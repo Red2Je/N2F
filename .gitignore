@@ -1,5 +1,6 @@
 /__pycache__/
 /n2f/__pycache__/
+/main/__pycache__/
 
 db.sqlite3
 /.idea/*
