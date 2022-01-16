@@ -3,11 +3,15 @@ from django.db import models
 class Service(models.Model):
     #id = models.fields.IntegerField(unique=True)
     name = models.fields.CharField(max_length=100)
+    def __str__(self):
+	    return self.name
 
 class Mission(models.Model):
     #id = models.fields.IntegerField(unique=True)
-    nae = models.fields.CharField(max_length=100)
+    name = models.fields.CharField(max_length=100)
 
+    def __str__(self):
+	    return self.name
 
 #class Validator(models.Model):
 #    substitite = models.fields.BooleanField(default=False)
@@ -24,6 +28,9 @@ class Collaborator(models.Model):
 
     service = models.ForeignKey(Service, null=True, on_delete=models.SET_NULL)
     validator = models.ForeignKey('self', null=True, on_delete=models.SET_NULL, related_name='cValidator')
+
+    def __str__(self):
+	    return self.login
 
 
 class ExpenseReport(models.Model):
@@ -45,6 +52,10 @@ class ExpenseReport(models.Model):
     
     collaborator = models.ForeignKey(Collaborator, null=True, on_delete=models.SET_NULL) # ~~~~~~
 
+
+    def __str__(self):
+	    return self.collaborator +" "
+
 class ExpenseLine(models.Model):
     #id = models.fields.IntegerField(unique=True)
     nature = models.fields.CharField(max_length=100)
@@ -60,3 +71,6 @@ class ExpenseLine(models.Model):
     collaborator = models.ForeignKey(Collaborator, null=True, on_delete=models.SET_NULL, related_name='elCollaborator')
     validator = models.ForeignKey(Collaborator, null=True, on_delete=models.SET_NULL, related_name='elValidator')
     mission = models.ForeignKey(Mission, null=True, on_delete=models.SET_NULL)
+
+    def __str__(self):
+	    return self.nature
