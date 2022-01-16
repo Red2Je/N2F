@@ -21,5 +21,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('void/', views.void, name = 'void'),
     path('form/', views.createExpenseline),
+    path('formReport/', views.createExpenseReport),
 
 ]

@@ -38,26 +38,43 @@ class Collaborator(models.Model):
 
 class ExpenseReport(models.Model):
     #id = models.fields.IntegerField(unique=True)
-        
-    class Month(models.TextChoices):
-            january  = 'Janvier'
-            february  = 'Fevrier'
-            march  = 'Mars'
-            april  = 'Avril'
-            may  = 'Mai'
-            june  ='Juin'
-            july  = 'Juillet'
-            august  = 'Aout'
-            september  = 'Septembre'
-            october  = 'Octobre'
-            november  = 'Novembre'
-            december  = 'Decembre'
+    january  = 'Janvier'
+    february  = 'Fevrier'
+    march  = 'Mars'
+    april  = 'Avril'
+    may  = 'Mai'
+    june  ='Juin'
+    july  = 'Juillet'
+    august  = 'Aout'
+    september  = 'Septembre'
+    october  = 'Octobre'
+    november  = 'Novembre'
+    december  = 'Decembre'
+   
+    Month_CHOICES = [
+		(january  , 'Janvier'),
+		(february  , 'Fevrier'),
+        (march  , 'Mars'),
+		(april  , 'Avril'),
+		(may,'Mai'),
+		(june,'Juin'),
+		(july,'Juillet'),
+		(august,'Aout'),
+		(september,'Septembre'),
+        (october,'Octobre'),
+        (november,'Novembre'),
+        (december,'Decembre'),
+    ]
+    month = models.CharField(
+        max_length=20,
+		choices=Month_CHOICES,
+	)
     
     collaborator = models.ForeignKey(Collaborator, null=True, on_delete=models.SET_NULL) # ~~~~~~
 
 
     def __str__(self):
-	    return self.collaborator +" "
+	    return str(self.collaborator.username) +" "+self.month
 
 class ExpenseLine(models.Model):
     #id = models.fields.IntegerField(unique=True)
