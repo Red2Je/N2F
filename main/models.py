@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class Service(models.Model):
     #id = models.fields.IntegerField(unique=True)
@@ -20,10 +21,12 @@ class Mission(models.Model):
 
 class Collaborator(models.Model):
     #id = models.fields.IntegerField(unique=True)
-    login = models.fields.CharField(max_length=100)
-    password = models.fields.CharField(max_length=500) # pas en clair pour le modele, longueur a modifier selon le codage
-    firstname = models.fields.CharField(max_length=100)
-    lastname = models.fields.CharField(max_length=100)
+    #login = models.fields.CharField(max_length=100)
+    #password = models.fields.CharField(max_length=500) # pas en clair pour le modele, longueur a modifier selon le codage
+    #firstname = models.fields.CharField(max_length=100)
+    #lastname = models.fields.CharField(max_length=100)
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     isvalidator = models.fields.BooleanField(default=False)
 
     service = models.ForeignKey(Service, null=True, on_delete=models.SET_NULL)
