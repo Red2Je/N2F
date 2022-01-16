@@ -19,7 +19,7 @@
 	<h3 class="title"> New Expense Line<h1>
     <div class="row">
 		<div class="card-body">
-			<form class="form-group" action="" method="POST">
+			<form enctype="multipart/form-data" class="form-group" action="" method="POST">
 				{% csrf_token %}
 				{{ form }}
 				<input type="submit" name="Submit">
