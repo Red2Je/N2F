@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from .dataValidator import validate_file_type
 
 class Service(models.Model):
     #id = models.fields.IntegerField(unique=True)
@@ -83,7 +84,7 @@ class ExpenseLine(models.Model):
     amountHT = models.fields.FloatField()
     amountTVA = models.fields.FloatField()
     advance = models.fields.BooleanField(default=False)
-    proof = models.FileField(upload_to='proofs') 
+    proof = models.FileField(upload_to='proofs',validators = [validate_file_type]) 
     commentary = models.fields.CharField(max_length=1000)
     validated = models.fields.BooleanField(null=True)
 
