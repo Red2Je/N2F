@@ -7,7 +7,9 @@ from .models import ExpenseLine
 		
 
 class ExpenseLineCreateForm(ModelForm):
+
+	
 	class Meta:
 		model = ExpenseLine
-		fields = '__all__'
+		fields = ['nature', 'date', 'amountHT', 'amountTVA','advance','proof','commentary','validated']
 	
