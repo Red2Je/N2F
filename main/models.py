@@ -33,7 +33,7 @@ class Collaborator(models.Model):
     validator = models.ForeignKey('self', null=True, on_delete=models.SET_NULL, related_name='cValidator')
 
     def __str__(self):
-	    return self.login
+	    return self.user.username
 
 
 class ExpenseReport(models.Model):
