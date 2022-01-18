@@ -19,8 +19,10 @@ def save_file(f):
 
 
 def createExpenseline(request):
+
 	form = ExpenseLineCreateForm()
 	if request.method == 'POST':
+
 		form = ExpenseLineCreateForm(request.POST, request.FILES)
 		if form.is_valid():
 
@@ -38,13 +40,12 @@ def createExpenseline(request):
 				obj.expenseReport = newReport
 			obj.collaborator = col
 			obj.validator = col.validator
-			print("ca marche la mission ?")
-			#mission ?
-			print("oui")
 
 			obj.save()
 			save_file(request.FILES['proof'])
 			return redirect('/void')
+		else:
+			print(form.errors)
 	context = {'form':form}
 	return render(request, 'main/form.html', context) 
 
