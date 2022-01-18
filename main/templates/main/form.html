@@ -21,7 +21,27 @@
 		<div class="card-body">
 			<form enctype="multipart/form-data" class="form-group" action="" method="POST">
 				{% csrf_token %}
-				{{ form }}
+				
+				<h4 class="title"> Nature<h1>
+					{{form.nature}}
+					<h4 class="title"> Date<h1>
+					{{form.date}}
+					<h4 class="title"> Amount HT<h1>
+					{{form.amountHT}}
+					<h4 class="title"> Amount TVA<h1>
+					{{form.amountTVA}}
+					<h4 class="title"> Advance<h1>
+					{{form.advance}}
+					<h4 class="title"> Proof<h1>
+					{{form.proof}}
+					<h4 class="title"> Commentary<h1>
+					{{form.commentary}}
+					<h4 class="title"> Validated ?<h1>
+					{{form.validated}}
+					<h4 class="title"> Mission linked<h1>
+					{{form.mission}}
+
+					<br>
 				<input type="submit" name="Submit">
 			</form>
 		</div>	

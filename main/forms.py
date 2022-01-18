@@ -1,4 +1,5 @@
 from django.forms import ModelForm
+from django import forms
 from .models import Collaborator, ExpenseLine
 from .models import ExpenseReport
 
@@ -8,11 +9,10 @@ from .models import ExpenseReport
 		
 
 class ExpenseLineCreateForm(ModelForm):
-
-	
-	class Meta:
-		model = ExpenseLine
-		fields = ['nature', 'date', 'amountHT', 'amountTVA','advance','proof','commentary','validated']
+    class Meta:
+        model = ExpenseLine
+        fields = ['nature', 'date', 'amountHT', 'amountTVA','advance','proof','commentary','validated','mission']
+        mission = forms.ModelChoiceField(queryset=ExpenseLine.objects.all())
 	
 
 class ExpenseReportForm(ModelForm):
