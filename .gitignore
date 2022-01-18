@@ -1,6 +1,6 @@
-/__pycache__/
-/n2f/__pycache__/
-/main/__pycache__/
+__pycache__/
+n2f/__pycache__/
+main/__pycache__/
 
 *.log
 *.pot
