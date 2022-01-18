@@ -19,6 +19,7 @@
         <link rel="stylesheet" href="{% static 'admin-lte/plugins/datatables-responsive/css/responsive.bootstrap4.min.css' %}">
         <link rel="stylesheet" href="{% static 'admin-lte/plugins/datatables-fixedheader/css/fixedHeader.bootstrap4.min.css' %}">
     </head>
+    <body class="hold-transition sidebar-mini">
 
         <!-- Navbar -->
         <nav class="main-header navbar navbar-expand navbar-black navbar-dark">
@@ -27,7 +28,8 @@
             <li class="nav-item">
             <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
             </li>
-            
+            </ul>
+            <ul class="navbar-nav ml-auto">
             {% if user.is_authenticated %}
                 <li class="nav-item d-none d-sm-inline-block">
                     <a href="{% url 'void' %}" class="nav-link"><i class="fa fa-user" aria-hidden="true"></i>{{ user.username}}</a>
@@ -56,6 +58,7 @@
             </ul>
         </nav>
 
+        <!-- Main Sidebar -->
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
         <!-- Brand Logo -->
         <a href="{% url 'void' %}" class="brand-link">
@@ -79,12 +82,29 @@
                     <p>Ajouter une ligne de frais</p>
                     </a>
                 </li>
+            </ul>
         </div>
-        <!-- Sidebar user panel (optional) -->
+        </aside>
 
+        <!-- Sidebar user panel (optional) -->
 
         {% block content %}
         {% endblock %}
+
+        <!-- Control Sidebar -->
+      <aside class="control-sidebar control-sidebar-dark">
+        <!-- Control sidebar content goes here -->
+      </aside>
+      <!-- /.control-sidebar -->
+
+{% block javascript %}
+{% include 'adminlte/lib/_scripts.html' %}
+{% endblock %}
+
+{% block extra_js %}{% endblock %}
+
+{% block extra_foot %}{% endblock %}
+</body>
 
 
 
