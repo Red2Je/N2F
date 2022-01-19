@@ -99,7 +99,8 @@ class ExpenseLine(models.Model):
 
     @receiver(pre_delete)
     def dele(sender,instance,**kwargs):
-        os.remove(instance.proof.name)
+        if sender == ExpenseLine:
+            os.remove(instance.proof.name)
     def __str__(self):
 	    return self.nature+' '+self.proof.name
 
