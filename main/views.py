@@ -26,28 +26,32 @@ def createExpenseline(request):
 
 		form = ExpenseLineCreateForm(request.POST, request.FILES)
 		if form.is_valid():
-
+			toValidate = None
+			if 'Submit' in request.POST:
+				toValidate = False
 			obj = form.save(commit = False)
 			col = Collaborator.objects.get(user = request.user)
 			
+			if(locale.LC_TIME != 'fr'):#avoid our month to be in english. As the database is in french, we force the format to be in french
+					locale.setlocale(locale.LC_TIME,'fr')
+			currMonth = datetime.datetime.now()
+			currMonth = currMonth.strftime("%B")
+			#Little piece of code to capitalize the first letter to match the database
+			monthList = list(currMonth)
+			monthList[0] = monthList[0].upper()
+			currMonth = "".join(monthList)
+			
+
 			# Handle the users that does not have a report yet
 			try:
-				obj.expenseReport = ExpenseReport.objects.get(collaborator = col)
+				obj.expenseReport = ExpenseReport.objects.get(collaborator = col, month = currMonth)
 			except ExpenseReport.DoesNotExist:
-				if(locale.LC_TIME != 'fr'):#avoid our month to be in english. As the database is in french, we force the format to be in french
-					locale.setlocale(locale.LC_TIME,'fr')
-				currMonth = datetime.datetime.now()
-				currMonth = currMonth.strftime("%B")
-				#Little piece of code to capitalize the first letter to match the database
-				monthList = list(currMonth)
-				monthList[0] = monthList[0].upper()
-				currMonth = "".join(monthList)
-				#
 				newReport = ExpenseReport(collaborator = col, month = currMonth)
 				newReport.save()
 				obj.expenseReport = newReport
 			obj.collaborator = col
 			obj.validator = col.validator
+			obj.validated = toValidate
 
 			obj.save()
 			save_file(request.FILES['proof'])

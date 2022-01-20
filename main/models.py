@@ -90,7 +90,7 @@ class ExpenseLine(models.Model):
     advance = models.fields.BooleanField(default=False)
     proof = models.FileField(upload_to='proofs',validators = [validate_file_type])
     commentary = models.fields.CharField(max_length=1000)
-    validated = models.fields.BooleanField(null=True)
+    validated = models.fields.BooleanField(null = True)
 
     expenseReport = models.ForeignKey(ExpenseReport, null=True, on_delete=models.SET_NULL)
     collaborator = models.ForeignKey(Collaborator, null=True, on_delete=models.SET_NULL, related_name='elCollaborator')

@@ -4,4 +4,4 @@ def validate_file_type(file):
     name,ext = os.path.splitext(file.name)
     valid_extensions = ['.pdf','.jpg','.png','.jpeg'] # append every types you want to add to this list
     if not ext.lower() in valid_extensions:
-        raise ValidationError(f'unsupported file extension for file {file.name}')
+        raise ValidationError(f'Type de fichier non supporté pour le fichier :  {file.name}, types acceptés : {valid_extensions}')

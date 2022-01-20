@@ -11,7 +11,17 @@ from .models import ExpenseReport
 class ExpenseLineCreateForm(ModelForm):
     class Meta:
         model = ExpenseLine
-        fields = ['nature', 'date', 'amountHT', 'amountTVA','advance','proof','commentary','validated','mission']
+        fields = ['nature', 'date', 'amountHT', 'amountTVA','advance','proof','commentary','mission']
+        labels = {
+            'nature' : 'Nature',
+            'date' : 'Date',
+            'amountHT':'Remboursement hors taxe',
+            'amountTVA':'Remboursement avec taxe',
+            'advance':'Une demande d\'avance à t\'elle été émise ?',
+            'proof' : 'Preuve de dépense',
+            'commentary':'Commentaires',
+            'mission' : 'Mission'
+        }
         mission = forms.ModelChoiceField(queryset=ExpenseLine.objects.all())
 	
 
