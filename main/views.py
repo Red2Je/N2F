@@ -10,6 +10,12 @@ import os
 import locale
 # Create your views here.
 
+def logoutPage(request):
+	return render(request,'main/logout.html')
+
+def login(request):
+	return render(request,'main/login.html')
+
 def void(request):
 	return render(request,'main/void.html')
 

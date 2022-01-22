@@ -22,5 +22,7 @@ urlpatterns = [
     path('void/', views.void, name = 'void'),
     path('form/', views.createExpenseline),
     path('formReport/', views.createExpenseReport),
+    path('login/', views.login),
+    path('logoutPage/', views.logoutPage),
 
 ]
