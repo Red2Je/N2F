@@ -19,10 +19,11 @@ from main import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', views.home, name='home'),
     path('void/', views.void, name = 'void'),
-    path('form/', views.createExpenseline),
-    path('formReport/', views.createExpenseReport),
-    path('login/', views.login),
-    path('logoutPage/', views.logoutPage),
+    path('form/', views.createExpenseline, name='form'),
+    path('formReport/', views.createExpenseReport, name='formReport'),
+    path('login/', views.login, name='login'),
+    path('logoutPage/', views.logoutPage, name='logout'),
 
 ]
