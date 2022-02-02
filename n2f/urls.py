@@ -19,11 +19,19 @@ from main import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', views.home, name='home'),
     path('void/', views.void, name = 'void'),
+<<<<<<< HEAD
     path('form/', views.createExpenseline),
     path('formReport/', views.createExpenseReport),
     path('login/', views.login),
     path('logoutPage/', views.logoutPage),
     path('serviceHistoric/', views.sHistoric),
+=======
+    path('form/', views.createExpenseline, name='form'),
+    path('formReport/', views.createExpenseReport, name='formReport'),
+    path('login/', views.login, name='login'),
+    path('logoutPage/', views.logoutPage, name='logout'),
+>>>>>>> 8377e1a051dbb37aeb940fc55b8904ad9137c50d
 
 ]

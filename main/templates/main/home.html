@@ -1,0 +1,51 @@
+{% extends 'main/base.html' %}
+
+{% block content %}
+
+<div class = "content-wrapper">
+    <section class="content-header">
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>LOGO</h1>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <!-- general form elements -->
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Demandes</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+
+
+                                <button><a href="{% url 'void' %}"> VOID </a> </button>
+                                <button><a href="{% url 'form' %}"> Faire une nouvelle ligne de frais </a> </button>
+                                <button><a href="{% url 'formReport' %}"> Historique des notes de frais </a> </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Validations</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                                <button><a href="{% url 'void' %}"> Consulter les notes de frais à valider </a> </button>
+                                <button><a href="{% url 'form' %}"> Historique des notes du service </a> </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+{% endblock %}

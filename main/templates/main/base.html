@@ -48,14 +48,14 @@
 
             {% if user.is_authenticated %}
                 <li class="nav-item d-none d-sm-inline-block">
-                    <a href="{% url 'void' %}" class="nav-link">Logout</a>
+                    <a href="{% url 'logout' %}" class="nav-link">Logout</a>
                 </li>
                 <li class="nav-item d-none d-sm-inline-block">
                     <a href="{% url 'void' %}" class="nav-link">Change Password</a>
                 </li>
             {% else %}
                 <li class="nav-item d-none d-sm-inline-block">
-                    <a href="{% url 'void' %}" class="nav-link">Login</a>
+                    <a href="{% url 'login' %}" class="nav-link">Login</a>
                 </li>
                 <li class="nav-item d-none d-sm-inline-block">
                     <a href="{% url 'void' %}" class="nav-link" >Register</a>
@@ -67,7 +67,7 @@
         <!-- Main Sidebar -->
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
         <!-- Brand Logo -->
-        <a href="{% url 'void' %}" class="brand-link">
+        <a href="{% url 'home' %}" class="brand-link">
           <span class="brand-text font-weight-light">N2F</span>
         </a>
 
@@ -84,7 +84,7 @@
                     <a href="{% url 'void' %}" class="nav-link ">
                     <p>Historique des notes de frais</p>
                     </a>
-                    <a href="{% url 'void' %}" class="nav-link ">
+                    <a href="{% url 'form' %}" class="nav-link ">
                     <p>Ajouter une ligne de frais</p>
                     </a>
                 </li>
