@@ -24,6 +24,9 @@ def save_file(f):
 		for chunk in f.chunks():
 			destination.write(chunk)
 
+def sHistoric(request):
+	return render(request,'main/historic.html')
+
 
 def createExpenseline(request):
 

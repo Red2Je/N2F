@@ -1,0 +1,115 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block content %}
+
+	{% if form.errors %}
+		{% for field in form %}
+			{% for error in field.errors %}
+				<div class="alert alert-danger">
+					<strong>{{ error|escape }}</strong>
+				</div>
+			{% endfor %}
+		{% endfor %}
+		{% for error in form.non_field_errors %}
+			<div class="alert alert-danger">
+				<strong>{{ error|escape }}</strong>
+			</div>
+		{% endfor %}
+	{% endif %}	
+	
+	<div class = "content-wrapper">
+	<section class="content-header">
+	  <div class="container-fluid">
+	    <div class="row mb-2">
+	      <div class="col-sm-6">
+	        <h1>Historique des notes de frais du service :</h1>
+	      </div>
+	    </div>
+	  </div><!-- /.container-fluid -->
+	</section>
+
+   <section class="content">
+
+      <div class="table-responsive">
+                                    <p class="t_heading">Notes de frais</p>
+                                    <table class="table table-bordered table-hover">
+                                        <thead>
+                                            <th>Demandeur</th>
+                                            <th>Date</th>
+                                            <th>Coût total TTC (€)</th>
+                                            <th>État</th>
+                                            <th>Details</th>                                                
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Tintin</td>
+                                                <td>12/2021</td>
+                                                <td>300</td>
+                                                <td>Incomplet</td>
+                                                <td><button class="btn btn-success" data-toggle="collapse" data-target="#intro">SHOW DETAILS</button></td>                         
+                                            </tr>
+                                            <tr id="intro" class="collapse">
+										 <td colspan="7">
+										  <p class="t_heading">Missions</p>
+										  <table class="table custom-view">
+										  <thead>
+										      <th>Mission</th>
+										      <th>Nombre ligne de frais</th>
+										      <th>Coût total TTC (€)</th>
+										      <th>Details</th>
+										  </thead>
+										  <tbody>
+										      <td>Voyage à Carracas</td>
+										      <td>2</td>
+										      <td>300</td>
+										      <td><button class="btn btn-success" data-toggle="collapse" data-target="#outro">MORE DETAILS</button></td>
+										  </tbody>
+										  <tr id="outro" class="collapse">
+										 <td colspan="14">
+										  <p class="t_heading">Lignes de frais</p>
+										  <table class="table custom-view">
+										  <thead>
+										      <th>Type</th>
+										      <th>Date</th>
+										      <th>Coût total TTC (€)</th>
+										      <th>Demande d'avance</th>
+										      <th>Justificatif</th>
+										      <th>État</th>
+										  </thead>
+										  <tbody>
+										      <td>Restaurant</td>
+										      <td>12/12/2021</td>
+										      <td>100</td>
+										      <td>non</td>
+										      <td>oui</td>
+										      <td>validé</td>
+										  </tbody>
+										  <tbody>
+										      <td>Hôtel</td>
+										      <td>12/12/2021</td>
+										      <td>200</td>
+										      <td>non</td>
+										      <td>non</td>
+										      <td>invalidé</td>
+										  </tbody>
+										 </table>
+										</td>
+										</tr> 
+										 </table>
+										</td>
+										</tr>                                                             
+                                        </tbody>                                                                                                    
+                                    </table>                                        
+                                </div>
+    </section>
+
+<script>
+$('button').click(function(){
+    $(this).text(function(i,old){
+        return old=="SHOW DETAILS" ?  "HIDE DETAILS" : "SHOW DETAILS";
+    });
+});
+</script>
+
+{% endblock %}

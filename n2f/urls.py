@@ -24,5 +24,6 @@ urlpatterns = [
     path('formReport/', views.createExpenseReport),
     path('login/', views.login),
     path('logoutPage/', views.logoutPage),
+    path('serviceHistoric/', views.sHistoric),
 
 ]
