@@ -57,7 +57,7 @@ ROOT_URLCONF = 'n2f.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -129,3 +129,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Changing the date format to match french
 DATE_INPUT_FORMATS = ['%d/%m/%Y']
+
+
+LOGIN_REDIRECT_URL = ''

@@ -1,4 +1,4 @@
-from django.contrib.auth.decorators import login_required
+
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.core.mail import send_mail
@@ -6,18 +6,37 @@ from django.shortcuts import redirect
 from .forms import ExpenseLineCreateForm
 from .forms import ExpenseReportForm
 from .models import ExpenseReport, Collaborator
+from django.contrib.auth import authenticate, login , logout
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.decorators import login_required
 import datetime
 import os
 import locale
 
 
+
 # Create your views here.
 
 def logoutPage(request):
-	return render(request,'main/logout.html')
+    logout(request)
+    return render(request,'main/logout.html')
 
-def login(request):
-	return render(request,'main/login.html')
+def user_login(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username =username, password = password)
+ 
+        if user is not None:
+            login(request,user)
+            return redirect('/void')
+        else:
+            form = AuthenticationForm()
+            return render(request,'main/login.html',{'form':form})
+     
+    else:
+        form = AuthenticationForm()
+        return render(request, 'main/login.html', {'form':form})
 
 def void(request):
     return render(request, 'main/void.html')
