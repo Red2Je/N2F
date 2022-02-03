@@ -57,7 +57,7 @@ def save_file(f):
 def sHistoric(request):
     return render(request,'main/historic.html')
 
-@login_required
+@login_required(login_url='/login/')
 def createExpenseline(request):
     form = ExpenseLineCreateForm()
     if request.method == 'POST':
