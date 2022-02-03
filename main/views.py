@@ -22,6 +22,9 @@ def logoutPage(request):
     return render(request,'main/logout.html')
 
 def user_login(request):
+    #handle rediredct
+    next = request.GET.get('next', '/')
+    
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
@@ -29,6 +32,9 @@ def user_login(request):
  
         if user is not None:
             login(request,user)
+            #if the user is valid and comes from another page, redirect him
+            if(next != '/'):
+                return redirect(next)
             return redirect('/void')
         else:
             form = AuthenticationForm()
@@ -47,10 +53,11 @@ def save_file(f):
         for chunk in f.chunks():
             destination.write(chunk)
 
+@login_required(login_url='/login/')
 def sHistoric(request):
-	return render(request,'main/historic.html')
+    return render(request,'main/historic.html')
 
-
+@login_required
 def createExpenseline(request):
     form = ExpenseLineCreateForm()
     if request.method == 'POST':
