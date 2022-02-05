@@ -15,7 +15,7 @@ class Mission(models.Model):
     #id = models.fields.IntegerField(unique=True)
     name = models.fields.CharField(max_length=100)
     date = models.fields.DateField()
-    montantAvance = models.fields.FloatField(default=0)
+    amountAdvance = models.fields.FloatField(default=0)
 
     def __str__(self):
 	    return self.name
@@ -33,7 +33,7 @@ class Collaborator(models.Model):
     #lastname = models.fields.CharField(max_length=100)
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    isvalidator = models.fields.BooleanField(default=False)
+    isValidator = models.fields.BooleanField(default=False)
 
     cv3  = '3 cv et moins'
     cv4  = '4 cv'
@@ -57,6 +57,7 @@ class Collaborator(models.Model):
     
     service = models.ForeignKey(Service, null=True, on_delete=models.SET_NULL)
     validator = models.ForeignKey('self', null=True, on_delete=models.SET_NULL, related_name='cValidator')
+    departmentHead = models.ForeignKey(Service, null=True, on_delete=models.SET_NULL, related_name='cDeptHead')
 
     def __str__(self):
 	    return self.user.username
@@ -147,8 +148,6 @@ class ExpenseLine(models.Model):
 	)
 
     expenseReport = models.ForeignKey(ExpenseReport, null=True, on_delete=models.SET_NULL)
-    collaborator = models.ForeignKey(Collaborator, null=True, on_delete=models.SET_NULL, related_name='elCollaborator')
-    validator = models.ForeignKey(Collaborator, null=True, on_delete=models.SET_NULL, related_name='elValidator')
     mission = models.ForeignKey(Mission, null=True, on_delete=models.SET_NULL)
 
 
