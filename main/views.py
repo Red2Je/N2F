@@ -12,6 +12,7 @@ from django.contrib.auth.decorators import login_required
 import datetime
 import os
 import locale
+import mimetypes
 
 
 
@@ -58,6 +59,14 @@ def sHistoric(request):
     return render(request,'main/historic.html')
 
 @login_required(login_url='/login/')
+def sValid(request):
+    return render(request,'main/valid.html')
+
+@login_required(login_url='/login/')
+def cHistoric(request):
+    return render(request,'main/clientHistoric.html')
+
+@login_required(login_url='/login/')
 def createExpenseline(request):
     form = ExpenseLineCreateForm()
     if request.method == 'POST':
@@ -100,6 +109,25 @@ def createExpenseline(request):
     context = {'form': form}
     return render(request, 'main/form.html', context)
 
+def download_file(request, filename=''):
+	if filename != '':
+		# Define Django project base directory
+		BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+		# Define the full file path
+		filepath = BASE_DIR + '/proofs/' + filename
+		# Open the file for reading content
+		path = open(filepath, 'rb')
+		# Set the mime type
+		mime_type, _ = mimetypes.guess_type(filepath)
+		# Set the return value of the HttpResponse
+		response = HttpResponse(path, content_type=mime_type)
+		# Set the HTTP header for sending to browser
+		response['Content-Disposition'] = "attachment; filename=%s" % filename
+		# Return the response value
+		return response
+	else:
+		# Load the template
+		return render(request, 'void.html')
 
 def createExpenseReport(request):
     form = ExpenseReportForm()

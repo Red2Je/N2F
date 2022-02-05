@@ -47,7 +47,7 @@
                                                 <td>12/2021</td>
                                                 <td>300</td>
                                                 <td>Incomplet</td>
-                                                <td><button class="btn btn-success" data-toggle="collapse" data-target="#intro">SHOW DETAILS</button></td>                         
+                                                <td><button class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target="#intro">Show details</button></td>                         
                                             </tr>
                                             <tr id="intro" class="collapse">
 										 <td colspan="7">
@@ -63,7 +63,7 @@
 										      <td>Voyage à Carracas</td>
 										      <td>2</td>
 										      <td>300</td>
-										      <td><button class="btn btn-success" data-toggle="collapse" data-target="#outro">MORE DETAILS</button></td>
+										      <td><button class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target="#outro">Show details</button></td>
 										  </tbody>
 										  <tr id="outro" class="collapse">
 										 <td colspan="14">
@@ -75,6 +75,7 @@
 										      <th>Coût total TTC (€)</th>
 										      <th>Demande d'avance</th>
 										      <th>Justificatif</th>
+										      <th>Détail</th>
 										      <th>État</th>
 										  </thead>
 										  <tbody>
@@ -82,7 +83,8 @@
 										      <td>12/12/2021</td>
 										      <td>100</td>
 										      <td>non</td>
-										      <td>oui</td>
+										      <td><a href="{% url 'download' filename='placeholder.jpg'%}">Télécharger</a></td>
+										      <td><button onclick="location.href = {% url 'void' %};" id="myButton" class="submit" >détail</button></td>
 										      <td>validé</td>
 										  </tbody>
 										  <tbody>
@@ -91,6 +93,7 @@
 										      <td>200</td>
 										      <td>non</td>
 										      <td>non</td>
+										      <td><button onclick="location.href = {% url 'void' %};" id="myButton" class="submit" >détail</button></td>
 										      <td>invalidé</td>
 										  </tbody>
 										 </table>
@@ -105,11 +108,14 @@
     </section>
 
 <script>
-$('button').click(function(){
-    $(this).text(function(i,old){
-        return old=="SHOW DETAILS" ?  "HIDE DETAILS" : "SHOW DETAILS";
-    });
-});
+function ShowHide(id) {
+  if ($(id).html() == "Show details") {
+    $(id).html("Hide details");
+  } else {
+    $(id).html("Show details");
+  }
+
+}
 </script>
 
 {% endblock %}
