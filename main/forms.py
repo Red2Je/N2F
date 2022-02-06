@@ -17,7 +17,7 @@ class ExpenseLineCreateForm(ModelForm):
             'date' : 'Date',
             'amountHT':'Remboursement hors taxe',
             'amountTVA':'Remboursement avec taxe',
-            'advance':'Une demande d\'avance à t\'elle été émise ?',
+            'advance':'Utiliser la somme avancée ?',
             'proof' : 'Preuve de dépense',
             'commentary':'Commentaires',
             'mission' : 'Mission'

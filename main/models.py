@@ -123,13 +123,13 @@ class ExpenseLine(models.Model):
     distance = models.fields.FloatField(default=0)
 
     fuel  = 'Essence'
-    accomodation  = 'Hebergement'
+    accomodation  = 'Hébergement'
     meal  = 'Repas'
     transport  = 'Transport'
     travel = 'Voyage'
     purchase = 'Achat'
     other = 'Autre'
-    advanceRequest = 'Demande d avance'
+    advanceRequest = 'Demande d\'avance'
 
    
     Nature_CHOICES = [
@@ -140,10 +140,10 @@ class ExpenseLine(models.Model):
         (travel  , 'Voyage'),
         (other  , 'Autre'),
         (purchase  , 'Achat'),
-        (advanceRequest , 'Demande d avance'),
+        (advanceRequest , 'Demande d\'avance'),
     ]
     nature = models.CharField(
-        max_length=20,
+        max_length=25,
 		choices=Nature_CHOICES,
 	)
 
