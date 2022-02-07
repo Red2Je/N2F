@@ -1,4 +1,5 @@
 
+from xmlrpc.client import DateTime
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.core.mail import send_mail
@@ -69,15 +70,22 @@ def cHistoric(request):
     expRepL = []
     expLinDict = {}
     missionDict = {}
+    tempDict ={}
     if ExpenseReport.objects.filter(collaborator=u).count() >= 1:
         expRepL = list(ExpenseReport.objects.filter(collaborator = u))
         for expRep in expRepL:
             filt = list(ExpenseLine.objects.filter(expenseReport = expRep))
-            expLinDict[expRep.id] = filt
-            filtMiss = [f.mission.name for f in filt]
+            filtMiss = [f.mission for f in filt]
             missionDict[expRep] = filtMiss
-    print(missionDict)
-
+            for miss in filtMiss:
+                tempDict[miss] = list(ExpenseLine.objects.filter(expenseReport = expRep, mission = miss))
+                expLinDict[expRep] = tempDict
+            k = expLinDict[expRep]
+            l = k[miss]
+            print(type(k))
+            print(type(l))
+            print(type(l[0]))
+            
     context = {'expRepL' : expRepL, 'collab' : u, 'expLinDict' : expLinDict, 'missDict' : missionDict}
     return render(request,'main/clientHistoric.html',context)
 
@@ -99,6 +107,7 @@ def createExpenseline(request):
                 # we force the format to be in french
                 locale.setlocale(locale.LC_TIME, 'fr')
             currMonth = datetime.datetime.now()
+            currYear = currMonth.strftime("%Y")
             currMonth = currMonth.strftime("%B")
             # Little piece of code to capitalize the first letter to match the database
             monthList = list(currMonth)
@@ -107,9 +116,9 @@ def createExpenseline(request):
 
             # Handle the users that does not have a report yet
             try:
-                obj.expenseReport = ExpenseReport.objects.get(collaborator=col, month=currMonth)
+                obj.expenseReport = ExpenseReport.objects.get(collaborator=col, month=currMonth, year = currYear )
             except ExpenseReport.DoesNotExist:
-                newReport = ExpenseReport(collaborator=col, month=currMonth)
+                newReport = ExpenseReport(collaborator=col, month=currMonth, year=currYear)
                 newReport.save()
                 obj.expenseReport = newReport
             obj.collaborator = col

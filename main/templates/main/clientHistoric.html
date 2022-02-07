@@ -48,7 +48,7 @@
                 <tr>
                     <td>{{ collab.user.username }}</td>
                     <td>{{ expRep.month}} {{expRep.year }}</td>
-                    <td>{{ expRep|sum:1 }}</td>
+                    <td>{{ expRep|sumRep:1 }}</td>
                     <td>Incomplet</td>
                     <td><button class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target="#intro">Show details</button></td>              
                 </tr>
@@ -66,14 +66,12 @@
 			  {% if key == expRep %}
 			  {% for mission in value %}
 			  <tbody>
-			      <td>{{ mission }}</td>
-			      <td>{{ mission|sumMission:expRep }}</td>
-			      <td>300</td>
+			      <td>{{ mission.name }}</td>
+			      <td>{{ mission.name|sumMission:expRep }}</td>
+			      <td>{{ mission.name|sumMissMoney:expRep }}</td>
 			      <td><button class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target="#outro">Show details</button></td>
 			  </tbody>
-			  {% endfor %}
-		  	  {% endif %}
-		 	  {% endfor %}
+			  
 			  <tr id="outro" class="collapse">
 			 <td colspan="14">
 			  <p class="t_heading">Lignes de frais</p>
@@ -88,23 +86,25 @@
 			      <th>État</th>
 			  </thead>
 			  <tbody>
-			      <td>Restaurant</td>
-			      <td>12/12/2021</td>
-			      <td>100</td>
-			      <td>non</td>
-			      <td><a href="{% url 'download' filename='placeholder.jpg'%}">Télécharger</a></td>
+				  {% for valueRep in expLinDict.expRep %}
+				  {% for valueMiss in valueRep.mission  %}
+				  {% for expLin in valueMiss %}
+			      <td>{{ expLin.get_nature_display }}</td>
+			      <td>{{ expLin.date }}</td>
+			      <td>{{ expLin.amountTVA }}</td>
+			      <td>à enlever</td>
+			      <td><a href="{% url 'download' filename='{{ expLin.proof.name }}'%}">Télécharger</a></td>
 			      <td><button onclick="location.href = {% url 'void' %};" id="myButton" class="submit" >détail</button></td>
-			      <td>validé</td>
+			      <td>à revoir </td>
+				  {% endfor %}
+				  {% endfor %}
+				  {% endfor %}
+				  
+
 			  </tbody>
-			  <tbody>
-			      <td>Hôtel</td>
-			      <td>12/12/2021</td>
-			      <td>200</td>
-			      <td>non</td>
-			      <td>non</td>
-			      <td><button onclick="location.href = {% url 'void' %};" id="myButton" class="submit" >détail</button></td>
-			      <td>invalidé</td>
-			  </tbody>
+			  {% endfor %}
+		  	  {% endif %}
+		 	  {% endfor %}
 			 </table>
 			</td>
 			</tr> 

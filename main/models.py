@@ -66,7 +66,7 @@ class Collaborator(models.Model):
 class ExpenseReport(models.Model):
     #id = models.fields.IntegerField(unique=True)
 
-    year = models.fields.IntegerField()
+    year = models.fields.IntegerField(default = 2020)
 
     january  = 'Janvier'
     february  = 'Fevrier'
