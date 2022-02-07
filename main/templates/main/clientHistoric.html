@@ -17,6 +17,8 @@
 			</div>
 		{% endfor %}
 	{% endif %}	
+
+	{% load tags %}
 	
 	<div class = "content-wrapper">
 	<section class="content-header">
@@ -42,12 +44,13 @@
                 <th>Details</th>                                                
             </thead>
             <tbody>
+            	{% for expRep in expRepL %}
                 <tr>
-                    <td>Tintin</td>
-                    <td>12/2021</td>
-                    <td>300</td>
+                    <td>{{ collab.user.username }}</td>
+                    <td>{{ expRep.month}} {{expRep.year }}</td>
+                    <td>{{ expRep|sum:1 }}</td>
                     <td>Incomplet</td>
-                    <td><button class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target="#intro">Show details</button></td>                         
+                    <td><button class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target="#intro">Show details</button></td>              
                 </tr>
                 <tr id="intro" class="collapse">
 			 <td colspan="7">
@@ -59,12 +62,18 @@
 			      <th>Coût total TTC (€)</th>
 			      <th>Details</th>
 			  </thead>
+			  {% for key,value in missDict.items %}
+			  {% if key == expRep %}
+			  {% for mission in value %}
 			  <tbody>
-			      <td>Voyage à Carracas</td>
-			      <td>2</td>
+			      <td>{{ mission }}</td>
+			      <td>{{ mission|sumMission:expRep }}</td>
 			      <td>300</td>
 			      <td><button class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target="#outro">Show details</button></td>
 			  </tbody>
+			  {% endfor %}
+		  	  {% endif %}
+		 	  {% endfor %}
 			  <tr id="outro" class="collapse">
 			 <td colspan="14">
 			  <p class="t_heading">Lignes de frais</p>
@@ -99,17 +108,17 @@
 			 </table>
 			</td>
 			</tr> 
-			 </table>
+			</table>
+			<form method="get" action="{% url 'form' %}">
+			{% csrf_token %}
+		    <button type="submit" formmethod="get" class="btn btn-primary btn-lg float-right">Ajouter ligne de frais</button>
+			</form>
 			</td>
-			</tr>                                                             
+			</tr>   
+			{% endfor %}                                                           
             </tbody>                                                                                                    
         </table>                                        
     </div>
-    <form method="get" action="{% url 'form' %}">
-		{% csrf_token %}
-	    <button type="submit" formmethod="get" class="btn btn-primary btn-lg float-right">Ajouter ligne de frais</button>
-
-	</form>
     </section>
 
 <script>

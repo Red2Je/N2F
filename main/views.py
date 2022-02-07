@@ -5,7 +5,7 @@ from django.core.mail import send_mail
 from django.shortcuts import redirect
 from .forms import ExpenseLineCreateForm
 from .forms import ExpenseReportForm
-from .models import ExpenseReport, Collaborator
+from .models import ExpenseReport, Collaborator, ExpenseLine
 from django.contrib.auth import authenticate, login , logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
@@ -13,6 +13,7 @@ import datetime
 import os
 import locale
 import mimetypes
+
 
 
 
@@ -64,7 +65,21 @@ def sValid(request):
 
 @login_required(login_url='/login/')
 def cHistoric(request):
-    return render(request,'main/clientHistoric.html')
+    u = Collaborator.objects.get(user = request.user)
+    expRepL = []
+    expLinDict = {}
+    missionDict = {}
+    if ExpenseReport.objects.filter(collaborator=u).count() >= 1:
+        expRepL = list(ExpenseReport.objects.filter(collaborator = u))
+        for expRep in expRepL:
+            filt = list(ExpenseLine.objects.filter(expenseReport = expRep))
+            expLinDict[expRep.id] = filt
+            filtMiss = [f.mission.name for f in filt]
+            missionDict[expRep] = filtMiss
+    print(missionDict)
+
+    context = {'expRepL' : expRepL, 'collab' : u, 'expLinDict' : expLinDict, 'missDict' : missionDict}
+    return render(request,'main/clientHistoric.html',context)
 
 @login_required(login_url='/login/')
 def createExpenseline(request):
