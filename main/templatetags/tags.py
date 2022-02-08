@@ -26,3 +26,13 @@ def sumMissMoney(value,arg):
     for eL in filt:
         sum += eL.amountTVA
     return (str(sum))
+
+
+@register.filter
+def get(dict,key):
+    return(dict.get(key))
+
+
+@register.filter
+def urlFromFile(url,arg):
+    return(url.split('/')[1])

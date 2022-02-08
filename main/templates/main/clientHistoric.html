@@ -86,21 +86,17 @@
 			      <th>État</th>
 			  </thead>
 			  <tbody>
-				  {% for valueRep in expLinDict.expRep %}
-				  {% for valueMiss in valueRep.mission  %}
-				  {% for expLin in valueMiss %}
+				  {% with expLinL=expLinDict|get:expRep|get:mission %}
+				  {% for expLin in expLinL %}
 			      <td>{{ expLin.get_nature_display }}</td>
 			      <td>{{ expLin.date }}</td>
 			      <td>{{ expLin.amountTVA }}</td>
 			      <td>à enlever</td>
-			      <td><a href="{% url 'download' filename='{{ expLin.proof.name }}'%}">Télécharger</a></td>
+			      <td><a href="{% url 'download' expLin.proof.name|urlFromFile:1 %}">Télécharger  {{expLine.proof.name}} </a></td>
 			      <td><button onclick="location.href = {% url 'void' %};" id="myButton" class="submit" >détail</button></td>
 			      <td>à revoir </td>
 				  {% endfor %}
-				  {% endfor %}
-				  {% endfor %}
-				  
-
+				  {% endwith %}
 			  </tbody>
 			  {% endfor %}
 		  	  {% endif %}

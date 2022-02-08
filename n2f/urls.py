@@ -30,7 +30,7 @@ urlpatterns = [
     path('serviceHistoric/', views.sHistoric),
     path('clientHistoric/', views.cHistoric, name='clientHistoric'),
     path('serviceValid/', views.sValid),
-    path('download/<str:filename>', views.download_file, name='download'),
+    #path('download/<str:filename>', views.download_file, name='download'),
     path('download/<str:filename>/', views.download_file, name='download'),
 
 ]

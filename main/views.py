@@ -1,4 +1,5 @@
 
+from ast import expr
 from xmlrpc.client import DateTime
 from django.shortcuts import render
 from django.http import HttpResponse
@@ -80,12 +81,7 @@ def cHistoric(request):
             for miss in filtMiss:
                 tempDict[miss] = list(ExpenseLine.objects.filter(expenseReport = expRep, mission = miss))
                 expLinDict[expRep] = tempDict
-            k = expLinDict[expRep]
-            l = k[miss]
-            print(type(k))
-            print(type(l))
-            print(type(l[0]))
-            
+                print(expLinDict[expRep][miss][0].proof.name)
     context = {'expRepL' : expRepL, 'collab' : u, 'expLinDict' : expLinDict, 'missDict' : missionDict}
     return render(request,'main/clientHistoric.html',context)
 
@@ -134,24 +130,25 @@ def createExpenseline(request):
     return render(request, 'main/form.html', context)
 
 def download_file(request, filename=''):
-	if filename != '':
-		# Define Django project base directory
-		BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-		# Define the full file path
-		filepath = BASE_DIR + '/proofs/' + filename
-		# Open the file for reading content
-		path = open(filepath, 'rb')
-		# Set the mime type
-		mime_type, _ = mimetypes.guess_type(filepath)
-		# Set the return value of the HttpResponse
-		response = HttpResponse(path, content_type=mime_type)
-		# Set the HTTP header for sending to browser
-		response['Content-Disposition'] = "attachment; filename=%s" % filename
-		# Return the response value
-		return response
-	else:
-		# Load the template
-		return render(request, 'void.html')
+    print(filename)
+    if filename != '':
+        # Define Django project base directory
+        BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        # Define the full file path
+        filepath = BASE_DIR + '/proofs/' + filename
+        # Open the file for reading content
+        path = open(filepath, 'rb')
+        # Set the mime type
+        mime_type, _ = mimetypes.guess_type(filepath)
+        # Set the return value of the HttpResponse
+        response = HttpResponse(path, content_type=mime_type)
+        # Set the HTTP header for sending to browser
+        response['Content-Disposition'] = "attachment; filename=%s" % filename
+        # Return the response value
+        return response
+    else:
+        # Load the template
+        return render(request, 'void.html')
 
 def createExpenseReport(request):
     form = ExpenseReportForm()
