@@ -13,8 +13,8 @@ from .models import Service
 
 
 
-class ExpenseLineAdmin(admin.ModelAdmin):
-    list_display1 = [field.name for field in ExpenseLine._meta.get_fields()]
+#class ExpenseLineAdmin(admin.ModelAdmin):
+#    list_display1 = [field.name for field in ExpenseLine._meta.get_fields()]
 
 class ExpenseReportAdmin(admin.ModelAdmin):
     list_display2 = [field2.name for field2 in ExpenseReport._meta.get_fields()]
@@ -32,7 +32,7 @@ class ServiceAdmin(admin.ModelAdmin):
 
 
 
-admin.site.register(ExpenseLine, ExpenseLineAdmin)
+#admin.site.register(ExpenseLine, ExpenseLineAdmin)
 admin.site.register(ExpenseReport, ExpenseReportAdmin)
 admin.site.register(Collaborator, CollaboratorAdmin)
 admin.site.register(Mission, MissionAdmin)

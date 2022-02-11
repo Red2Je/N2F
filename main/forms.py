@@ -9,6 +9,7 @@ from .models import ExpenseReport
 		
 
 class ExpenseLineCreateForm(ModelForm):
+    """
     class Meta:
         model = ExpenseLine
         fields = ['nature', 'date', 'amountHT', 'amountTVA','advance','proof','commentary','mission']
@@ -23,7 +24,7 @@ class ExpenseLineCreateForm(ModelForm):
             'mission' : 'Mission'
         }
         mission = forms.ModelChoiceField(queryset=ExpenseLine.objects.all())
-	
+"""
 
 class ExpenseReportForm(ModelForm):
     class Meta:
