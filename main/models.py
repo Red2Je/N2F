@@ -37,8 +37,8 @@ class Collaborator(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     
     service = models.ForeignKey(Service, null=True, on_delete=models.SET_NULL)
-    validator = models.ForeignKey('self', null=True, on_delete=models.SET_NULL, related_name='cValidator')
-    departmentHead = models.ForeignKey(Service, null=True, on_delete=models.SET_NULL, related_name='cDeptHead')
+    validator = models.ForeignKey('self', blank=True, null=True, on_delete=models.SET_NULL, related_name='cValidator')
+    departmentHead = models.ForeignKey(Service, blank=True, null=True, on_delete=models.SET_NULL, related_name='cDeptHead')
 
     def __str__(self):
 	    return self.user.username
@@ -187,9 +187,11 @@ class MileageExpense (RefundRequest) :
 		(cv6  , '6 cv'),
         (cv7 , '7 cv et plus'),
     ]
+
     carFiscalPower = models.CharField(
         max_length=20,
 		choices=FiscalPower_CHOICES,
+        default=cv3
 	)
 
     startCity = models.fields.CharField(max_length=100, default=""), 
