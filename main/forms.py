@@ -13,18 +13,46 @@ from .models import MileageExpense
 class RefundRequestForm(ModelForm):
     class Meta:
         model = RefundRequest
-        fields = ['date', 'validorCommentary', 'nature', 'expenseReport','mission','amountHT','amountTVA','proof']
+        fields = ['date', 'nature', 'expenseReport','mission','amountHT','amountTVA','proof']
+        labels = {
+            'date' : 'Date',
+            'nature':'Nature',
+            'expenseReport':'Note de frais',
+            'mission':'Mission',
+            'amountHT':'Remboursement hors taxe',
+            'amountTVA':'Remboursement avec taxe',
+            'proof':'Justificatif',
+        }
+
 
 class AdvanceForm(ModelForm):
     class Meta:
         model = Advance
-        fields = ['date', 'validorCommentary', 'nature', 'expenseReport','mission','estimatedPrice','advanceCommentary']
+        fields = ['date', 'nature', 'expenseReport','mission','estimatedPrice','advanceCommentary']
+        labels = {
+            'date' : 'Date',
+            'nature':'Nature',
+            'expenseReport':'Note de frais',
+            'mission':'Mission',
+            'estimatedPrice' : 'Prix estime de la demande',
+            'advanceCommentary' : "Commentaire",
+        }
 
 
 class MileageExpenseForm(ModelForm):
     class Meta:
         model = MileageExpense
-        fields = ['date', 'validorCommentary', 'nature', 'expenseReport','mission','carFiscalPower','startCity','endCity','distance']
+        fields = ['date', 'nature', 'expenseReport','mission','carFiscalPower','startCity','endCity','distance']
+        labels = {
+            'date' : 'Date',
+            'nature':'Nature',
+            'expenseReport': 'Note de frais',
+            'mission':'Mission',
+            'carFiscalPower':'Puissance fiscale du vehicule',
+            'startCity' : 'Ville de depart',
+            'endCity' : "Ville d'arrivee",
+            'distance':'Distance',
+        }
 
 
 """
