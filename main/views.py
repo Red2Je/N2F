@@ -1,9 +1,6 @@
 
-from ast import expr
-from xmlrpc.client import DateTime
 from django.shortcuts import render
 from django.http import HttpResponse
-from django.core.mail import send_mail
 from django.shortcuts import redirect
 from .forms import MileageExpenseForm, RefundRequestForm, ExpenseReportForm, AdvanceForm
 from .forms import RefundRequestForm
@@ -11,6 +8,7 @@ from .models import ExpenseReport, Collaborator, ExpenseLine
 from django.contrib.auth import authenticate, login , logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ObjectDoesNotExist
 import datetime
 import os
 import locale
@@ -63,11 +61,16 @@ def sHistoric(request):
 
 @login_required(login_url='/login/')
 def sValid(request):
-    return render(request,'main/valid.html')
+    valid = Collaborator.objects.get(user = request.user)
+    
+
+    context = {'valid' : valid}
+    return render(request,'main/valid.html',context)
 
 @login_required(login_url='/login/')
 def cHistoric(request):
     u = Collaborator.objects.get(user = request.user)
+
     expRepL = []
     expLinDict = {}
     missionDict = {}
@@ -81,7 +84,6 @@ def cHistoric(request):
             for miss in filtMiss:
                 tempDict[miss] = list(ExpenseLine.objects.filter(expenseReport = expRep, mission = miss))
                 expLinDict[expRep] = tempDict
-                print(expLinDict[expRep][miss][0].proof.name)
     context = {'expRepL' : expRepL, 'collab' : u, 'expLinDict' : expLinDict, 'missDict' : missionDict}
     return render(request,'main/clientHistoric.html',context)
 
