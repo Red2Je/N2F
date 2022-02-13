@@ -192,6 +192,6 @@ class MileageExpense (RefundRequest) :
 		choices=FiscalPower_CHOICES,
 	)
 
-    startCity = models.fields.CharField(max_length=100, default=""), 
+    startCity = models.fields.CharField(max_length=100, default="") 
     endCity = models.fields.CharField(max_length=100, default="")
     distance = models.fields.FloatField(default=0)

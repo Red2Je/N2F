@@ -2,14 +2,34 @@ from django.forms import ModelForm
 from django import forms
 from .models import Collaborator, ExpenseLine
 from .models import ExpenseReport
-
+from .models import RefundRequest
+from .models import Advance
+from .models import MileageExpense
 
 
 # form for update/create
 		
 
+class RefundRequestForm(ModelForm):
+    class Meta:
+        model = RefundRequest
+        fields = ['date', 'validorCommentary', 'nature', 'expenseReport','mission','amountHT','amountTVA','proof']
+
+class AdvanceForm(ModelForm):
+    class Meta:
+        model = Advance
+        fields = ['date', 'validorCommentary', 'nature', 'expenseReport','mission','estimatedPrice','advanceCommentary']
+
+
+class MileageExpenseForm(ModelForm):
+    class Meta:
+        model = MileageExpense
+        fields = ['date', 'validorCommentary', 'nature', 'expenseReport','mission','carFiscalPower','startCity','endCity','distance']
+
+
+"""
 class ExpenseLineCreateForm(ModelForm):
-    """
+ 
     class Meta:
         model = ExpenseLine
         fields = ['nature', 'date', 'amountHT', 'amountTVA','advance','proof','commentary','mission']

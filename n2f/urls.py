@@ -23,7 +23,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.home, name='home'),
     path('void/', views.void, name = 'void'),
-    path('form/', views.createExpenseline, name='form'),
     path('formReport/', views.createExpenseReport, name='formReport'),
     path('login/', views.user_login, name='login'),
     path('logout/', views.logoutPage, name='logout'),
@@ -32,5 +31,8 @@ urlpatterns = [
     path('serviceValid/', views.sValid),
     #path('download/<str:filename>', views.download_file, name='download'),
     path('download/<str:filename>/', views.download_file, name='download'),
+    path('Refund/', views.createRefundRequest, name='RefundRequest'),
+    path('Advance/', views.createAdvanceRequest, name='AdvanceRequest'),
+    path('Mileage/', views.createMileageExpense, name='MileageRequest'),
 
 ]
