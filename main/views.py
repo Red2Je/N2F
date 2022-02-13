@@ -2,9 +2,9 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.shortcuts import redirect
-from .forms import MileageExpenseForm, RefundRequestForm, ExpenseReportForm, AdvanceForm
-from .forms import RefundRequestForm
-from .models import ExpenseReport, Collaborator, ExpenseLine
+from .forms import ExpenseReportForm, RefundRequestForm, AdvanceForm, MileageExpenseForm
+from .models import ExpenseReport, Collaborator, ExpenseLine, RefundRequest
+
 from django.contrib.auth import authenticate, login , logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
@@ -78,11 +78,11 @@ def cHistoric(request):
     if ExpenseReport.objects.filter(collaborator=u).count() >= 1:
         expRepL = list(ExpenseReport.objects.filter(collaborator = u))
         for expRep in expRepL:
-            filt = list(ExpenseLine.objects.filter(expenseReport = expRep))
+            filt = list(RefundRequest.objects.filter(expenseReport = expRep))
             filtMiss = [f.mission for f in filt]
             missionDict[expRep] = filtMiss
             for miss in filtMiss:
-                tempDict[miss] = list(ExpenseLine.objects.filter(expenseReport = expRep, mission = miss))
+                tempDict[miss] = list(RefundRequest.objects.filter(expenseReport = expRep, mission = miss))
                 expLinDict[expRep] = tempDict
     context = {'expRepL' : expRepL, 'collab' : u, 'expLinDict' : expLinDict, 'missDict' : missionDict}
     return render(request,'main/clientHistoric.html',context)
