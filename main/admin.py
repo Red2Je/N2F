@@ -3,7 +3,7 @@ from .models import ExpenseLine
 from .models import ExpenseReport
 from .models import Collaborator
 from .models import Mission
-from .models import Service
+from .models import Service, RefundRequest, MileageExpense, Advance
 
 # Register your models here.
 
@@ -29,6 +29,14 @@ class MissionAdmin(admin.ModelAdmin):
 class ServiceAdmin(admin.ModelAdmin):
     list_display5 = [field5.name for field5 in Service._meta.get_fields()]
 
+class RefundRequestAdmin(admin.ModelAdmin):
+    list_display6 = [field6.name for field6 in RefundRequest._meta.get_fields()]
+    
+class MileageExpenseAdmin(admin.ModelAdmin):
+    list_display7 = [field7.name for field7 in MileageExpense._meta.get_fields()]
+
+class AdvanceAdmin(admin.ModelAdmin):
+    list_display8 = [field8.name for field8 in Advance._meta.get_fields()]
 
 
 
@@ -37,3 +45,6 @@ admin.site.register(ExpenseReport, ExpenseReportAdmin)
 admin.site.register(Collaborator, CollaboratorAdmin)
 admin.site.register(Mission, MissionAdmin)
 admin.site.register(Service, ServiceAdmin)
+admin.site.register(RefundRequest, RefundRequestAdmin)
+admin.site.register(MileageExpense, MileageExpenseAdmin)
+admin.site.register(Advance, AdvanceAdmin)
