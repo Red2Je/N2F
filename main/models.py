@@ -103,7 +103,7 @@ class ExpenseLine(models.Model):
     #nature = models.fields.CharField(max_length=100)
     date = models.fields.DateField()
 
-    validorCommentary = models.fields.CharField(max_length=1000)
+    validorCommentary = models.fields.CharField(max_length=1000, default = "")
     
     
     draft  = 'Brouillon'
