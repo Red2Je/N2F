@@ -1,11 +1,11 @@
 from django import template
-from ..models import ExpenseReport, Collaborator, ExpenseLine, Mission
+from ..models import ExpenseReport, Collaborator, ExpenseLine, Mission, RefundRequest
 
 register = template.Library()
 @register.filter
 def sumRep(value,arg):
     sum = 0
-    filt = list(ExpenseLine.objects.filter(expenseReport = value))
+    filt = list(RefundRequest.objects.filter(expenseReport = value))
     for eL in filt:
         sum += eL.amountTVA
     return str(sum)
@@ -14,7 +14,7 @@ def sumRep(value,arg):
 @register.filter
 def sumMission(value,arg):
     filtMiss = Mission.objects.get(name = value)
-    filt = list(ExpenseLine.objects.filter(expenseReport = arg).filter(mission = filtMiss))
+    filt = list(RefundRequest.objects.filter(expenseReport = arg).filter(mission = filtMiss))
     return str(len(filt))
 
 
@@ -22,7 +22,7 @@ def sumMission(value,arg):
 def sumMissMoney(value,arg):
     sum = 0
     filtMiss = Mission.objects.get(name = value)
-    filt = list(ExpenseLine.objects.filter(expenseReport = arg).filter(mission = filtMiss))
+    filt = list(RefundRequest.objects.filter(expenseReport = arg).filter(mission = filtMiss))
     for eL in filt:
         sum += eL.amountTVA
     return (str(sum))
