@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from django.shortcuts import redirect
 from .forms import MileageExpenseForm, RefundRequestForm, ExpenseReportForm, AdvanceForm
 from .forms import RefundRequestForm
-from .models import ExpenseReport, Collaborator, ExpenseLine
+from .models import ExpenseReport, Collaborator, ExpenseLine, Advance, RefundRequest, MileageExpense
 from django.contrib.auth import authenticate, login , logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
@@ -17,7 +17,7 @@ import mimetypes
 
 
 
-# Create your views here.
+
 
 def logoutPage(request):
     logout(request)
@@ -75,6 +75,61 @@ def cHistoric(request):
     expLinDict = {}
     missionDict = {}
     tempDict ={}
+    if ExpenseReport.objects.filter(collaborator=u).count() >= 1:
+        expRepL = list(ExpenseReport.objects.filter(collaborator = u))
+        for expRep in expRepL:
+            filt = list(ExpenseLine.objects.filter(expenseReport = expRep))
+            filtMiss = [f.mission for f in filt]
+            missionDict[expRep] = filtMiss
+            for miss in filtMiss:
+                tempDict[miss] = list(ExpenseLine.objects.filter(expenseReport = expRep, mission = miss))
+                expLinDict[expRep] = tempDict
+    context = {'expRepL' : expRepL, 'collab' : u, 'expLinDict' : expLinDict, 'missDict' : missionDict}
+    return render(request,'main/clientHistoric.html',context)
+
+################################################################
+#                 validator Homepage                           #
+################################################################
+
+@login_required(login_url='/login/')
+def valid(request):
+    validor = Collaborator.objects.get(user = request.user) # valideur
+    CollaboratorList = [] # liste des collaborateurs du valideur
+    DictNoteDeFrais = {} # dict de [collaborateur : [liste de notes de frais] ]
+    DictLigneDeFrais= {} # dict de [Note de frais: [liste de ExpenseLine ] ]
+
+    if Collaborator.objects.filter(validator= validor) >= 1: # on ne fait rien si personne n'a ce valideur
+        CollaboratorList = list(Collaborator.objects.filter(validator= validor))
+
+        # recuperation de ses notes de frais, peut etre mettre une date limite sinon tout sera envoye
+        for collabo in CollaboratorList:
+            if ExpenseReport.objects.filter(collaborator = collabo) >= 1: # on ne fait rien si pas de note de frais
+                DictNoteDeFrais[collabo]=list(ExpenseReport.objects.filter(collaborator = collabo)) 
+
+            # on associe a chaque note de frais envoyee les lignes correspondantes
+            for note in DictNoteDeFrais[collabo]:
+                DictLigneDeFrais[note]=[] #  besoin de lui donner le type ExpenseLine pour accepter les 3 types du bas ?
+                
+                # ajouter des conditions : ex que celles a traiter : .fitler(state = "sent")
+                # ajout de ses advances 
+                DictLigneDeFrais[note].append(list(Advance.objects.filter(expenseReport= note)))
+                # ajout de ses lignes de frais
+                DictLigneDeFrais[note]=list(Advance.objects.filter(expenseReport= note))
+                # ajout de ses frais kilometriques
+                DictLigneDeFrais[note]=list(MileageExpense.objects.filter(expenseReport= note))
+        
+
+    context = {'CollaboratorList' : CollaboratorList, 'DictNoteDeFrais' : DictNoteDeFrais, 'DictLigneDeFrais' : DictLigneDeFrais, 'validor' : validor}
+    return render(request,'main/valid.html',context)
+
+
+
+
+    
+    
+    missionDict = {}
+    tempDict ={}
+
     if ExpenseReport.objects.filter(collaborator=u).count() >= 1:
         expRepL = list(ExpenseReport.objects.filter(collaborator = u))
         for expRep in expRepL:
