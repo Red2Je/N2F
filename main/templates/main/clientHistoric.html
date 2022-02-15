@@ -91,7 +91,7 @@
 			      <td>{{ expLin.date }}</td>
 			      <td>{{ expLin.amountTVA }}</td>
 			      <td><a href="{% url 'download' expLin.proof.name|urlFromFile:1 %}">Télécharger  {{expLine.proof.name}} </a></td>
-			      <td><button onclick="location.href = {% url 'void' %};" id="myButton" class="submit" >détail</button></td>
+			      <td><button onclick="location.href = "{% url 'void' %}" id="myButton" class="submit" >détail</button></td>
 			      <td>{{ expLin.get_state_display }} </td>
 				  {% endfor %}
 				  {% endwith %}

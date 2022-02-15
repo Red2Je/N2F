@@ -18,6 +18,7 @@
 		{% endfor %}
 	{% endif %}	
 	
+	{% load tags %}
 	<div class = "content-wrapper">
 	<section class="content-header">
 	  <div class="container-fluid">
@@ -42,14 +43,23 @@
 	                    <th>Details</th>                                                
 	                </thead>
 	                <tbody>
-	                    <tr>
-							
-	                        <td>Tintin</td>
-	                        <td>12/2021</td>
-	                        <td>300</td>
-	                        <td>Incomplet</td>
-	                        <td><button class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target="#intro">Show details</button></td>                         
-	                    </tr>
+	                    {% for collab in CollaboratorList %}
+							{% for key,value in DictNoteDeFrais.items %}
+								{% if key == collab %}
+									{% for notedefrais in value %}
+						<tr>
+							<td>{{ collab.user.username }}</td>
+							<td>{{ value.month}} {{value.year }}</td>
+							<td>{{ value|sumRep:1 }}</td>
+							<td>Incomplet</td>
+							<td><button class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target="#intro">Show details</button></td>              
+						</tr>
+
+						{% endfor %}
+						{% endif %}
+						{% endfor %}
+		  	 			 
+				 		  {% endfor %}
 	                    <tr id="intro" class="collapse">
 					 <td colspan="7">
 					  <p class="t_heading">Missions</p>

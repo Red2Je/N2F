@@ -2,15 +2,9 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.shortcuts import redirect
-<<<<<<< HEAD
 from .forms import MileageExpenseForm, RefundRequestForm, ExpenseReportForm, AdvanceForm
 from .forms import RefundRequestForm
 from .models import ExpenseReport, Collaborator, ExpenseLine, Advance, RefundRequest, MileageExpense
-=======
-from .forms import ExpenseReportForm, RefundRequestForm, AdvanceForm, MileageExpenseForm
-from .models import ExpenseReport, Collaborator, ExpenseLine, RefundRequest
-
->>>>>>> 5d88cf1360ce5c5d9d44c470397d7b1d0cee30ba
 from django.contrib.auth import authenticate, login , logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
@@ -104,7 +98,7 @@ def valid(request):
     DictNoteDeFrais = {} # dict de [collaborateur : [liste de notes de frais] ]
     DictLigneDeFrais= {} # dict de [Note de frais: [liste de ExpenseLine ] ]
 
-    if Collaborator.objects.filter(validator= validor) >= 1: # on ne fait rien si personne n'a ce valideur
+    if Collaborator.objects.filter(validator= validor).count() >= 1: # on ne fait rien si personne n'a ce valideur
         CollaboratorList = list(Collaborator.objects.filter(validator= validor))
 
         # recuperation de ses notes de frais, peut etre mettre une date limite sinon tout sera envoye
@@ -114,15 +108,13 @@ def valid(request):
 
             # on associe a chaque note de frais envoyee les lignes correspondantes
             for note in DictNoteDeFrais[collabo]:
-                DictLigneDeFrais[note]=[] #  besoin de lui donner le type ExpenseLine pour accepter les 3 types du bas ?
-                
-                # ajouter des conditions : ex que celles a traiter : .fitler(state = "sent")
+                DictLigneDeFrais[note]=[] 
                 # ajout de ses advances 
-                DictLigneDeFrais[note].append(list(Advance.objects.filter(expenseReport= note)))
+                DictLigneDeFrais[note].append(list(Advance.objects.filter(expenseReport= note).fitler(state = "sent")))
                 # ajout de ses lignes de frais
-                DictLigneDeFrais[note]=list(Advance.objects.filter(expenseReport= note))
+                DictLigneDeFrais[note]=list(Advance.objects.filter(expenseReport= note).fitler(state = "sent"))
                 # ajout de ses frais kilometriques
-                DictLigneDeFrais[note]=list(MileageExpense.objects.filter(expenseReport= note))
+                DictLigneDeFrais[note]=list(MileageExpense.objects.filter(expenseReport= note).fitler(state = "sent"))
         
 
     context = {'CollaboratorList' : CollaboratorList, 'DictNoteDeFrais' : DictNoteDeFrais, 'DictLigneDeFrais' : DictLigneDeFrais, 'validor' : validor}

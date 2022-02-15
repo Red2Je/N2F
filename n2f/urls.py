@@ -34,5 +34,7 @@ urlpatterns = [
     path('Refund/', views.createRefundRequest, name='RefundRequest'),
     path('Advance/', views.createAdvanceRequest, name='AdvanceRequest'),
     path('Mileage/', views.createMileageExpense, name='MileageRequest'),
+    
+    path('validation/', views.valid, name='validation'),
 
 ]
