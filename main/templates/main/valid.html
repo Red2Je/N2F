@@ -38,9 +38,7 @@
 	                <thead>
 	                    <th>Demandeur</th>
 	                    <th>Date</th>
-	                    <th>Coût total TTC (€)</th>
-	                    <th>État</th>
-	                    <th>Details</th>                                                
+	                    <th>Coût total TTC (€)</th>               
 	                </thead>
 	                <tbody>
 	                    {% for collab in CollaboratorList %}
@@ -49,31 +47,46 @@
 									{% for notedefrais in value %}
 						<tr>
 							<td>{{ collab.user.username }}</td>
-							<td>{{ value.month}} {{value.year }}</td>
-							<td>{{ value|sumRep:1 }}</td>
-							<td>Incomplet</td>
+							<td>{{ notedefrais.month}} {{notedefraisyear }}</td>
+							<td>{{ notedefrais|sumRep:1 }}</td>
 							<td><button class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target="#intro">Show details</button></td>              
 						</tr>
 
 						{% endfor %}
-						{% endif %}
+						
 						{% endfor %}
-		  	 			 
-				 		  {% endfor %}
+		  	 			{% endfor %}
 	                    <tr id="intro" class="collapse">
 					 <td colspan="7">
 					  <p class="t_heading">Missions</p>
 					  <table class="table custom-view">
 					  <thead>
+						
+
+										
+
 					      <th>Mission</th>
 					      <th>Nombre ligne de frais</th>
 					      <th>Coût total TTC (€)</th>
 					  </thead>
+					  
+					  {% for collab in CollaboratorList %}
+							{% for key,value in DictNoteDeFrais.items %}
+								{% if key == collab %}
+									{% for notedefrais in value %}
+										{% for key2,value2 in DictLigneDeFrais.items %}
+											{% if key2  == notedefrais %}
+												{% for lignedefrais in value2 %}
+													
 					  <tbody>
-					      <td>Voyage à Carracas</td>
+
+					      <td>{{ lignedefrais.mission }}</td>
 					      <td>2</td>
 					      <td>300</td>
 					  </tbody>
+					  {% endfor %}
+					  {% endif %}
+
 					  <tr id="outro">
 					 <td colspan="14">
 					  <p class="t_heading">Lignes de frais</p>
@@ -87,6 +100,17 @@
 					      <th>Détail</th>
 					      <th>Valider</th>
 					  </thead>
+
+					  {% for collab in CollaboratorList %}
+							{% for key,value in DictNoteDeFrais.items %}
+								{% if key == collab %}
+									{% for notedefrais in value %}
+										{% for key2,value2 in DictLigneDeFrais.items %}
+											{% if key2  == notedefrais %}
+												{% for lignedefrais in value2 %}
+													{% if Object|get_class == 'Advance' %}
+														bananabread
+													{% endif %}
 					  <tbody>
 					      <td>Restaurant</td>
 					      <td>12/12/2021</td>
@@ -122,6 +146,8 @@
 	                </tbody>                                                                                                    
 	            </table>                                        
 	        </div>
+
+			
     </section>
 
 <script>
