@@ -48,7 +48,7 @@
                 <tr>
                     <td>{{ collab.user.username }}</td>
                     <td>{{ expRep.month}} {{expRep.year }}</td>
-                    <td>{{ expRep|sumRep:1 }}</td>
+                    <td>{{ expRep|sum:1 }}</td>
                     <td>Incomplet</td>
                     <td><button class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target="#intro">Show details</button></td>              
                 </tr>
@@ -66,69 +66,52 @@
 			  {% if key == expRep %}
 			  {% for mission in value %}
 			  <tbody>
-			      <td>{{ mission.name }}</td>
-			      <td>{{ mission.name|sumMission:expRep }}</td>
-			      <td>{{ mission.name|sumMissMoney:expRep }}</td>
+			      <td>{{ mission }}</td>
+			      <td>{{ mission|sumMission:expRep }}</td>
+			      <td>300</td>
 			      <td><button class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target="#outro">Show details</button></td>
 			  </tbody>
-			  
+			  {% endfor %}
+		  	  {% endif %}
+		 	  {% endfor %}
 			  <tr id="outro" class="collapse">
 			 <td colspan="14">
-			  <p class="t_heading">Remboursement hors frais kilométriques</p>
+			  <p class="t_heading">Lignes de frais</p>
 			  <table class="table custom-view">
 			  <thead>
 			      <th>Type</th>
 			      <th>Date</th>
 			      <th>Coût total TTC (€)</th>
+			      <th>Demande d'avance</th>
 			      <th>Justificatif</th>
 			      <th>Détail</th>
 			      <th>État</th>
 			  </thead>
-			  {% with expLinL=expLinDict|get:expRep|get:mission %}
-			  {% for expLin in expLinL %}
 			  <tbody>
-				  
-			      <td>{{ expLin.get_nature_display }}</td>
-			      <td>{{ expLin.date }}</td>
-			      <td>{{ expLin.amountTVA }}</td>
-				  {% if expLin.proof.name.strip %}
-					<td><a href="{% url 'download' expLin.proof.name|urlFromFile:1 %}">Télécharger  {{expLine.proof.name}} </a></td>
-				  {% else %}
-				  	<td>Non renseignée</td>
-				  {% endif %}
-			      <td><button onclick="location.href = "{% url 'void' %}" id="myButton" class="submit" >détail</button></td>
-			      <td>{{ expLin.get_state_display }} </td>
-				  
-
+			      <td>Restaurant</td>
+			      <td>12/12/2021</td>
+			      <td>100</td>
+			      <td>non</td>
+			      <td><a href="{% url 'download' filename='placeholder.jpg'%}">Télécharger</a></td>
+			      <td><button onclick="location.href = {% url 'void' %};" id="myButton" class="submit" >détail</button></td>
+			      <td>validé</td>
 			  </tbody>
-			  
-		  	  {% endfor %}
-			  {% endwith %}
-		 	  {% endfor %}
-			  {% endif %}
-			  {% endfor %}
+			  <tbody>
+			      <td>Hôtel</td>
+			      <td>12/12/2021</td>
+			      <td>200</td>
+			      <td>non</td>
+			      <td>non</td>
+			      <td><button onclick="location.href = {% url 'void' %};" id="myButton" class="submit" >détail</button></td>
+			      <td>invalidé</td>
+			  </tbody>
 			 </table>
-
-			
-
-			</table>
-
-
-
 			</td>
 			</tr> 
 			</table>
-			<form method="get" action="{% url 'RefundRequest' %}">
+			<form method="get" action="{% url 'form' %}">
 			{% csrf_token %}
-		    <button type="submit" formmethod="get" class="btn btn-primary btn-lg float-right">Ajouter une demande de remboursement</button>
-			</form>
-			<form method="get" action="{% url 'AdvanceRequest' %}">
-			{% csrf_token %}
-			<button type="submit" formmethod="get" class="btn btn-primary btn-lg float-right">Ajouter une demande d'avance</button>
-			</form>
-			<form method="get" action="{% url 'MileageRequest' %}">
-			{% csrf_token %}
-			<button type="submit" formmethod="get" class="btn btn-primary btn-lg float-right">Ajouter une demande de remboursement de frais kilométrique</button>
+		    <button type="submit" formmethod="get" class="btn btn-primary btn-lg float-right">Ajouter ligne de frais</button>
 			</form>
 			</td>
 			</tr>   
