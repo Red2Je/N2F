@@ -1,152 +1,155 @@
 {% extends 'main/base.html' %}
 {% load static %}
-
 {% block content %}
-
-	{% if form.errors %}
-		{% for field in form %}
-			{% for error in field.errors %}
-				<div class="alert alert-danger">
-					<strong>{{ error|escape }}</strong>
-				</div>
-			{% endfor %}
-		{% endfor %}
-		{% for error in form.non_field_errors %}
-			<div class="alert alert-danger">
-				<strong>{{ error|escape }}</strong>
-			</div>
-		{% endfor %}
-	{% endif %}	
-
-	{% load tags %}
-	
-	<div class = "content-wrapper">
-	<section class="content-header">
-	  <div class="container-fluid">
-	    <div class="row mb-2">
-	      <div class="col-sm-6">
-	        <h1>Historique des notes de frais du service :</h1>
-	      </div>
-	    </div>
-	  </div><!-- /.container-fluid -->
-	</section>
-
-   <section class="content">
-
-      <div class="table-responsive">
-        <p class="t_heading">Notes de frais</p>
-        <table class="table table-bordered table-hover">
-            <thead>
-                <th>Demandeur</th>
-                <th>Date</th>
-                <th>Coût total TTC (€)</th>
-                <th>État</th>
-                <th>Details</th>                                                
-            </thead>
-            <tbody>
-            	{% for expRep in expRepL %}
-                <tr>
-                    <td>{{ collab.user.username }}</td>
-                    <td>{{ expRep.month}} {{expRep.year }}</td>
-                    <td>{{ expRep|sumRep:1 }}</td>
-                    <td>Incomplet</td>
-                    <td><button class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target="#intro">Show details</button></td>              
-                </tr>
-                <tr id="intro" class="collapse">
-			 <td colspan="7">
-			  <p class="t_heading">Missions</p>
-			  <table class="table custom-view">
-			  <thead>
-			      <th>Mission</th>
-			      <th>Nombre ligne de frais</th>
-			      <th>Coût total TTC (€)</th>
-			      <th>Details</th>
-			  </thead>
-			  {% for key,value in missDict.items %}
-			  {% if key == expRep %}
-			  {% for mission in value %}
-			  <tbody>
-			      <td>{{ mission.name }}</td>
-			      <td>{{ mission.name|sumMission:expRep }}</td>
-			      <td>{{ mission.name|sumMissMoney:expRep }}</td>
-			      <td><button class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target="#outro">Show details</button></td>
-			  </tbody>
-			  
-			  <tr id="outro" class="collapse">
-			 <td colspan="14">
-			  <p class="t_heading">Remboursement hors frais kilométriques</p>
-			  <table class="table custom-view">
-			  <thead>
-			      <th>Type</th>
-			      <th>Date</th>
-			      <th>Coût total TTC (€)</th>
-			      <th>Justificatif</th>
-			      <th>Détail</th>
-			      <th>État</th>
-			  </thead>
-			  {% with expLinL=expLinDict|get:expRep|get:mission %}
-			  {% for expLin in expLinL %}
-			  <tbody>
-				  
-			      <td>{{ expLin.get_nature_display }}</td>
-			      <td>{{ expLin.date }}</td>
-			      <td>{{ expLin.amountTVA }}</td>
-				  {% if expLin.proof.name.strip %}
-					<td><a href="{% url 'download' expLin.proof.name|urlFromFile:1 %}">Télécharger  {{expLine.proof.name}} </a></td>
-				  {% else %}
-				  	<td>Non renseignée</td>
-				  {% endif %}
-			      <td><button onclick="location.href = "{% url 'void' %}" id="myButton" class="submit" >détail</button></td>
-			      <td>{{ expLin.get_state_display }} </td>
-				  
-
-			  </tbody>
-			  
-		  	  {% endfor %}
-			  {% endwith %}
-		 	  {% endfor %}
-			  {% endif %}
-			  {% endfor %}
-			 </table>
-
-			
-
-			</table>
-
-
-
-			</td>
-			</tr> 
-			</table>
-			<form method="get" action="{% url 'RefundRequest' %}">
-			{% csrf_token %}
-		    <button type="submit" formmethod="get" class="btn btn-primary btn-lg float-right">Ajouter une demande de remboursement</button>
-			</form>
-			<form method="get" action="{% url 'AdvanceRequest' %}">
-			{% csrf_token %}
-			<button type="submit" formmethod="get" class="btn btn-primary btn-lg float-right">Ajouter une demande d'avance</button>
-			</form>
-			<form method="get" action="{% url 'MileageRequest' %}">
-			{% csrf_token %}
-			<button type="submit" formmethod="get" class="btn btn-primary btn-lg float-right">Ajouter une demande de remboursement de frais kilométrique</button>
-			</form>
-			</td>
-			</tr>   
-			{% endfor %}                                                           
-            </tbody>                                                                                                    
-        </table>                                        
-    </div>
-    </section>
-
+{% if form.errors %}
+{% for field in form %}
+{% for error in field.errors %}
+<div class="alert alert-danger">
+   <strong>{{ error|escape }}</strong>
+</div>
+{% endfor %}
+{% endfor %}
+{% for error in form.non_field_errors %}
+<div class="alert alert-danger">
+   <strong>{{ error|escape }}</strong>
+</div>
+{% endfor %}
+{% endif %}	
+{% load tags %}
+<div class = "content-wrapper">
+<section class="content-header">
+   <div class="container-fluid">
+      <div class="row mb-2">
+         <div class="col-sm-6">
+            <h1>Historique des notes de frais du service :</h1>
+         </div>
+      </div>
+   </div>
+   <!-- /.container-fluid -->
+</section>
+<section class="content">
+   <div class="table-responsive">
+      <p class="t_heading">Notes de frais</p>
+      <table class="table table-bordered table-hover">
+         <thead>
+            <th>Demandeur</th>
+            <th>Date</th>
+            <th>Coût total TTC (€)</th>
+            <th>État</th>
+            <th>Details</th>
+         </thead>
+         <script>
+         @{int i=0;}
+     	</script>
+         {% for expRep in expRepL %}
+         <script>
+         i++;
+         </script>
+         <tbody>
+            <tr>
+               <td>{{ collab.user.username }}</td>
+               <td>{{ expRep.month}} {{expRep.year }}</td>
+               <td>{{ expRep|sumRep:1 }}</td>
+               <td>Incomplet</td>
+               <td><button class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target= "#intro-{{ forloop.counter }}">Show details</button></td>
+            </tr>
+            <tr id="intro-{{ forloop.counter }}" class="collapse">
+               <td colspan="7">
+                  <p class="t_heading">Missions</p>
+                  <table class="table custom-view">
+                     <thead>
+                        <th>Mission</th>
+                        <th>Nombre ligne de frais</th>
+                        <th>Coût total TTC (€)</th>
+                        <th>Details</th>
+                     </thead>
+                     {% for key,value in missDict.items %}
+                     {% if key == expRep %}
+                     {% for mission in value %}
+                     <tbody>
+                        <td>{{ mission.name }}</td>
+                        <td>{{ mission.name|sumMission:expRep }}</td>
+                        <td>{{ mission.name|sumMissMoney:expRep }}</td>
+                        <td><button class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target="#outro-{{forloop.parentloop.counter}}-{{ forloop.counter }}">Show details</button></td>
+                     </tbody>
+                     <tr id="outro-{{forloop.parentloop.counter}}-{{ forloop.counter }}" class="collapse">
+                        <td colspan="14">
+                           <p class="t_heading">Remboursement hors frais kilométriques</p>
+                           <table class="table custom-view">
+                              <thead>
+                                 <th>Type</th>
+                                 <th>Date</th>
+                                 <th>Coût total TTC (€)</th>
+                                 <th>Justificatif</th>
+                                 <th>Détail</th>
+                                 <th>État</th>
+                              </thead>
+                              {% with expLinL=expLinDict|get:expRep|get:mission %}
+                              {% for expLin in expLinL %}
+                              <tbody>
+                                 <td>{{ expLin.get_nature_display }}</td>
+                                 <td>{{ expLin.date }}</td>
+                                 <td>{{ expLin.amountTVA }}</td>
+                                 {% if expLin.proof.name.strip %}
+                                 <td><a href="{% url 'download' expLin.proof.name|urlFromFile:1 %}">Télécharger  {{expLine.proof.name}} </a></td>
+                                 {% else %}
+                                 <td>Non renseignée</td>
+                                 {% endif %}
+                                 <td><button onclick="location.href = "{% url 'void' %}" id="myButton" class="submit" >détail</button></td>
+                                 <td>{{ expLin.get_state_display }} </td>
+                              </tbody>
+                              {% endfor %}
+                              {% endwith %}
+                              {% endfor %}
+                              {% endif %}
+                              {% endfor %}
+                           </table>
+                        </td>
+                     </tr>
+                  </table>
+                  <form method="get" action="{% url 'RefundRequest' %}">
+                     {% csrf_token %}
+                     <button type="submit" formmethod="get" class="btn btn-primary btn-lg float-right">Ajouter une demande de remboursement</button>
+                  </form>
+                  <form method="get" action="{% url 'AdvanceRequest' %}">
+                     {% csrf_token %}
+                     <button type="submit" formmethod="get" class="btn btn-primary btn-lg float-right">Ajouter une demande d'avance</button>
+                  </form>
+                  <form method="get" action="{% url 'MileageRequest' %}">
+                     {% csrf_token %}
+                     <button type="submit" formmethod="get" class="btn btn-primary btn-lg float-right">Ajouter une demande de remboursement de frais kilométrique</button>
+                  </form>
+               </td>
+            </tr>
+         </tbody>
+         {% endfor %}                                                                                                    
+      </table>
+   </div>
+</section>
 <script>
-function ShowHide(id) {
-  if ($(id).html() == "Show details") {
-    $(id).html("Hide details");
-  } else {
-    $(id).html("Show details");
-  }
+   function ShowHide(id) {
+     if ($(id).html() == "Show details") {
+       $(id).html("Hide details");
+     } else {
+       $(id).html("Show details");
+     }
+   
+   }
+   function Test(){
+   	return"<h1>TEST</h1>";
+   }
 
-}
+   class Counter {
+     static cpt = 0;
+    
+     //static variable defined
+     static Increase() {
+       cpt = cpt + 1;
+       return "#" + cpt;
+     }
+     static Cpt(){
+       return cpt;
+     }
+   }
 </script>
-
 {% endblock %}
