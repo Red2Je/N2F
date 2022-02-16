@@ -23,6 +23,13 @@ class RefundRequestForm(ModelForm):
             'amountTVA':'Remboursement avec taxe',
             'proof':'Justificatif',
         }
+        widgets = { 'date' : forms.SelectDateWidget}
+
+    def __init__(self, collab = None, *args, **kwargs, ):
+        super(RefundRequestForm, self).__init__(*args, **kwargs)
+        expRepL = ExpenseReport.objects.filter(collaborator = collab)
+        c = [("".join(expRep.collaborator.user.username).join(" ").join(expRep.month), expRep) for expRep in expRepL]
+        self.fields['expenseReport'].choices =c
 
 
 
@@ -39,6 +46,13 @@ class AdvanceForm(ModelForm):
             'estimatedPrice' : 'Prix estime de la demande',
             'advanceCommentary' : "Commentaire",
         }
+        widgets = { 'date' : forms.SelectDateWidget}
+
+    def __init__(self, collab = None, *args, **kwargs, ):
+        super(AdvanceForm, self).__init__(*args, **kwargs)
+        expRepL = ExpenseReport.objects.filter(collaborator = collab)
+        c = [("".join(expRep.collaborator.user.username).join(" ").join(expRep.month), expRep) for expRep in expRepL]
+        self.fields['expenseReport'].choices =c
 
 
 class MileageExpenseForm(ModelForm):
@@ -56,8 +70,14 @@ class MileageExpenseForm(ModelForm):
             'distance':'Distance',
             'amountHT' : 'Remboursemnt hors taxes',
             'amountTVA' : 'Remoursement avec taxes',
-            'proof' : 'J reustificatif',
+            'proof' : 'Justificatif',
         }
+        widgets = { 'date' : forms.SelectDateWidget}
+    def __init__(self, collab = None, *args, **kwargs, ):
+        super(MileageExpenseForm, self).__init__(*args, **kwargs)
+        expRepL = ExpenseReport.objects.filter(collaborator = collab)
+        c = [("".join(expRep.collaborator.user.username).join(" ").join(expRep.month), expRep) for expRep in expRepL]
+        self.fields['expenseReport'].choices =c
 
 
 """
