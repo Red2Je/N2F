@@ -74,7 +74,7 @@
 			  
 			  <tr id="outro" class="collapse">
 			 <td colspan="14">
-			  <p class="t_heading">Lignes de frais</p>
+			  <p class="t_heading">Remboursement hors frais kilométriques</p>
 			  <table class="table custom-view">
 			  <thead>
 			      <th>Type</th>
@@ -90,7 +90,11 @@
 			      <td>{{ expLin.get_nature_display }}</td>
 			      <td>{{ expLin.date }}</td>
 			      <td>{{ expLin.amountTVA }}</td>
-			      <td><a href="{% url 'download' expLin.proof.name|urlFromFile:1 %}">Télécharger  {{expLine.proof.name}} </a></td>
+				  {% if expLin.proof.name.strip %}
+					<td><a href="{% url 'download' expLin.proof.name|urlFromFile:1 %}">Télécharger  {{expLine.proof.name}} </a></td>
+				  {% else %}
+				  	<td>Non renseignée</td>
+				  {% endif %}
 			      <td><button onclick="location.href = "{% url 'void' %}" id="myButton" class="submit" >détail</button></td>
 			      <td>{{ expLin.get_state_display }} </td>
 				  {% endfor %}
@@ -100,6 +104,13 @@
 		  	  {% endif %}
 		 	  {% endfor %}
 			 </table>
+
+			
+
+			</table>
+
+
+
 			</td>
 			</tr> 
 			</table>
