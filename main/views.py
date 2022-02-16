@@ -85,7 +85,7 @@ def cHistoric(request):
             filt = list(RefundRequest.objects.filter(expenseReport = expRep))
             if(Advance.objects.filter(expenseReport = expRep).count() >= 1):
                 advDict[expRep] = list(Advance.objects.filter(expenseReport = expRep))
-            filtMiss = [f.mission for f in filt]
+            filtMiss = [f.mission for f in filt if f.mission not in filtMiss]
             missionDict[expRep] = filtMiss
             for miss in filtMiss:
                 tempELDict[miss] = list(RefundRequest.objects.filter(expenseReport = expRep, mission = miss))

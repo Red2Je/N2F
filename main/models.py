@@ -60,7 +60,7 @@ class ExpenseReport(models.Model):
     year = models.fields.IntegerField(default = 2020)
 
     january  = 'Janvier'
-    february  = 'Fevrier'
+    february  = 'Février'
     march  = 'Mars'
     april  = 'Avril'
     may  = 'Mai'
@@ -74,7 +74,7 @@ class ExpenseReport(models.Model):
    
     Month_CHOICES = [
 		(january  , 'Janvier'),
-		(february  , 'Fevrier'),
+		(february  , 'Février'),
         (march  , 'Mars'),
 		(april  , 'Avril'),
 		(may,'Mai'),
@@ -154,10 +154,6 @@ class ExpenseLine(models.Model):
     class Meta:
         abstract = True
         
-    @receiver(pre_delete)
-    def dele(sender,instance,**kwargs):
-        if sender == ExpenseLine:
-            os.remove(instance.proof.name)
     def __str__(self):
 	    return self.nature+' '+self.proof.name
 
@@ -170,7 +166,12 @@ class Advance (ExpenseLine) :
 class RefundRequest (ExpenseLine) :
     amountHT = models.fields.FloatField()
     amountTVA = models.fields.FloatField()
-    proof = models.FileField(upload_to='proofs',validators = [validate_file_type])
+    proof = models.FileField(upload_to='proofs',validators = [validate_file_type], blank = True, null=True)
+    @receiver(pre_delete)
+    def dele(sender,instance,**kwargs):
+        if sender == RefundRequest:
+            if(instance.proof.name != ''):
+                os.remove(instance.proof.name)
 
 class MileageExpense (RefundRequest) :
 

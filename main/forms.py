@@ -44,7 +44,7 @@ class AdvanceForm(ModelForm):
 class MileageExpenseForm(ModelForm):
     class Meta:
         model = MileageExpense
-        fields = ['date', 'nature', 'expenseReport','mission','carFiscalPower','startCity','endCity','distance']
+        fields = ['date', 'nature', 'expenseReport','mission','carFiscalPower','startCity','endCity','distance','amountHT','amountTVA','proof']
         labels = {
             'date' : 'Date',
             'nature':'Nature',
@@ -54,6 +54,9 @@ class MileageExpenseForm(ModelForm):
             'startCity' : 'Ville de depart',
             'endCity' : "Ville d'arrivee",
             'distance':'Distance',
+            'amountHT' : 'Remboursemnt hors taxes',
+            'amountTVA' : 'Remoursement avec taxes',
+            'proof' : 'J reustificatif',
         }
 
 
