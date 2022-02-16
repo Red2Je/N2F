@@ -9,6 +9,7 @@ from django.contrib.auth import authenticate, login , logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
+from django.utils.datastructures import MultiValueDictKeyError
 import datetime
 import os
 import locale
@@ -73,18 +74,27 @@ def cHistoric(request):
 
     expRepL = []
     expLinDict = {}
+    advDict = {}
+    mileDict = {}
     missionDict = {}
-    tempDict ={}
+    tempELDict ={}
+    tempMDict = {}
     if ExpenseReport.objects.filter(collaborator=u).count() >= 1:
         expRepL = list(ExpenseReport.objects.filter(collaborator = u))
         for expRep in expRepL:
             filt = list(RefundRequest.objects.filter(expenseReport = expRep))
+            if(Advance.objects.filter(expenseReport = expRep).count() >= 1):
+                advDict[expRep] = list(Advance.objects.filter(expenseReport = expRep))
             filtMiss = [f.mission for f in filt]
             missionDict[expRep] = filtMiss
             for miss in filtMiss:
-                tempDict[miss] = list(RefundRequest.objects.filter(expenseReport = expRep, mission = miss))
-                expLinDict[expRep] = tempDict
-    context = {'expRepL' : expRepL, 'collab' : u, 'expLinDict' : expLinDict, 'missDict' : missionDict}
+                tempELDict[miss] = list(RefundRequest.objects.filter(expenseReport = expRep, mission = miss))
+                expLinDict[expRep] = tempELDict
+                if MileageExpense.objects.filter(expenseReport = expRep, mission = miss).count() >= 1:
+                    tempMDict[miss] = list(MileageExpense.objects.filter(expenseReport = expRep, mission = miss))
+                    mileDict[expRep] = tempMDict
+
+    context = {'expRepL' : expRepL, 'collab' : u, 'expLinDict' : expLinDict, 'missDict' : missionDict, 'mileDict' : mileDict, 'advDict' : advDict}
     return render(request,'main/clientHistoric.html',context)
 
 ################################################################
@@ -125,20 +135,20 @@ def valid(request):
 
     
     
-    missionDict = {}
-    tempDict ={}
+    # missionDict = {}
+    # tempDict ={}
 
-    if ExpenseReport.objects.filter(collaborator=u).count() >= 1:
-        expRepL = list(ExpenseReport.objects.filter(collaborator = u))
-        for expRep in expRepL:
-            filt = list(ExpenseLine.objects.filter(expenseReport = expRep))
-            filtMiss = [f.mission for f in filt]
-            missionDict[expRep] = filtMiss
-            for miss in filtMiss:
-                tempDict[miss] = list(ExpenseLine.objects.filter(expenseReport = expRep, mission = miss))
-                expLinDict[expRep] = tempDict
-    context = {'expRepL' : expRepL, 'collab' : u, 'expLinDict' : expLinDict, 'missDict' : missionDict}
-    return render(request,'main/clientHistoric.html',context)
+    # if ExpenseReport.objects.filter(collaborator=u).count() >= 1:
+    #     expRepL = list(ExpenseReport.objects.filter(collaborator = u))
+    #     for expRep in expRepL:
+    #         filt = list(ExpenseLine.objects.filter(expenseReport = expRep))
+    #         filtMiss = [f.mission for f in filt]
+    #         missionDict[expRep] = filtMiss
+    #         for miss in filtMiss:
+    #             tempDict[miss] = list(ExpenseLine.objects.filter(expenseReport = expRep, mission = miss))
+    #             expLinDict[expRep] = tempDict
+    # context = {'expRepL' : expRepL, 'collab' : u, 'expLinDict' : expLinDict, 'missDict' : missionDict}
+    # return render(request,'main/clientHistoric.html',context)
 
 
 def download_file(request, filename=''):
@@ -301,7 +311,10 @@ def createMileageExpense(request):
             obj.validated = toValidate
 
             obj.save()
-            save_file(request.FILES['proof'])
+            try:
+                save_file(request.FILES['proof'])
+            except MultiValueDictKeyError:
+                pass
             return redirect('/void')
         else:
             print(form.errors)
