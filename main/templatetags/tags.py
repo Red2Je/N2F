@@ -40,3 +40,9 @@ def urlFromFile(url,arg):
         return s
     except IndexError:
         return ''
+
+
+
+@register.filter(name='get_class')
+def get_class(value):
+  return value.__class__.__name__

@@ -1,4 +1,6 @@
 
+from time import strftime
+from xmlrpc.client import DateTime
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.shortcuts import redirect
@@ -173,41 +175,57 @@ def download_file(request, filename=''):
         # Load the template
         return render(request, 'void.html')
 
+
+
+def collabAndReport(request):
+    if (locale.LC_TIME != 'fr'):  # avoid our month to be in english. As the database is in french, we force the format to be in french
+            locale.setlocale(locale.LC_TIME, 'fr')
+    currMonth = datetime.datetime.now()
+    currYear = currMonth.strftime("%Y")
+    currMonth = currMonth.strftime("%B")
+    # Little piece of code to capitalize the first letter to match the database
+    monthList = list(currMonth)
+    monthList[0] = monthList[0].upper()
+    currMonth = "".join(monthList)
+
+    col = Collaborator.objects.get(user=request.user)
+    try:
+        currExpenseReport = ExpenseReport.objects.get(collaborator=col, month=currMonth, year = currYear )
+    except ExpenseReport.DoesNotExist:
+        newReport = ExpenseReport(collaborator=col, month=currMonth, year=currYear)
+        newReport.save()
+        currExpenseReport = newReport
+
+    return col,currExpenseReport
+
+
 ################################################################
 #                      RefundRequest                           #
 ################################################################
 @login_required(login_url='/login/')
 def createRefundRequest(request):
-    form = RefundRequestForm()
+    #default the date to today
+    today = datetime.date.today()
+    today = today.strftime("%d/%m/%Y")
+
+
+    # Handle the users that does not have a report yet
+    col,currExpenseReport = collabAndReport(request)
+
+
+
+
+    form = RefundRequestForm(collab=col, initial={'date':today})
     if request.method == 'POST':
 
-        form = RefundRequestForm(request.POST, request.FILES)
+        form = RefundRequestForm( request.POST, request.FILES, collab=col)
         if form.is_valid():
             toValidate = None
             if 'Submit' in request.POST:
                 toValidate = False
             obj = form.save(commit=False)
-            col = Collaborator.objects.get(user=request.user)
 
-            if (
-                    locale.LC_TIME != 'fr'):  # avoid our month to be in english. As the database is in french,
-                # we force the format to be in french
-                locale.setlocale(locale.LC_TIME, 'fr')
-            currMonth = datetime.datetime.now()
-            currYear = currMonth.strftime("%Y")
-            currMonth = currMonth.strftime("%B")
-            # Little piece of code to capitalize the first letter to match the database
-            monthList = list(currMonth)
-            monthList[0] = monthList[0].upper()
-            currMonth = "".join(monthList)
-
-            # Handle the users that does not have a report yet
-            try:
-                obj.expenseReport = ExpenseReport.objects.get(collaborator=col, month=currMonth, year = currYear )
-            except ExpenseReport.DoesNotExist:
-                newReport = ExpenseReport(collaborator=col, month=currMonth, year=currYear)
-                newReport.save()
-                obj.expenseReport = newReport
+            obj.expenseReport=currExpenseReport
             obj.collaborator = col
             obj.validator = col.validator
             obj.validated = toValidate
@@ -227,36 +245,22 @@ def createRefundRequest(request):
 
 @login_required(login_url='/login/')
 def createAdvanceRequest(request):
-    form = AdvanceForm()
+    col, expRep = collabAndReport(request)
+    #default the date to today
+    today = datetime.date.today()
+    today = today.strftime("%d/%m/%Y")
+    form = AdvanceForm(collab=col, initial={'date':today})
     if request.method == 'POST':
 
-        form = AdvanceForm(request.POST, request.FILES)
+        form = AdvanceForm(request.POST, request.FILES, collab=col)
         if form.is_valid():
             toValidate = None
             if 'Submit' in request.POST:
                 toValidate = False
             obj = form.save(commit=False)
-            col = Collaborator.objects.get(user=request.user)
-
-            if (
-                    locale.LC_TIME != 'fr'):  # avoid our month to be in english. As the database is in french,
-                # we force the format to be in french
-                locale.setlocale(locale.LC_TIME, 'fr')
-            currMonth = datetime.datetime.now()
-            currYear = currMonth.strftime("%Y")
-            currMonth = currMonth.strftime("%B")
-            # Little piece of code to capitalize the first letter to match the database
-            monthList = list(currMonth)
-            monthList[0] = monthList[0].upper()
-            currMonth = "".join(monthList)
 
             # Handle the users that does not have a report yet
-            try:
-                obj.expenseReport = ExpenseReport.objects.get(collaborator=col, month=currMonth, year = currYear )
-            except ExpenseReport.DoesNotExist:
-                newReport = ExpenseReport(collaborator=col, month=currMonth, year=currYear)
-                newReport.save()
-                obj.expenseReport = newReport
+            obj.expenseReport = expRep
             obj.collaborator = col
             obj.validator = col.validator
             obj.validated = toValidate
@@ -277,36 +281,20 @@ def createAdvanceRequest(request):
 
 @login_required(login_url='/login/')
 def createMileageExpense(request):
-    form = MileageExpenseForm()
+    col, expRep = collabAndReport(request)
+    #default the date to today
+    today = datetime.date.today()
+    today = today.strftime("%d/%m/%Y")
+    form = MileageExpenseForm(collab=col, initial={'date':today})
     if request.method == 'POST':
 
-        form = MileageExpenseForm(request.POST, request.FILES)
+        form = MileageExpenseForm(request.POST, request.FILES, collab=col)
         if form.is_valid():
             toValidate = None
             if 'Submit' in request.POST:
                 toValidate = False
             obj = form.save(commit=False)
-            col = Collaborator.objects.get(user=request.user)
-
-            if (
-                    locale.LC_TIME != 'fr'):  # avoid our month to be in english. As the database is in french,
-                # we force the format to be in french
-                locale.setlocale(locale.LC_TIME, 'fr')
-            currMonth = datetime.datetime.now()
-            currYear = currMonth.strftime("%Y")
-            currMonth = currMonth.strftime("%B")
-            # Little piece of code to capitalize the first letter to match the database
-            monthList = list(currMonth)
-            monthList[0] = monthList[0].upper()
-            currMonth = "".join(monthList)
-
-            # Handle the users that does not have a report yet
-            try:
-                obj.expenseReport = ExpenseReport.objects.get(collaborator=col, month=currMonth, year = currYear )
-            except ExpenseReport.DoesNotExist:
-                newReport = ExpenseReport(collaborator=col, month=currMonth, year=currYear)
-                newReport.save()
-                obj.expenseReport = newReport
+            obj.expenseReport = expRep
             obj.collaborator = col
             obj.validator = col.validator
             obj.validated = toValidate
