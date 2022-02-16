@@ -35,4 +35,8 @@ def get(dict,key):
 
 @register.filter
 def urlFromFile(url,arg):
-    return(url.split('/')[1])
+    try : 
+        s = url.split('/')[1]
+        return s
+    except IndexError:
+        return ''
