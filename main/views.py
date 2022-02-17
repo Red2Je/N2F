@@ -110,6 +110,7 @@ def valid(request):
     CollaboratorList = [] # liste des collaborateurs du valideur
     DictNoteDeFrais = {} # dict de [collaborateur : [liste de notes de frais] ]
     DictLigneDeFrais= {} # dict de [Note de frais: [liste de ExpenseLine ] ]
+    DictMission = {} # dict de  [Note de frais : [mission]
 
     if Collaborator.objects.filter(validator= validor).count() >= 1: # on ne fait rien si personne n'a ce valideur
         CollaboratorList = list(Collaborator.objects.filter(validator= validor))
@@ -117,7 +118,17 @@ def valid(request):
         # recuperation de ses notes de frais, peut etre mettre une date limite sinon tout sera envoye
         for collabo in CollaboratorList:
             if ExpenseReport.objects.filter(collaborator = collabo) >= 1: # on ne fait rien si pas de note de frais
-                DictNoteDeFrais[collabo]=list(ExpenseReport.objects.filter(collaborator = collabo)) 
+                DictNoteDeFrais[collabo]=list(ExpenseReport.objects.filter(collaborator = collabo))
+                for notedefraise in DictNoteDeFrais[collabo]:
+                    temp=[]
+                    Mission=[]
+                    temp=list(Advance.objects.filter(expenseReport= note))
+                    Mission.append(f.mission for f in temp)
+                    temp=list(MileageExpense.objects.filter(expenseReport= note))
+                    Mission.append(f.mission for f in temp)
+                    temp=list(RefundRequest.objects.filter(expenseReport= note))
+                    Mission.append(f.mission for f in temp)
+                    DictMission[notedefraise]=Mission  
 
             # on associe a chaque note de frais envoyee les lignes correspondantes
             for note in DictNoteDeFrais[collabo]:
@@ -125,12 +136,12 @@ def valid(request):
                 # ajout de ses advances 
                 DictLigneDeFrais[note].append(list(Advance.objects.filter(expenseReport= note).fitler(state = "sent")))
                 # ajout de ses lignes de frais
-                DictLigneDeFrais[note]=list(Advance.objects.filter(expenseReport= note).fitler(state = "sent"))
+                DictLigneDeFrais[note].append(list(RefundRequest.objects.filter(expenseReport= note).fitler(state = "sent")))
                 # ajout de ses frais kilometriques
-                DictLigneDeFrais[note]=list(MileageExpense.objects.filter(expenseReport= note).fitler(state = "sent"))
+                DictLigneDeFrais[note].append(list(MileageExpense.objects.filter(expenseReport= note).fitler(state = "sent")))
         
 
-    context = {'CollaboratorList' : CollaboratorList, 'DictNoteDeFrais' : DictNoteDeFrais, 'DictLigneDeFrais' : DictLigneDeFrais, 'validor' : validor}
+    context = {'CollaboratorList' : CollaboratorList, 'DictNoteDeFrais' : DictNoteDeFrais, 'DictLigneDeFrais' : DictLigneDeFrais, 'validor' : validor,'DictMission' : DictMission }
     return render(request,'main/valid.html',context)
 
 
