@@ -21,7 +21,7 @@
    <div class="container-fluid">
       <div class="row mb-2">
          <div class="col-sm-6">
-            <h1>Historique des notes de frais du service :</h1>
+            <h1>Historique de vos notes de frais :</h1>
          </div>
       </div>
    </div>
@@ -100,25 +100,26 @@
                               </tbody>
                               {% endfor %}
                               {% endwith %}
-                              {% endfor %}
-                              {% endif %}
-                              {% endfor %}
-                           </table>
+                              </table>
                         </td>
                      </tr>
+                      {% endfor %}
+                      {% endif %}
+                      {% endfor %}
+                     <form method="get" action="{% url 'RefundRequest' %}">
+                       {% csrf_token %}
+                       <button type="submit" formmethod="get" class="btn btn-primary btn-lg float-right">Ajouter une demande de remboursement</button>
+                    </form>
+                    <form method="get" action="{% url 'AdvanceRequest' %}">
+                       {% csrf_token %}
+                       <button type="submit" formmethod="get" class="btn btn-primary btn-lg float-right">Ajouter une demande d'avance</button>
+                    </form>
+                    <form method="get" action="{% url 'MileageRequest' %}">
+                       {% csrf_token %}
+                       <button type="submit" formmethod="get" class="btn btn-primary btn-lg float-right">Ajouter une demande de remboursement de frais kilométrique</button>
+                    </form>
+                        
                   </table>
-                  <form method="get" action="{% url 'RefundRequest' %}">
-                     {% csrf_token %}
-                     <button type="submit" formmethod="get" class="btn btn-primary btn-lg float-right">Ajouter une demande de remboursement</button>
-                  </form>
-                  <form method="get" action="{% url 'AdvanceRequest' %}">
-                     {% csrf_token %}
-                     <button type="submit" formmethod="get" class="btn btn-primary btn-lg float-right">Ajouter une demande d'avance</button>
-                  </form>
-                  <form method="get" action="{% url 'MileageRequest' %}">
-                     {% csrf_token %}
-                     <button type="submit" formmethod="get" class="btn btn-primary btn-lg float-right">Ajouter une demande de remboursement de frais kilométrique</button>
-                  </form>
                </td>
             </tr>
          </tbody>
