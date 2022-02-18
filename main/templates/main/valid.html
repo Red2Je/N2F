@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block content %}
-
+    <div class = "content-wrapper">
 	{% if form.errors %}
 		{% for field in form %}
 			{% for error in field.errors %}
@@ -19,7 +19,7 @@
 	{% endif %}	
 	
 	{% load tags %}
-	<div class = "content-wrapper">
+
 	<section class="content-header">
 	  <div class="container-fluid">
 	    <div class="row mb-2">
@@ -149,7 +149,7 @@
 
 			
     </section>
-
+    </div>
 <script>
 function ShowHide(id) {
   if ($(id).html() == "Show details") {

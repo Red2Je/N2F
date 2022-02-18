@@ -2,7 +2,8 @@
 {% load static %}
 
 {% block content %}
-
+    <div class = "content-wrapper">
+    <div class = "content-header">
 	{% if form.errors %}
 		{% for field in form %}
 			{% for error in field.errors %}
@@ -17,14 +18,15 @@
 			</div>
 		{% endfor %}
 	{% endif %}	
-	
-	<div class = "content-wrapper">
-	<section class="content-header">
-	  <div class="container-fluid">
-	    <div class="row mb-2">
-	    </div>
-	  </div><!-- /.container-fluid -->
-	</section>
+	</div>
+
+
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                </div>
+            </div><!-- /.container-fluid -->
+        </section>
 
     <section class="content">
       <div class="container-fluid">
@@ -52,5 +54,5 @@
 		</div>
 	</div>
 	</section>
-
+    </div>
 {% endblock %}
