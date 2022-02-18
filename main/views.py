@@ -6,12 +6,13 @@ from django.http import HttpResponse
 from django.shortcuts import redirect
 from .forms import MileageExpenseForm, RefundRequestForm, ExpenseReportForm, AdvanceForm
 from .forms import RefundRequestForm
-from .models import ExpenseReport, Collaborator, ExpenseLine, Advance, RefundRequest, MileageExpense
+from .models import ExpenseReport, Collaborator, ExpenseLine, Advance, Mission, RefundRequest, MileageExpense
 from django.contrib.auth import authenticate, login , logout
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.datastructures import MultiValueDictKeyError
+from django.forms import ValidationError
 import datetime
 import os
 import locale
@@ -166,7 +167,6 @@ def valid(request):
 
 
 def download_file(request, filename=''):
-    print(filename)
     if filename != '':
         # Define Django project base directory
         BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -214,38 +214,56 @@ def collabAndReport(request):
 #                      RefundRequest                           #
 ################################################################
 @login_required(login_url='/login/')
-def createRefundRequest(request):
+def createRefundRequest(request, RefReq = None):
     #default the date to today
     today = datetime.date.today()
     today = today.strftime("%d/%m/%Y")
-
-
     # Handle the users that does not have a report yet
     col,currExpenseReport = collabAndReport(request)
 
+    #if we give a refundrequest, display its state in the form
+    form = RefundRequestForm(initial={'date':today}, collab=col, req = request)
+    if RefReq is not None and RefReq.state != RefundRequest.accepted:
+        # form = RefundRequestForm(col, RefReq, initial = {
+        #     'date' : RefReq.date,
+        #     'validorCommentary' : RefReq.validorCommentary,
+        #     'state' : RefReq.state,
+        #     'nature' : RefReq.nature,
+        #     'expenseReport' : RefReq.expenseReport,
+        #     'mission' : RefReq.mission,
+        #     'amountHT' : RefReq.amountHT,
+        #     'amountTVA' : RefReq.amountTVA,
+        #     'proof' : RefReq.proof
+        # })
+        col = RefReq.expenseReport.collaborator
+        form = RefundRequestForm(instance = RefReq, collab=col, req=request, passing = True)
 
-
-
-    form = RefundRequestForm(collab=col, initial={'date':today})
     if request.method == 'POST':
 
-        form = RefundRequestForm( request.POST, request.FILES, collab=col)
+        form = RefundRequestForm(request.POST, request.FILES,instance = RefReq, collab=col, req = request, passing = True)
         if form.is_valid():
-            toValidate = None
-            if 'Submit' in request.POST:
-                toValidate = False
-            obj = form.save(commit=False)
+            if RefReq is None:
+                toValidate = RefundRequest.draft
+                if 'Submit' in request.POST:
+                    toValidate = RefundRequest.sent
+                obj = form.save(commit=False)
+                obj.collaborator = col
+                obj.validator = col.validator
+                obj.state = toValidate
 
-            obj.expenseReport=currExpenseReport
-            obj.collaborator = col
-            obj.validator = col.validator
-            obj.validated = toValidate
-
-            obj.save()
-            save_file(request.FILES['proof'])
-            return redirect('/void')
+                obj.save()
+                save_file(request.FILES['proof'])
+                return redirect('/void')
+            else:
+                obj = form.save(commit = False)
+                obj.collaborator = col
+                obj.validator = col.validator
+                obj.state = RefundRequest.sent
+                obj.proof = RefReq.proof
+                obj.save()
+                return redirect('/void')
         else:
-            print(form.errors)
+            print("ERROR : ",form.errors)
     context = {'form': form}
     return render(request, 'main/form.html', context)
 
@@ -322,7 +340,6 @@ def createMileageExpense(request):
     return render(request, 'main/form.html', context)
 
 def download_file(request, filename=''):
-    print(filename)
     if filename != '':
         # Define Django project base directory
         BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -340,7 +357,19 @@ def download_file(request, filename=''):
         return response
     else:
         # Load the template
-        return render(request, 'void.html')
+        return render(request, 'main/void.html')
+
+
+
+
+################################################################
+#                     Modify Refund Request                    #
+################################################################
+@login_required(login_url='/login/')
+def modifyRefund(request, refId):
+    RefReq = RefundRequest.objects.get(id = refId)
+    print(RefReq)
+    return createRefundRequest(request, RefReq=RefReq)
 
 
 def createExpenseReport(request):

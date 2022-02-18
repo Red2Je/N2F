@@ -1,3 +1,4 @@
+from ast import expr
 from django.forms import ModelForm
 from django import forms
 from .models import Collaborator, ExpenseLine
@@ -5,6 +6,7 @@ from .models import ExpenseReport
 from .models import RefundRequest
 from .models import Advance
 from .models import MileageExpense
+import operator
 
 
 # form for update/create
@@ -25,11 +27,19 @@ class RefundRequestForm(ModelForm):
         }
         widgets = { 'date' : forms.SelectDateWidget}
 
-    def __init__(self, collab = None, *args, **kwargs, ):
+    def __init__(self, *args, **kwargs, ):
+        collab = kwargs.pop('collab',None)
+        request = kwargs.pop('req',None)
+        passing = kwargs.pop('passing',False)
         super(RefundRequestForm, self).__init__(*args, **kwargs)
-        expRepL = ExpenseReport.objects.filter(collaborator = collab)
-        c = [("".join(expRep.collaborator.user.username).join(" ").join(expRep.month), expRep) for expRep in expRepL]
-        self.fields['expenseReport'].choices =c
+        if( not passing and request is not None and request.method == 'GET'):
+            expRepL = ExpenseReport.objects.filter(collaborator = collab).order_by('-year')
+            self.fields['expenseReport'].queryset = expRepL
+            self.fields['expenseReport'].widget.choices = self.fields['expenseReport'].choices
+            self.fields['expenseReport'].initial = expRepL[0]
+            # c = [(str(expRep), expRep.id) for expRep in expRepL]
+            # # c = sorted(c, key = lambda x: x[1].year, reverse=True)
+            # self.fields['expenseReport'].choices =c
 
 
 
@@ -48,11 +58,14 @@ class AdvanceForm(ModelForm):
         }
         widgets = { 'date' : forms.SelectDateWidget}
 
-    def __init__(self, collab = None, *args, **kwargs, ):
+    def __init__(self, *args, **kwargs, ):
+        collab = kwargs.pop('collab',None)
+        request = kwargs.pop('req',None)
         super(AdvanceForm, self).__init__(*args, **kwargs)
-        expRepL = ExpenseReport.objects.filter(collaborator = collab)
-        c = [("".join(expRep.collaborator.user.username).join(" ").join(expRep.month), expRep) for expRep in expRepL]
-        self.fields['expenseReport'].choices =c
+        if(self.instance is None and request is not None and request.method == 'GET'):
+            expRepL = ExpenseReport.objects.filter(collaborator = collab)
+            c = [(" ".join((expRep.collaborator.user.username,expRep.month, str(expRep.year), 'aaaaaa')), expRep) for expRep in expRepL]
+            self.fields['expenseReport'].choices =c
 
 
 class MileageExpenseForm(ModelForm):
@@ -73,12 +86,14 @@ class MileageExpenseForm(ModelForm):
             'proof' : 'Justificatif',
         }
         widgets = { 'date' : forms.SelectDateWidget}
-    def __init__(self, collab = None, *args, **kwargs, ):
+    def __init__(self, *args, **kwargs ):
+        collab = kwargs.pop('collab',None)
+        request = kwargs.pop('req',None)
         super(MileageExpenseForm, self).__init__(*args, **kwargs)
-        expRepL = ExpenseReport.objects.filter(collaborator = collab)
-        c = [("".join(expRep.collaborator.user.username).join(" ").join(expRep.month), expRep) for expRep in expRepL]
-        self.fields['expenseReport'].choices =c
-
+        if(self.instance is None and request is not None and request.method == 'GET'):
+            expRepL = ExpenseReport.objects.filter(collaborator = collab)
+            c = [(" ".join((expRep.collaborator.user.username,expRep.month, str(expRep.year), 'aaaaaa')), expRep) for expRep in expRepL]
+            self.fields['expenseReport'].choices =c
 
 """
 class ExpenseLineCreateForm(ModelForm):

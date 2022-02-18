@@ -95,8 +95,16 @@
                                  {% else %}
                                  <td>Non renseignée</td>
                                  {% endif %}
-                                 <td><button onclick="location.href = "{% url 'void' %}" id="myButton" class="submit" >détail</button></td>
-                                 <td>{{ expLin.get_state_display }} </td>
+                                 <td>
+                                    {% if expLin.state != 'Accepté' %}
+                                    <form method="get" action="{% url 'RefundRequest' %}{{expLin.id}}">
+                                       <button type="submit" formmethod="get" onclick="location.href = "{% url 'RefundRequest' %}" id="myButton" class="btn btn-primary" >détail</button>
+                                    </form>
+                                    {% else %}
+                                    <p>Non modifiable après acceptation</p>
+                                    {% endif %}
+                                 </td>
+                                 <td>{{ expLin.state }}</td>
                               </tbody>
                               {% endfor %}
                               {% endwith %}

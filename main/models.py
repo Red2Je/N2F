@@ -97,7 +97,7 @@ class ExpenseReport(models.Model):
     
 
     def __str__(self):
-	    return str(self.collaborator.user.username) +" "+self.month
+	    return str(self.collaborator.user.username) +" "+self.month+" "+str(self.year)
 
 class ExpenseLine(models.Model):
     #id = models.fields.IntegerField(unique=True)
@@ -156,7 +156,7 @@ class ExpenseLine(models.Model):
         abstract = True
         
     def __str__(self):
-	    return self.nature+' '+self.proof.name
+	    return self.nature+' '+self.expenseReport.collaborator.user.username
 
 
 
