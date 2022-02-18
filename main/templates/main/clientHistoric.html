@@ -24,7 +24,7 @@
    <div class="container-fluid">
       <div class="row mb-2">
          <div class="col-sm-6">
-            <h1>Historique de vos notes de frais :</h1>
+            <h1>Historique des notes de frais de {{ collab.user.username }}</h1>
          </div>
       </div>
    </div>
@@ -35,7 +35,6 @@
       <p class="t_heading">Notes de frais</p>
       <table class="table table-bordered table-hover">
          <thead>
-            <th>Demandeur</th>
             <th>Date</th>
             <th>Coût total TTC (€)</th>
             <th>État</th>
@@ -50,7 +49,6 @@
          </script>
          <tbody>
             <tr>
-               <td>{{ collab.user.username }}</td>
                <td>{{ expRep.month}} {{expRep.year }}</td>
                <td>{{ expRep|sumRep:1 }}</td>
                <td>Incomplet</td>
@@ -87,7 +85,10 @@
                                  <th>Détail</th>
                                  <th>État</th>
                               </thead>
-                              {% with expLinL=expLinDict|get:expRep|get:mission %}
+                              {% with expid=expRep.id|stringformat:"i" %}
+                              {% with missid=mission.id|stringformat:"i" %}
+                              {% with filt=expid|add:"&"|add:missid %}
+                              {% with expLinL=expLinDict|get_from_tuple:filt %}
                               {% for expLin in expLinL %}
                               <tbody>
                                  <td>{{ expLin.get_nature_display }}</td>
@@ -110,6 +111,9 @@
                                  <td>{{ expLin.state }}</td>
                               </tbody>
                               {% endfor %}
+                              {% endwith %}
+                              {% endwith %}
+                              {% endwith %}
                               {% endwith %}
                               </table>
                         </td>

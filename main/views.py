@@ -61,15 +61,14 @@ def save_file(f):
 
 @login_required(login_url='/login/')
 def sHistoric(request):
+	u = Collaborator.objects.get(user = request.user)
+	service = u.departmentHead
+	if service is not None:
+		"""uL = Collaborator.objects.filter(service=service)
+		for user in uL:"""
+		1
+
     return render(request,'main/historic.html')
-
-@login_required(login_url='/login/')
-def sValid(request):
-    valid = Collaborator.objects.get(user = request.user)
-    
-
-    context = {'valid' : valid}
-    return render(request,'main/valid.html',context)
 
 @login_required(login_url='/login/')
 def cHistoric(request):
@@ -83,17 +82,14 @@ def cHistoric(request):
     tempELDict ={}
     tempMDict = {}
     if ExpenseReport.objects.filter(collaborator=u).count() >= 1:
-        expRepL = list(ExpenseReport.objects.filter(collaborator = u))
+        expRepL = list(ExpenseReport.objects.filter(collaborator = u).order_by('year', '-month'))
         for expRep in expRepL:
             filt = list(RefundRequest.objects.filter(expenseReport = expRep))
-            if(Advance.objects.filter(expenseReport = expRep).count() >= 1):
-                advDict[expRep] = list(Advance.objects.filter(expenseReport = expRep))
             filtMiss = [f.mission for f in filt]
             filtMiss = list(set(filtMiss))#remove duplicates
             missionDict[expRep] = filtMiss
             for miss in filtMiss:
-                tempELDict[miss] = list(RefundRequest.objects.filter(expenseReport = expRep, mission = miss))
-                expLinDict[expRep] = tempELDict
+                expLinDict[(expRep, miss)] = list(RefundRequest.objects.filter(expenseReport = expRep, mission = miss))
                 if MileageExpense.objects.filter(expenseReport = expRep, mission = miss).count() >= 1:
                     tempMDict[miss] = list(MileageExpense.objects.filter(expenseReport = expRep, mission = miss))
                     mileDict[expRep] = tempMDict

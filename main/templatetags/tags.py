@@ -46,3 +46,10 @@ def urlFromFile(url,arg):
 @register.filter(name='get_class')
 def get_class(value):
   return value.__class__.__name__
+
+@register.filter
+def get_from_tuple(dict, args):
+    argList = args.split('&')
+    expRep = ExpenseReport.objects.get(id=int(argList[0]))
+    mission = Mission.objects.get(id=int(argList[1]))
+    return dict.get((expRep, mission))

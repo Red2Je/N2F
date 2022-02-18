@@ -28,13 +28,11 @@ urlpatterns = [
     path('logout/', views.logoutPage, name='logout'),
     path('serviceHistoric/', views.sHistoric, name='serviceHistoric'),
     path('clientHistoric/', views.cHistoric, name='clientHistoric'),
-    path('serviceValid/', views.sValid),
     #path('download/<str:filename>', views.download_file, name='download'),
     path('download/<str:filename>/', views.download_file, name='download'),
     path('Refund/', views.createRefundRequest, name='RefundRequest'),
     path('Advance/', views.createAdvanceRequest, name='AdvanceRequest'),
     path('Mileage/', views.createMileageExpense, name='MileageRequest'),
-    
     path('validation/', views.valid, name='validation'),
     path('Refund/<int:refId>',views.modifyRefund, name='ModifyRefund'),
 
