@@ -1,164 +1,143 @@
 {% extends 'main/base.html' %}
 {% load static %}
-
 {% block content %}
-    <div class = "content-wrapper">
-	{% if form.errors %}
-		{% for field in form %}
-			{% for error in field.errors %}
-				<div class="alert alert-danger">
-					<strong>{{ error|escape }}</strong>
-				</div>
-			{% endfor %}
-		{% endfor %}
-		{% for error in form.non_field_errors %}
-			<div class="alert alert-danger">
-				<strong>{{ error|escape }}</strong>
-			</div>
-		{% endfor %}
-	{% endif %}	
-	
-	{% load tags %}
-
-	<section class="content-header">
-	  <div class="container-fluid">
-	    <div class="row mb-2">
-	      <div class="col-sm-6">
-	        <h1>Historique des notes de frais du service :</h1>
-	      </div>
-	    </div>
-	  </div><!-- /.container-fluid -->
-	</section>
-
+<div class = "content-wrapper">
+   {% if form.errors %}
+   {% for field in form %}
+   {% for error in field.errors %}
+   <div class="alert alert-danger">
+      <strong>{{ error|escape }}</strong>
+   </div>
+   {% endfor %}
+   {% endfor %}
+   {% for error in form.non_field_errors %}
+   <div class="alert alert-danger">
+      <strong>{{ error|escape }}</strong>
+   </div>
+   {% endfor %}
+   {% endif %}	
+   {% load tags %}
+   <section class="content-header">
+      <div class="container-fluid">
+         <div class="row mb-2">
+            <div class="col-sm-6">
+               <h1>Historique des notes de frais du service :</h1>
+            </div>
+         </div>
+      </div>
+      <!-- /.container-fluid -->
+   </section>
    <section class="content">
-
-	      <div class="table-responsive">
-	            <p class="t_heading">Notes de frais</p>
-	            <table class="table table-bordered table-hover">
-	                <thead>
-	                    <th>Demandeur</th>
-	                    <th>Date</th>
-	                    <th>Coût total TTC (€)</th>               
-	                </thead>
-	                <tbody>
-	                    {% for collab in CollaboratorList %}
+      <div class="table-responsive">
+         <p class="t_heading">Notes de frais</p>
+         <table class="table table-bordered table-hover">
+            <thead>
+               <th>Demandeur</th>
+               <th>Date</th>
+               <th>Coût total TTC (€)</th>
+            </thead>
+            <tbody>
+               {% for collab in CollaboratorList %}
+               {% for key,value in DictNoteDeFrais.items %}
+               {% if key == collab %}
+               {% for notedefrais in value %}
+               <tr>
+                  <td>{{ collab.user.username }}</td>
+                  <td>{{ notedefrais.month}} {{notedefraisyear }}</td>
+                  <td>{{ notedefrais|sumRep:1 }}</td>
+                  <td><button class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target="#intro">Show details</button></td>
+               </tr>
+               {% endfor %}
+               {% endif %}
+               {% endfor %}
+               {% endfor %}
+               <tr id="intro" class="collapse">
+                  <td colspan="7">
+                     <p class="t_heading">Missions</p>
+                     <table class="table custom-view">
+                        <thead>
+                           <th>Mission</th>
+                           <th>Nombre ligne de frais</th>
+                           <th>Coût total TTC (€)</th>
+                        </thead>
+						{% for collab in CollaboratorList %}
 							{% for key,value in DictNoteDeFrais.items %}
 								{% if key == collab %}
 									{% for notedefrais in value %}
-						<tr>
-							<td>{{ collab.user.username }}</td>
-							<td>{{ notedefrais.month}} {{notedefraisyear }}</td>
-							<td>{{ notedefrais|sumRep:1 }}</td>
-							<td><button class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target="#intro">Show details</button></td>              
-						</tr>
-
+										{% for key,value in DictMission.items %}
+											{% if key == notedefrais %}
+												{% for mission in value %}
+                        <tbody>
+							<td>{{ mission.name }}</td>
+							<td>{{ mission.name|sumMission:key }}</td>
+                        	<td>{{ mission.name|sumMissMoney:key }}</td>
+                        </tbody>
+						{% endfor %}
+						{% endif %}
+						{% endfor %}
+						{% endfor %}
+						{% endif %}
+						{% endfor %}
 						{% endfor %}
 						
-						{% endfor %}
-		  	 			{% endfor %}
-	                    <tr id="intro" class="collapse">
-					 <td colspan="7">
-					  <p class="t_heading">Missions</p>
-					  <table class="table custom-view">
-					  <thead>
+
 						
+                        <tr id="outro">
+                           <td colspan="14">
+                              <p class="t_heading">Lignes de frais</p>
+                              <table class="table custom-view">
+                                 <thead>
+                                    <th>Type</th>
+                                    <th>Date</th>
+                                    <th>Coût total TTC (€)</th>
+                                    <th>Demande d'avance</th>
+                                    <th>Justificatif</th>
+                                    <th>Détail</th>
+                                    <th>Valider</th>
+                                 </thead>
 
-										
-
-					      <th>Mission</th>
-					      <th>Nombre ligne de frais</th>
-					      <th>Coût total TTC (€)</th>
-					  </thead>
-					  
-					  {% for collab in CollaboratorList %}
-							{% for key,value in DictNoteDeFrais.items %}
-								{% if key == collab %}
-									{% for notedefrais in value %}
-										{% for key2,value2 in DictLigneDeFrais.items %}
-											{% if key2  == notedefrais %}
-												{% for lignedefrais in value2 %}
+								 
+												{% for key2,value2 in DictLigneDeFrais.items %}
 													
-					  <tbody>
-
-					      <td>{{ lignedefrais.mission }}</td>
-					      <td>{{ value2|sumRep:1 }}</td>
-					      <td>300</td>
-					  </tbody>
-					  {% endfor %}
-					  {% endif %}
-
-					  <tr id="outro">
-					 <td colspan="14">
-					  <p class="t_heading">Lignes de frais</p>
-					  <table class="table custom-view">
-					  <thead>
-					      <th>Type</th>
-					      <th>Date</th>
-					      <th>Coût total TTC (€)</th>
-					      <th>Demande d'avance</th>
-					      <th>Justificatif</th>
-					      <th>Détail</th>
-					      <th>Valider</th>
-					  </thead>
-
-					  {% for collab in CollaboratorList %}
-							{% for key,value in DictNoteDeFrais.items %}
-								{% if key == collab %}
-									{% for notedefrais in value %}
-										{% for key2,value2 in DictLigneDeFrais.items %}
-											{% if key2  == notedefrais %}
-												{% for lignedefrais in value2 %}
-													{% if Object|get_class == 'Advance' %}
-														bananabread
-													{% endif %}
-					  <tbody>
-					      <td>Restaurant</td>
-					      <td>12/12/2021</td>
-					      <td>100</td>
-					      <td>non</td>
-					       <td><a href="{% url 'download' filename='placeholder.jpg'%}">Télécharger</a></td>
-					      <td><button onclick="location.href = {% url 'void' %};" id="myButton" class="submit" >détail</button></td>
-					      <td><div class="form-check">
-						  <input class="form-check-input" type="checkbox" value="" name="valid" id="flexCheckChecked" checked>
-						</div></td>
-					  </tbody>
-					  <tbody>
-					      <td>Hôtel</td>
-					      <td>12/12/2021</td>
-					      <td>200</td>
-					      <td>non</td>
-					      <td>non</td>
-					      <td><button onclick="location.href = {% url 'void' %};" id="myButton" class="submit" >détail</button></td>
-					      <td><div class="form-check">
-						  <input class="form-check-input" type="checkbox" value="" name="valid" id="flexCheckChecked" checked>
-						</div></td>
-					  </tbody>
-					 </table>
-					</td>
-					</tr> 
-					 </table>
-					 <form method="post">
-						{% csrf_token %}
-					 	<button type="submit"   formmethod="post" class="btn btn-primary btn-lg float-right">Confirmer</button>
-					</form>
-					</td>
-					</tr>                                                       
-	                </tbody>                                                                                                    
-	            </table>                                        
-	        </div>
-
-			
-    </section>
-    </div>
+                                 <tbody>
+                                    <td>{{ value2.nature }}</td>
+                                    <td>12/12/2021</td>
+                                    <td>100</td>
+                                    <td>non</td>
+                                    <td><a href="{% url 'download' filename='placeholder.jpg'%}">Télécharger</a></td>
+                                    <td><button onclick="location.href = {% url 'void' %};" id="myButton" class="submit" >détail</button></td>
+                                    <td>
+                                       <div class="form-check">
+                                          <input class="form-check-input" type="checkbox" value="" name="valid" id="flexCheckChecked" checked>
+                                       </div>
+                                    </td>
+                                 </tbody>
+                                 
+								
+								{% endfor %}
+                              </table>
+                           </td>
+                        </tr>
+                     </table>
+                     <form method="post">
+                        {% csrf_token %}
+                        <button type="submit"   formmethod="post" class="btn btn-primary btn-lg float-right">Confirmer</button>
+                     </form>
+                  </td>
+               </tr>
+            </tbody>
+         </table>
+      </div>
+   </section>
+</div>
 <script>
-function ShowHide(id) {
-  if ($(id).html() == "Show details") {
-    $(id).html("Hide details");
-  } else {
-    $(id).html("Show details");
-  }
-
-}
+   function ShowHide(id) {
+     if ($(id).html() == "Show details") {
+       $(id).html("Hide details");
+     } else {
+       $(id).html("Show details");
+     }
+   
+   }
 </script>
-
 {% endblock %}
