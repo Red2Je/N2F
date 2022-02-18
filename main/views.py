@@ -223,26 +223,15 @@ def createRefundRequest(request, RefReq = None):
 
     #if we give a refundrequest, display its state in the form
     form = RefundRequestForm(initial={'date':today}, collab=col, req = request)
+    #if we give a refund request, and this refund request is not accepted (redundant with a verification in the html)
     if RefReq is not None and RefReq.state != RefundRequest.accepted:
-        # form = RefundRequestForm(col, RefReq, initial = {
-        #     'date' : RefReq.date,
-        #     'validorCommentary' : RefReq.validorCommentary,
-        #     'state' : RefReq.state,
-        #     'nature' : RefReq.nature,
-        #     'expenseReport' : RefReq.expenseReport,
-        #     'mission' : RefReq.mission,
-        #     'amountHT' : RefReq.amountHT,
-        #     'amountTVA' : RefReq.amountTVA,
-        #     'proof' : RefReq.proof
-        # })
         col = RefReq.expenseReport.collaborator
-        form = RefundRequestForm(instance = RefReq, collab=col, req=request, passing = True)
+        form = RefundRequestForm(instance = RefReq, collab=col, req=request)#we pass the instance of the already existing refund request to let the model form generate itself
 
     if request.method == 'POST':
-
-        form = RefundRequestForm(request.POST, request.FILES,instance = RefReq, collab=col, req = request, passing = True)
+        form = RefundRequestForm(request.POST, request.FILES,instance = RefReq, collab=col, req = request)
         if form.is_valid():
-            if RefReq is None:
+            if RefReq is None:#if the refund request is not given, we check wich button is pressed
                 toValidate = RefundRequest.draft
                 if 'Submit' in request.POST:
                     toValidate = RefundRequest.sent
@@ -259,6 +248,11 @@ def createRefundRequest(request, RefReq = None):
                 obj.collaborator = col
                 obj.validator = col.validator
                 obj.state = RefundRequest.sent
+                if obj.proof != RefReq.proof :#if we give a new proof, we delete the old one from the server
+                    RefReq.dele()
+                    save_file(request.FILES['proof'])
+                else:
+                    obj.proof = RefReq.proof
                 obj.proof = RefReq.proof
                 obj.save()
                 return redirect('/void')

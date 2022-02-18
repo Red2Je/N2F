@@ -28,18 +28,14 @@ class RefundRequestForm(ModelForm):
         widgets = { 'date' : forms.SelectDateWidget}
 
     def __init__(self, *args, **kwargs, ):
-        collab = kwargs.pop('collab',None)
+        collab = kwargs.pop('collab',None)#kwargs is a list of argument that have keywords. if oyu call f(a, opt = 1), kwargs.pop('opt',None), return either 1 if opt is given and none if we call f(a)
         request = kwargs.pop('req',None)
-        passing = kwargs.pop('passing',False)
-        super(RefundRequestForm, self).__init__(*args, **kwargs)
-        if( not passing and request is not None and request.method == 'GET'):
-            expRepL = ExpenseReport.objects.filter(collaborator = collab).order_by('-year')
-            self.fields['expenseReport'].queryset = expRepL
-            self.fields['expenseReport'].widget.choices = self.fields['expenseReport'].choices
-            self.fields['expenseReport'].initial = expRepL[0]
-            # c = [(str(expRep), expRep.id) for expRep in expRepL]
-            # # c = sorted(c, key = lambda x: x[1].year, reverse=True)
-            # self.fields['expenseReport'].choices =c
+        super(RefundRequestForm, self).__init__(*args, **kwargs)#very important that it must be here !
+        if( request is not None and request.method == 'GET'):
+            expRepL = ExpenseReport.objects.filter(collaborator = collab).order_by('-year') # we look for the the expense report of the user, order them by descending year
+            self.fields['expenseReport'].queryset = expRepL#the queryset is the choice we have in the choicefield
+            self.fields['expenseReport'].widget.choices = self.fields['expenseReport'].choices#we mus actualize the widget's choices along with the modek's choices
+            self.fields['expenseReport'].initial = expRepL[0]# we set the initial value of the choice field to the most recent expense report
 
 
 
