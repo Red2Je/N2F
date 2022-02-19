@@ -31,7 +31,7 @@
       <div class="table-responsive">
          <p class="t_heading">Notes de frais</p>
          <table class="table table-bordered table-hover">
-            <thead>
+            <thead style="background-color:darkgreen;color:white;" >
                <th>Demandeur</th>
                <th>Date</th>
                <th>Coût total TTC (€)</th>
@@ -46,13 +46,13 @@
                   <td>{{ collab.user.username }}</td>
                   <td>{{ notedefrais.month}} {{notedefraisyear }}</td>
                   <td>{{ notedefrais|sumRep:1 }}</td>
-                  <td><button class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target="#intro">Show details</button></td>
+                  <td><button class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target= "#intro-{{ forloop.counter }}">Show details</button></td>
                </tr>
-               <tr id="intro" class="collapse">
+               <tr id="intro-{{ forloop.counter }}" class="collapse">
                   <td colspan="7">
                      <p class="t_heading">Missions</p>
                      <table class="table custom-view">
-                        <thead>
+                        <thead thead style="background-color:green;color:white;" >
                            <th>Mission</th>
                            <th>Nombre ligne de frais</th>
                            <th>Coût total TTC (€)</th>
@@ -71,7 +71,7 @@
                            <td colspan="14">
                               <p class="t_heading">Lignes de frais</p>
                               <table class="table custom-view">
-                                 <thead>
+                                 <thead style="background-color:seagreen;color:white;" >
                                     <th>Type</th>
                                     <th>Date</th>
                                     <th>Coût total TTC (€)</th>
@@ -88,7 +88,11 @@
                                     <td>{{ expLin.nature }}</td>
                                     <td>{{ expLin.date }}</td>
                                     <td>{{ expLin.amountTVA }}</td>
-                                    <td><a href="{% url 'download' filename='placeholder.jpg'%}">Télécharger</a></td>
+                                    {% if expLin.proof.name.strip %}
+                                    <td><a href="{% url 'download' expLin.proof.name|urlFromFile:1 %}">Télécharger</a></td>
+                                    {% else %}
+                                    <td>Non renseignée</td>
+                                    {% endif %}
                                     <td>
                                        {% if expLin.state != 'Accepté' %}
                                        <form method="get" action="{% url 'RefundRequest' %}{{expLin.id}}">
@@ -112,7 +116,7 @@
                               </table>
                               <p class="t_heading">Demande d'avances</p>
                               <table class="table custom-view">
-                                 <thead>
+                                 <thead style="background-color:seagreen;color:white;">
                                     <th>Type</th>
                                     <th>Date</th>
                                     <th>Coût total TTC (€)</th>
@@ -129,7 +133,11 @@
                                     <td>{{ expLin.nature }}</td>
                                     <td>{{ expLin.date }}</td>
                                     <td>{{ expLin.amountTVA }}</td>
-                                    <td><a href="{% url 'download' filename='placeholder.jpg'%}">Télécharger</a></td>
+                                    {% if expLin.proof.name.strip %}
+                                    <td><a href="{% url 'download' expLin.proof.name|urlFromFile:1 %}">Télécharger</a></td>
+                                    {% else %}
+                                    <td>Non renseignée</td>
+                                    {% endif %}
                                     <td>
                                        {% if expLin.state != 'Accepté' %}
                                        <form method="get" action="{% url 'RefundRequest' %}{{expLin.id}}">
@@ -153,7 +161,7 @@
                               </table>
                               <p class="t_heading">Frais kilométriques</p>
                               <table class="table custom-view">
-                                 <thead>
+                                 <thead style="background-color:seagreen;color:white;">
                                     <th>Type</th>
                                     <th>Date</th>
                                     <th>Coût total TTC (€)</th>
@@ -170,7 +178,11 @@
                                     <td>{{ expLin.nature }}</td>
                                     <td>{{ expLin.date }}</td>
                                     <td>{{ expLin.amountTVA }}</td>
-                                    <td><a href="{% url 'download' filename='placeholder.jpg'%}">Télécharger</a></td>
+                                    {% if expLin.proof.name.strip %}
+                                    <td><a href="{% url 'download' expLin.proof.name|urlFromFile:1 %}">Télécharger</a></td>
+                                    {% else %}
+                                    <td>Non renseignée</td>
+                                    {% endif %}
                                     <td>
                                        {% if expLin.state != 'Accepté' %}
                                        <form method="get" action="{% url 'RefundRequest' %}{{expLin.id}}">
