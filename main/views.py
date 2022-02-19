@@ -332,9 +332,9 @@ def createAdvanceRequest(request):
 
         form = AdvanceForm(request.POST, request.FILES, collab=col)
         if form.is_valid():
-            toValidate = None
+            toValidate = RefundRequest.draft
             if 'Submit' in request.POST:
-                toValidate = False
+                toValidate = RefundRequest.sent
             obj = form.save(commit=False)
 
             # Handle the users that does not have a report yet
@@ -416,12 +416,12 @@ def modifyRefund(request, refId):
 @login_required(login_url='/login/')
 def modifyAdvance(request, advId):
     RefReq = Advance.objects.get(id=advId)
-    return createRefundRequest(request, AdvRef=RefReq)
+    return createAdvanceRequest(request, AdvRef=RefReq)
 
 @login_required(login_url='/login/')
 def modifyMileage(request, milId):
     RefReq = Advance.objects.get(id=milId)
-    return createRefundRequest(request, MilRef=RefReq)
+    return createMileageExpense(request, MilRef=RefReq)
 
 
 def createExpenseReport(request):
