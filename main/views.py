@@ -66,7 +66,7 @@ def sHistoric(request):
     missionDict = {}
     expLinDict = {}
     if service is not None:
-        uL = list(Collaborator.objects.filter(service=service).order_by('-user'))
+        uL = list(Collaborator.objects.filter(service=service))
         for user in uL:
             expRepDict[user] = list(ExpenseReport.objects.filter(collaborator=user))
             for expRep in expRepDict[user]:
@@ -120,34 +120,43 @@ def valid(request):
     validor = Collaborator.objects.get(user=request.user)  # valideur
     CollaboratorList = []  # liste des collaborateurs du valideur
     DictNoteDeFrais = {}  # dict de [collaborateur : [liste de notes de frais] ]
-    DictLigneDeFrais = {}  # dict de [Note de frais: [liste de ExpenseLine ] ]
-    DictMission = {}  # dict de  [Note de frais : [mission] ]
+    DictMileageExpense = {}  # dict de [Note de frais: [liste de MileageExpense ] ]
+    DictRefundRequest = {}  # dict de [Note de frais: [liste de RefundRequest ] ]
+    DictAdvance = {}  # dict de [Note de frais: [liste de Advance ] ]
+    DictMission = {}  # dict de  [Note de frais : [RefundRequest] ]
 
     if Collaborator.objects.filter(validator=validor).count() >= 1:  # on ne fait rien si personne n'a ce valideur
         CollaboratorList = list(Collaborator.objects.filter(validator=validor))
 
         # recuperation de ses notes de frais, peut etre mettre une date limite sinon tout sera envoye
         for collabo in CollaboratorList:
-            if ExpenseReport.objects.filter(
-                    collaborator=collabo).count() >= 1:  # on ne fait rien si pas de note de frais
+            if ExpenseReport.objects.filter(collaborator=collabo).count() >= 1:  # on ne fait rien si pas de note de frais
                 DictNoteDeFrais[collabo] = list(ExpenseReport.objects.filter(collaborator=collabo))
 
                 for notedefraise in DictNoteDeFrais[collabo]:
                     DictMission[notedefraise] = []
+
                     if RefundRequest.objects.filter(expenseReport=notedefraise).count() >= 1:
                         filt = list(RefundRequest.objects.filter(expenseReport=notedefraise))
                         Mission = [f.mission for f in filt]
-                        DictMission[notedefraise] += Mission
+                        Mission = list(set(Mission))  # remove duplicates
+                        DictMission[notedefraise] += Mission # stockage des missions pour l'affichage
+                        for miss in Mission:
+                            DictRefundRequest[(notedefraise,miss)] = list(RefundRequest.objects.filter(expenseReport=notedefraise)) # ligne de frais de l'utilisateur pour cette note de frais
+                        
 
                     if Advance.objects.filter(expenseReport=notedefraise).count() >= 1:
                         filt = list(Advance.objects.filter(expenseReport=notedefraise))
                         Mission = [f.mission for f in filt]
-                        DictMission[notedefraise] += Mission
+                        Mission = list(set(Mission))  # remove duplicates
+                        DictMission[notedefraise] += Mission # stockage des missions pour l'affichage
+                        for miss in Mission:
+                            DictAdvance[(notedefraise,miss)] = list(Advance.objects.filter(expenseReport=notedefraise)) # avance de l'utilisateur pour cette note de frais
+                        
 
                     if MileageExpense.objects.filter(expenseReport=notedefraise).count() >= 1:
                         filt = list(MileageExpense.objects.filter(expenseReport=notedefraise))
                         Mission = [f.mission for f in filt]
-<<<<<<< Updated upstream
                         Mission = list(set(Mission))  # remove duplicates
                         DictMission[notedefraise] += Mission # stockage des missions pour l'affichage
                         for miss in Mission:
@@ -165,22 +174,10 @@ def valid(request):
                     
                     
 
-=======
-                        DictMission[notedefraise] += Mission
-
-            # on associe a chaque note de frais envoyee les lignes correspondantes
-            for note in DictNoteDeFrais[collabo]:
-                DictLigneDeFrais[note] = []
-                # ajout de ses advances 
-                DictLigneDeFrais[note] += list(Advance.objects.filter(expenseReport=note).filter(state="sent"))
-                # ajout de ses lignes de frais
-                DictLigneDeFrais[note] += list(RefundRequest.objects.filter(expenseReport=note).filter(state="sent"))
-                # ajout de ses frais kilometriques
-                DictLigneDeFrais[note] += list(MileageExpense.objects.filter(expenseReport=note).filter(state="sent"))
->>>>>>> Stashed changes
 
     context = {'CollaboratorList': CollaboratorList, 'DictNoteDeFrais': DictNoteDeFrais,
-               'DictLigneDeFrais': DictLigneDeFrais, 'validor': validor, 'DictMission': DictMission}
+               'DictAdvance': DictAdvance,'DictMileageExpense': DictMileageExpense,'DictRefundRequest': DictRefundRequest,
+                'validor': validor, 'DictMission': DictMission}
     return render(request, 'main/valid.html', context)
 
     # missionDict = {}
@@ -287,6 +284,7 @@ def createRefundRequest(request, RefReq=None):
                     save_file(request.FILES['proof'])
                 else:
                     obj.proof = RefReq.proof
+                obj.proof = RefReq.proof
                 obj.save()
                 return redirect('/void')
         else:
@@ -294,24 +292,6 @@ def createRefundRequest(request, RefReq=None):
     context = {'form': form}
     return render(request, 'main/form.html', context)
 
-
-################################################################
-#                      ConsultRefund                           #
-################################################################
-@login_required(login_url='/login/')
-def consultRefund(request, refId):
-    RefReq = RefundRequest.objects.get(id=refId)
-    print(RefReq)
-    return createConsultRefund(request, RefReq=RefReq)
-
-@login_required(login_url='/login/')
-def createConsultRefund(request, RefReq=None):
-    validor = Collaborator.objects.get(user=request.user)  # valideur
-    if Collaborator.objects.filter(validator=validor).count() >= 1:  # on ne fait rien si personne n'a ce valideur
-        return redirect('/void')
-    ligneDeFrais = RefundRequest.objects.get(id=RefReq.id)
-    context = {'ldf':ligneDeFrais}
-    return render(request, 'main/consult.html', context)
 
 ################################################################
 #                         Advance                              #
@@ -353,46 +333,30 @@ def createAdvanceRequest(request):
 ################################################################
 
 @login_required(login_url='/login/')
-def createMileageExpense(request, MilRef=None):
+def createMileageExpense(request):
     col, expRep = collabAndReport(request)
     # default the date to today
     today = datetime.date.today()
     today = today.strftime("%d/%m/%Y")
-    form = MileageExpenseForm(initial={'date': today},collab=col, req = request)
-
-    if MilRef is not None and MilRef.state != RefundRequest.accepted:
-            col = MilRef.expenseReport.collaborator
-            form = RefundRequestForm(instance=MilRef, collab=col,
-                                    req=request)  # we pass the instance of the already existing refund request to let the model form generate itself
-
+    form = MileageExpenseForm(collab=col, initial={'date': today})
     if request.method == 'POST':
 
         form = MileageExpenseForm(request.POST, request.FILES, collab=col)
         if form.is_valid():
-            if MilRef is not None:
-                toValidate = RefundRequest.draft
-                if 'Submit' in request.POST:
-                    toValidate = RefundRequest.sent
-                obj = form.save(commit=False)
-                obj.expenseReport = expRep
-                obj.collaborator = col
-                obj.validator = col.validator
-                obj.validated = toValidate
+            toValidate = None
+            if 'Submit' in request.POST:
+                toValidate = False
+            obj = form.save(commit=False)
+            obj.expenseReport = expRep
+            obj.collaborator = col
+            obj.validator = col.validator
+            obj.validated = toValidate
 
-                obj.save()
+            obj.save()
+            try:
                 save_file(request.FILES['proof'])
-            else:
-                obj = form.save(commit=False)
-                obj.collaborator = col
-                obj.validator = col.validator
-                obj.state = RefundRequest.sent
-                if obj.proof != MilRef.proof:  # if we give a new proof, we delete the old one from the server
-                    MilRef.dele()
-                    save_file(request.FILES['proof'])
-                else:
-                    obj.proof = MilRef.proof
-                obj.save()
-                return redirect('/void')
+            except MultiValueDictKeyError:
+                pass
             return redirect('/void')
         else:
             print(form.errors)
@@ -406,17 +370,8 @@ def createMileageExpense(request, MilRef=None):
 @login_required(login_url='/login/')
 def modifyRefund(request, refId):
     RefReq = RefundRequest.objects.get(id=refId)
+    print(RefReq)
     return createRefundRequest(request, RefReq=RefReq)
-
-@login_required(login_url='/login/')
-def modifyAdvance(request, advId):
-    RefReq = Advance.objects.get(id=advId)
-    return createRefundRequest(request, AdvRef=RefReq)
-
-@login_required(login_url='/login/')
-def modifyMileage(request, milId):
-    RefReq = Advance.objects.get(id=milId)
-    return createRefundRequest(request, MilRef=RefReq)
 
 
 def createExpenseReport(request):
