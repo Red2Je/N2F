@@ -111,7 +111,6 @@
                                  <td>Non renseignée</td>
                                  {% endif %}
                                  <td>
-
                                     <form method="get" action="{% url 'ConsultRequest' %}{{expLin.id}}" target="_blank">
                                        <button type="submit" formmethod="get" id="myButton" class="btn btn-primary" >Consulter</button>
                                     </form>
@@ -158,7 +157,7 @@
                                  <td>Non renseignée</td>
                                  {% endif %}
                                  <td>
-                                    <form method="get" action="{% url 'ConsultRequest' %}{{expLin.id}}" target="_blank">
+                                    <form method="get" action="{% url 'ConsultMileageRequest' %}{{expLin.id}}" target="_blank">
                                        <button type="submit" formmethod="get" id="myButton" class="btn btn-primary" >Consulter</button>
                                     </form>
                                  </td>
@@ -197,7 +196,7 @@
                                  <td>{{ expLin.estimatedPrice }}</td>
                                  <td>{{ expLin.advanceCommentary }}</td>
                                  <td>
-                                    <form method="get" action="{% url 'ConsultRequest' %}{{expLin.id}}" target="_blank">
+                                    <form method="get" action="{% url 'ConsultAdvanceRequest' %}{{expLin.id}}" target="_blank">
                                        <button type="submit" formmethod="get" id="myButton" class="btn btn-primary" >Consulter</button>
                                     </form>
                                  </td>

@@ -95,7 +95,7 @@
                                  {% endif %}
                                  <td>
                                     {% if expLin.state != 'Accepté' %}
-                                    <form method="get" action="{% url 'RefundRequest' %}{{expLin.id}}">
+                                    <form method="get" action="{% url 'RefundRequest' %}{{expLin.id}}" target="_blank">
                                        <button type="submit" formmethod="get" id="myButton" class="btn btn-primary" >Modifier</button>
                                     </form>
                                     {% else %}
@@ -140,7 +140,7 @@
                                  {% endif %}
                                  <td>
                                     {% if expLin.state != 'Accepté' %}
-                                    <form method="get" action="{% url 'MileageRequest' %}{{expLin.id}}">
+                                    <form method="get" action="{% url 'MileageRequest' %}{{expLin.id}}" target="_blank">
                                        <button type="submit" formmethod="get" id="myButton" class="btn btn-primary" >Modifier</button>
                                     </form>
                                     {% else %}
@@ -182,8 +182,8 @@
                                  <td>{{ expLin.advanceCommentary }}</td>
                                  <td>
                                     {% if expLin.state != 'Accepté' %}
-                                    <form method="get" action="{% url 'AdvanceRequest' %}{{expLin.id}}">
-                                       <button type="submit" formmethod="get" id="myButton" class="btn btn-primary" >Consulter</button>
+                                    <form method="get" action="{% url 'AdvanceRequest' %}{{expLin.id}}" target="_blank"">
+                                       <button type="submit" formmethod="get" id="myButton" class="btn btn-primary" >Modifier</button>
                                     </form>
                                     {% else %}
                                     <p>Non modifiable après acceptation</p>

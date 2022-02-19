@@ -34,7 +34,15 @@
             <!-- general form elements -->
             <div class="card card-primary">
               <div class="card-header">
-                <h3 class="card-title">Édition d'une ligne de frais</h3>
+                <h3 class="card-title">
+                	{% if type == 'refund' %}
+	                	Édition d'une ligne de frais
+	                {%elif type == 'advance' %}
+	                	Édition d'une demande d'avance
+	                {%elif type == 'mileage' %}
+	                	Édition d'une ligne de frais kilométriques
+	                {% endif %}
+            	</h3>
               </div>
 				<form>
 				<div class="card-body">

@@ -313,7 +313,7 @@ def createRefundRequest(request, RefReq=None):
                 return redirect('/void')
         else:
             print("ERROR : ", form.errors)
-    context = {'form': form}
+    context = {'form': form, 'type':"refund"}
     return render(request, 'main/form.html', context)
 
 ################################################################
@@ -334,6 +334,44 @@ def createConsultRefund(request, RefReq=None):
     ligneDeFrais = RefundRequest.objects.get(id=RefReq.id)
     context = {'ldf':ligneDeFrais}
     return render(request, 'main/consult.html', context)
+
+################################################################
+#                      ConsultAdvance                          #
+################################################################
+@login_required(login_url='/login/')
+def consultAdvance(request, advId):
+    AdvReq = Advance.objects.get(id=advId)
+    print(AdvReq)
+    return createConsultAdvance(request, AdvReq=AdvReq)
+
+@login_required(login_url='/login/')
+def createConsultAdvance(request, AdvReq=None):
+    validor = Collaborator.objects.get(user=request.user)  # valideur
+    print(Collaborator.objects.filter(validator=validor).count())
+    if Collaborator.objects.filter(validator=validor).count() < 1:  # on ne fait rien si personne n'a ce valideur
+        return redirect('/void')
+    ligneDeFrais = Advance.objects.get(id=AdvReq.id)
+    context = {'ldf':ligneDeFrais}
+    return render(request, 'main/consultA.html', context)
+
+################################################################
+#                      ConsultMileage                          #
+################################################################
+@login_required(login_url='/login/')
+def consultMileage(request, milId):
+    MilReq = MileageExpense.objects.get(id=milId)
+    print(MilReq)
+    return createConsultMileage(request, MilReq=MilReq)
+
+@login_required(login_url='/login/')
+def createConsultMileage(request, MilReq=None):
+    validor = Collaborator.objects.get(user=request.user)  # valideur
+    print(Collaborator.objects.filter(validator=validor).count())
+    if Collaborator.objects.filter(validator=validor).count() < 1:  # on ne fait rien si personne n'a ce valideur
+        return redirect('/void')
+    ligneDeFrais = MileageExpense.objects.get(id=MilReq.id)
+    context = {'ldf':ligneDeFrais}
+    return render(request, 'main/consultM.html', context)
 
 ################################################################
 #                         Advance                              #
@@ -382,7 +420,7 @@ def createAdvanceRequest(request, AdvRef=None):
                 return redirect('/void')
         else:
             print(form.errors)
-    context = {'form': form}
+    context = {'form': form, 'type':"advance"}
     return render(request, 'main/form.html', context)
 
 
@@ -434,7 +472,7 @@ def createMileageExpense(request, MilRef=None):
             return redirect('/void')
         else:
             print(form.errors)
-    context = {'form': form}
+    context = {'form': form, 'type':"mileage"}
     return render(request, 'main/form.html', context)
 
 
