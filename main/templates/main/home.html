@@ -15,31 +15,31 @@
 
     <section class="content">
         <div class="container-fluid">
-            <div class="row">
+            <div class="col">
                 <!-- general form elements -->
                 <div class="card card-primary">
                     <div class="card-header">
-                        <h3 class="card-title">Demandes</h3>
+                        <h3 class="card-title">Mes notes de frais</h3>
                     </div>
                     <div class="card-body">
                         <div class="form-group">
 
 
-                                <button><a href="{% url 'void' %}"> VOID </a> </button>
-                                <button><a href="{% url 'RefundRequest' %}"> Faire une nouvelle ligne de frais </a> </button>
-                                <button><a href="{% url 'formReport' %}"> Historique des notes de frais </a> </button>
+                                <a class="btn btn-primary btn-lg" href="{% url 'void' %}"> Consulter la note de frais en cours  </a><br><br>
+                                <a class="btn btn-primary btn-lg" href="{% url 'RefundRequest' %}"> Faire une nouvelle ligne de frais </a><br><br>
+                                <a class="btn btn-primary btn-lg" href="{% url 'formReport' %}"> Historique des notes de frais </a>
                         </div>
                     </div>
                 </div>
-
+                <div><canvas width="5"></canvas></div>
                 <div class="card card-primary">
                     <div class="card-header">
                         <h3 class="card-title">Validations</h3>
                     </div>
                     <div class="card-body">
                         <div class="form-group">
-                                <button><a href="{% url 'void' %}"> Consulter les notes de frais à valider </a> </button>
-                                <button><a href="{% url 'serviceHistoric' %}"> Historique des notes du service </a> </button>
+                                <a class="btn btn-primary btn-lg" href="{% url 'void' %}"> Consulter les notes de frais à valider </a><br><br>
+                                <a class="btn btn-primary btn-lg" href="{% url 'serviceHistoric' %}"> Historique des notes du service </a>
                         </div>
                     </div>
                 </div>
