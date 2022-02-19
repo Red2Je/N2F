@@ -380,6 +380,16 @@ def modifyRefund(request, refId):
     print(RefReq)
     return createRefundRequest(request, RefReq=RefReq)
 
+@login_required(login_url='/login/')
+def modifyAdvance(request, advId):
+    RefReq = Advance.objects.get(id=advId)
+    return createRefundRequest(request, AdvRef=RefReq)
+
+@login_required(login_url='/login/')
+def modifyMileage(request, milId):
+    RefReq = Advance.objects.get(id=milId)
+    return createRefundRequest(request, MilRef=RefReq)
+
 
 def createExpenseReport(request):
     form = ExpenseReportForm()
