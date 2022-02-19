@@ -38,15 +38,18 @@
                <th>Détails</th>
             </thead>
             <tbody>
+               
                {% for collab in CollaboratorList %}
                {% for key,value in DictNoteDeFrais.items %}
                {% if key == collab %}
                {% for notedefrais in value %}
+               <form  class="form-group" method="post">
+                  {% csrf_token %}
                <tr>
                   <td>{{ collab.user.username }}</td>
                   <td>{{ notedefrais.month}} {{notedefraisyear }}</td>
                   <td>{{ notedefrais|sumRep:1 }}</td>
-                  <td><button class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target= "#intro-{{ forloop.counter }}">Show details</button></td>
+                  <td><button type="button" class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target= "#intro-{{ forloop.counter }}">Show details</button></td>
                </tr>
                <tr id="intro-{{ forloop.counter }}" class="collapse">
                   <td colspan="7">
@@ -65,7 +68,7 @@
                            <td>{{ mission.name }}</td>
                            <td>{{ mission.name|sumMission:key2 }}</td>
                            <td>{{ mission.name|sumMissMoney:key2 }}</td>
-                           <td><button class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target="#outro-{{forloop.parentloop.counter}}-{{ forloop.counter }}">Show details</button></td>
+                           <td><button  type="button" class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target="#outro-{{forloop.parentloop.counter}}-{{ forloop.counter }}">Show details</button></td>
                         </tbody>
                         <tr id="outro-{{forloop.parentloop.counter}}-{{ forloop.counter }}" class="collapse">
                            <td colspan="14">
@@ -103,9 +106,10 @@
                                        {% endif %}
                                     </td>
                                     <td>
-                                       <div class="form-check">
-                                          <input class="form-check-input" type="checkbox" value="expline.id" name="validRefundRequest" id="flexCheckChecked" checked>
-                                       </div>
+                                          <div class="form-check">
+                                             <input class="form-check-input" type="checkbox" value="{{ expLin.id|stringformat:"i" }}" name="validRefundRequest" id="flexCheckChecked" checked>
+                                             <label class="form-check-label" for="mango">Valider</label>
+                                          </div>
                                     </td>
                                  </tbody>
                                  {% endfor %}
@@ -211,8 +215,7 @@
                            </td>
                         </tr>
                      </table>
-                     <form method="post">
-                        {% csrf_token %}
+                     
                         <button type="submit"   formmethod="post" class="btn btn-primary btn-lg float-right">Confirmer</button>
                      </form>
                   </td>
@@ -226,6 +229,7 @@
       </div>
    </section>
 </div>
+
 <script>
    function ShowHide(id) {
      if ($(id).html() == "Show details") {

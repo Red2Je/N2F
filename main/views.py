@@ -171,11 +171,23 @@ def valid(request):
 
                             DictRefundRequest[(notedefraise,miss)] = [e for e in DictRefundRequest[(notedefraise,miss)] if e.id not in [m.id for m in DictMileageExpense[(notedefraise,miss)]]]
 
+        """
         if request.method == 'POST':
             RefundRequestvalided= request.POST.getlist('validRefundRequest')
+            print(RefundRequestvalided)
             Mileagevalided= request.POST.getlist('validMileage')
             Advancevalided= request.POST.getlist('validAvance')
-            print("chabite")        
+            for refundamodif in RefundRequestvalided:
+                 amodif =RefundRequest.objects.filter( id = RefundRequestvalided )
+                 amodif.state='Accepté'
+                 amodif.save()
+        """
+        if request.method == 'POST':
+            fruits = request.POST.getlist('validRefundRequest')
+            print(fruits)
+
+
+
 
                     
                     
