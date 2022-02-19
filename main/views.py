@@ -121,47 +121,56 @@ def valid(request):
     validor = Collaborator.objects.get(user=request.user)  # valideur
     CollaboratorList = []  # liste des collaborateurs du valideur
     DictNoteDeFrais = {}  # dict de [collaborateur : [liste de notes de frais] ]
-    DictLigneDeFrais = {}  # dict de [Note de frais: [liste de ExpenseLine ] ]
-    DictMission = {}  # dict de  [Note de frais : [mission] ]
+    DictMileageExpense = {}  # dict de [Note de frais: [liste de MileageExpense ] ]
+    DictRefundRequest = {}  # dict de [Note de frais: [liste de RefundRequest ] ]
+    DictAdvance = {}  # dict de [Note de frais: [liste de Advance ] ]
+    DictMission = {}  # dict de  [Note de frais : [RefundRequest] ]
 
     if Collaborator.objects.filter(validator=validor).count() >= 1:  # on ne fait rien si personne n'a ce valideur
         CollaboratorList = list(Collaborator.objects.filter(validator=validor))
 
         # recuperation de ses notes de frais, peut etre mettre une date limite sinon tout sera envoye
         for collabo in CollaboratorList:
-            if ExpenseReport.objects.filter(
-                    collaborator=collabo).count() >= 1:  # on ne fait rien si pas de note de frais
+            if ExpenseReport.objects.filter(collaborator=collabo).count() >= 1:  # on ne fait rien si pas de note de frais
                 DictNoteDeFrais[collabo] = list(ExpenseReport.objects.filter(collaborator=collabo))
 
                 for notedefraise in DictNoteDeFrais[collabo]:
                     DictMission[notedefraise] = []
+
                     if RefundRequest.objects.filter(expenseReport=notedefraise).count() >= 1:
                         filt = list(RefundRequest.objects.filter(expenseReport=notedefraise))
                         Mission = [f.mission for f in filt]
-                        DictMission[notedefraise] += Mission
+                        Mission = list(set(Mission))  # remove duplicates
+                        DictMission[notedefraise] += Mission # stockage des missions pour l'affichage
+                        for miss in Mission:
+                            DictRefundRequest[(notedefraise,miss)] = list(RefundRequest.objects.filter(expenseReport=notedefraise)) # ligne de frais de l'utilisateur pour cette note de frais
+                        
 
                     if Advance.objects.filter(expenseReport=notedefraise).count() >= 1:
                         filt = list(Advance.objects.filter(expenseReport=notedefraise))
                         Mission = [f.mission for f in filt]
-                        DictMission[notedefraise] += Mission
+                        Mission = list(set(Mission))  # remove duplicates
+                        DictMission[notedefraise] += Mission # stockage des missions pour l'affichage
+                        for miss in Mission:
+                            DictAdvance[(notedefraise,miss)] = list(Advance.objects.filter(expenseReport=notedefraise)) # avance de l'utilisateur pour cette note de frais
+                        
 
                     if MileageExpense.objects.filter(expenseReport=notedefraise).count() >= 1:
                         filt = list(MileageExpense.objects.filter(expenseReport=notedefraise))
                         Mission = [f.mission for f in filt]
-                        DictMission[notedefraise] += Mission
+                        Mission = list(set(Mission))  # remove duplicates
+                        DictMission[notedefraise] += Mission # stockage des missions pour l'affichage
+                        for miss in Mission:
+                            DictMileageExpense[(notedefraise,miss)] = list(MileageExpense.objects.filter(expenseReport=notedefraise)) # frais kilométriques de l'utilisateur pour cette note de frais
+                        
 
-            # on associe a chaque note de frais envoyee les lignes correspondantes
-            for note in DictNoteDeFrais[collabo]:
-                DictLigneDeFrais[note] = []
-                # ajout de ses advances 
-                DictLigneDeFrais[note] += list(Advance.objects.filter(expenseReport=note).filter(state="sent"))
-                # ajout de ses lignes de frais
-                DictLigneDeFrais[note] += list(RefundRequest.objects.filter(expenseReport=note).filter(state="sent"))
-                # ajout de ses frais kilometriques
-                DictLigneDeFrais[note] += list(MileageExpense.objects.filter(expenseReport=note).filter(state="sent"))
+                    
+                    
+
 
     context = {'CollaboratorList': CollaboratorList, 'DictNoteDeFrais': DictNoteDeFrais,
-               'DictLigneDeFrais': DictLigneDeFrais, 'validor': validor, 'DictMission': DictMission}
+               'DictAdvance': DictAdvance,'DictMileageExpense': DictMileageExpense,'DictRefundRequest': DictRefundRequest,
+                'validor': validor, 'DictMission': DictMission}
     return render(request, 'main/valid.html', context)
 
     # missionDict = {}
