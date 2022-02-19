@@ -1,0 +1,144 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class = "content-wrapper">
+    <div class = "content-header">
+	{% if form.errors %}
+		{% for field in form %}
+			{% for error in field.errors %}
+				<div class="alert alert-danger">
+					<strong>{{ error|escape }}</strong>
+				</div>
+			{% endfor %}
+		{% endfor %}
+		{% for error in form.non_field_errors %}
+			<div class="alert alert-danger">
+				<strong>{{ error|escape }}</strong>
+			</div>
+		{% endfor %}
+	{% endif %}	
+	</div>
+
+	{% load tags %}
+
+<style>
+.wrapper {
+  display: grid;
+  grid-template-columns: repeat(7,1);
+  grid-gap: 10px;
+  grid-auto-rows: minmax(20px, auto);
+}
+.one {
+  grid-column: 1;
+  grid-row: 1;
+}
+.two {
+  grid-column: 1;
+  grid-row: 2;
+}
+.three {
+  grid-column: 1;
+  grid-row: 3;
+}
+.four {
+  grid-column: 1;
+  grid-row: 4;
+}
+.five {
+  grid-column: 1;
+  grid-row: 5;
+}
+.six {
+  grid-column: 1;
+  grid-row: 6;
+}
+.seven {
+  grid-column: 1;
+  grid-row: 7;
+}
+</style>
+
+        <section class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                </div>
+            </div><!-- /.container-fluid -->
+        </section>
+
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+            <!-- general form elements -->
+            <div class="card card-primary">
+              <div class="card-header">
+                <h3 class="card-title">Consultation d'une ligne de frais</h3>
+              </div>
+				<form>
+				<div class="card-body">
+					<div class="form-group">
+					<form enctype="multipart/form-data" class="form-group" action="" method="POST">
+						<div class="row">
+						<div class="wrapper">
+							<div class="one">
+								<Label>Date</Label>
+							</div>
+							<div class="two">
+				            	<Label>Nature</Label>
+				            </div>
+				            <div class="three">
+				            	<Label>Note de Frais</Label>
+				            </div>
+				            <div class="four">
+				            	<Label>Mission</Label>
+				            </div>
+				            <div class="five">
+				            	<Label>Remboursement hors taxe</Label>
+				            </div>
+				            <div class="six">
+				            	<Label>Remboursement avec taxes</Label>
+				            </div>
+				            <div class="seven">
+				            	<Label>Justificatif</Label>
+				            </div>
+				        </div>
+				        <div class="wrapper">
+				        	<div class="one">
+				        		<h1>&#8205 &#8205 &#8205 &#8205</h1>
+				        	</div>
+				        </div>
+				        <div class="wrapper">
+				        	<div class="one">
+								<a>{{ldf.date}}</a>
+							</div>
+							<div class="two">
+								<a>{{ldf.nature}}</a>
+							</div>
+							<div class="three">
+								<a>{{ldf.expenseReport}}</a>
+							</div>
+							<div class="four">
+								<a>{{ldf.mission}}</a>
+							</div>
+							<div class="five">
+								<a>{{ldf.amountHT}}</a>
+							</div>
+							<div class="six">
+								<a>{{ldf.amountTVA}}</a>
+							</div>
+							<div class="seven">
+								<a href="{% url 'download' ldf.proof.name|urlFromFile:1 %}">Télécharger</a>
+							</div>
+						</div>
+				</div>
+					</form>
+					</div>
+				</div>
+				</form>
+			</div>	
+		</div>
+	</div>
+</section>
+</div>
+
+{% endblock %}

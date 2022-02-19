@@ -31,7 +31,7 @@
       <div class="table-responsive">
          <p class="t_heading">Notes de frais</p>
          <table class="table table-bordered table-hover">
-            <thead>
+            <thead style="background-color:darkgreen;color:white;" >
                <th>Demandeur</th>
                <th>Date</th>
                <th>Coût total TTC (€)</th>
@@ -39,197 +39,187 @@
             </thead>
             <tbody>
                {% for collab in CollaboratorList %}
-                  {% for key,value in DictNoteDeFrais.items %}
-                     {% if key == collab %}
-                        {% for notedefrais in value %}
-                           <tr>
-                              <td>{{ collab.user.username }}</td>
-                              <td>{{ notedefrais.month}} {{notedefraisyear }}</td>
-                              <td>{{ notedefrais|sumRep:1 }}</td>
-                              <td><button class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target="#intro">Show details</button></td>
-                           </tr>
-                        
-               
-                        <tr id="intro" class="collapse">
-                           <td colspan="7">
-                              <p class="t_heading">Missions</p>
+               {% for key,value in DictNoteDeFrais.items %}
+               {% if key == collab %}
+               {% for notedefrais in value %}
+               <tr>
+                  <td>{{ collab.user.username }}</td>
+                  <td>{{ notedefrais.month}} {{notedefraisyear }}</td>
+                  <td>{{ notedefrais|sumRep:1 }}</td>
+                  <td><button class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target= "#intro-{{ forloop.counter }}">Show details</button></td>
+               </tr>
+               <tr id="intro-{{ forloop.counter }}" class="collapse">
+                  <td colspan="7">
+                     <p class="t_heading">Missions</p>
+                     <table class="table custom-view">
+                        <thead thead style="background-color:green;color:white;" >
+                           <th>Mission</th>
+                           <th>Nombre ligne de frais</th>
+                           <th>Coût total TTC (€)</th>
+                           <th>Détails</th>
+                        </thead>
+                        {% for key2,value2 in DictMission.items %}
+                        {% if key2 == notedefrais %}
+                        {% for mission in value2 %}
+                        <tbody>
+                           <td>{{ mission.name }}</td>
+                           <td>{{ mission.name|sumMission:key2 }}</td>
+                           <td>{{ mission.name|sumMissMoney:key2 }}</td>
+                           <td><button class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target="#outro-{{forloop.parentloop.counter}}-{{ forloop.counter }}">Show details</button></td>
+                        </tbody>
+                        <tr id="outro-{{forloop.parentloop.counter}}-{{ forloop.counter }}" class="collapse">
+                           <td colspan="14">
+                              <p class="t_heading">Lignes de frais</p>
                               <table class="table custom-view">
-                                 <thead>
-                                    <th>Mission</th>
-                                    <th>Nombre ligne de frais</th>
+                                 <thead style="background-color:seagreen;color:white;" >
+                                    <th>Type</th>
+                                    <th>Date</th>
                                     <th>Coût total TTC (€)</th>
-                                    <th>Détails</th>
-                                    
+                                    <th>Justificatif</th>
+                                    <th>Détail</th>
+                                    <th>Valider</th>
                                  </thead>
-                                    
-                                    {% for key2,value2 in DictMission.items %}
-                                       {% if key2 == notedefrais %}
-                                          {% for mission in value2 %}
-                                             <tbody>
-                                                <td>{{ mission.name }}</td>
-                                                <td>{{ mission.name|sumMission:key2 }}</td>
-                                                <td>{{ mission.name|sumMissMoney:key2 }}</td>
-                                                <td><button class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target="#outro-{{forloop.parentloop.counter}}-{{ forloop.counter }}">Show details</button></td>
-                                             </tbody>
-
-                                             <tr id="outro-{{forloop.parentloop.counter}}-{{ forloop.counter }}" class="collapse">
-                                                <td colspan="14">
-                                                   <p class="t_heading">Lignes de frais</p>
-                                                   <table class="table custom-view">
-                                                      <thead>
-                                                         <th>Type</th>
-                                                         <th>Date</th>
-                                                         <th>Coût total TTC (€)</th>
-                                                         <th>Justificatif</th>
-                                                         <th>Détail</th>
-                                                         <th>Valider</th>
-                                                      </thead>
-
-                                                      {% with expid=notedefrais.id|stringformat:"i" %}
-                                                      {% with missid=mission.id|stringformat:"i" %}
-                                                      {% with filt=expid|add:"&"|add:missid %}
-                                                      {% with expLinL=DictRefundRequest|get_from_pair:filt %}
-                                                      {% for expLin in expLinL %}
-                                                         <tbody>
-                                                            <td>{{ expLin.nature }}</td>
-                                                            <td>{{ expLin.date }}</td>
-                                                            <td>{{ expLin.amountTVA }}</td>
-                                                            <td><a href="{% url 'download' filename='placeholder.jpg'%}">Télécharger</a></td>
-                                                            
-                                                            <td>
-                                                               {% if expLin.state != 'Accepté' %}
-                                                               <form method="get" action="{% url 'RefundRequest' %}{{expLin.id}}">
-                                                                  <button type="submit" formmethod="get" onclick="location.href = "{% url 'RefundRequest' %}" id="myButton" class="btn btn-primary" >détail</button>
-                                                               </form>
-                                                               {% else %}
-                                                               <p>Non modifiable après acceptation</p>
-                                                               {% endif %}
-                                                            </td>
-                                                            <td>
-                                                               <div class="form-check">
-                                                                  <input class="form-check-input" type="checkbox" value="" name="valid" id="flexCheckChecked" checked>
-                                                               </div>
-                                                            </td>
-                                                            
-                                                         </tbody>
-                                                      {% endfor %}
-        
-                                                      {% endwith %}
-                                                      {% endwith %}
-                                                      {% endwith %}
-                                                      {% endwith %}
-                                                   </table>    
-                                                      <p class="t_heading">Demande d'avances</p>
-                                                   <table class="table custom-view">
-                                                      <thead>
-                                                         <th>Type</th>
-                                                         <th>Date</th>
-                                                         <th>Coût total TTC (€)</th>
-                                                         <th>Justificatif</th>
-                                                         <th>Détail</th>
-                                                         <th>Valider</th>
-                                                      </thead>
-
-                                                      {% with expid=notedefrais.id|stringformat:"i" %}
-                                                      {% with missid=mission.id|stringformat:"i" %}
-                                                      {% with filt=expid|add:"&"|add:missid %}
-                                                      {% with expLinL=DictAdvance|get_from_pair:filt %}
-                                                      {% for expLin in expLinL %}
-                                                         <tbody>
-                                                            <td>{{ expLin.nature }}</td>
-                                                            <td>{{ expLin.date }}</td>
-                                                            <td>{{ expLin.amountTVA }}</td>
-                                                            <td><a href="{% url 'download' filename='placeholder.jpg'%}">Télécharger</a></td>
-                                                            
-                                                            <td>
-                                                               {% if expLin.state != 'Accepté' %}
-                                                               <form method="get" action="{% url 'RefundRequest' %}{{expLin.id}}">
-                                                                  <button type="submit" formmethod="get" onclick="location.href = "{% url 'RefundRequest' %}" id="myButton" class="btn btn-primary" >détail</button>
-                                                               </form>
-                                                               {% else %}
-                                                               <p>Non modifiable après acceptation</p>
-                                                               {% endif %}
-                                                            </td>
-                                                            <td>
-                                                               <div class="form-check">
-                                                                  <input class="form-check-input" type="checkbox" value="" name="valid" id="flexCheckChecked" checked>
-                                                               </div>
-                                                            </td>
-                                                            
-                                                         </tbody>
-                                                      {% endfor %}
-        
-                                                      {% endwith %}
-                                                      {% endwith %}
-                                                      {% endwith %}
-                                                      {% endwith %}
-                                                   </table>
-                                                   <p class="t_heading">Frais kilométriques</p>
-                                                   <table class="table custom-view">
-                                                      <thead>
-                                                         <th>Type</th>
-                                                         <th>Date</th>
-                                                         <th>Coût total TTC (€)</th>
-                                                         <th>Justificatif</th>
-                                                         <th>Détail</th>
-                                                         <th>Valider</th>
-                                                      </thead>
-
-                                                      {% with expid=notedefrais.id|stringformat:"i" %}
-                                                      {% with missid=mission.id|stringformat:"i" %}
-                                                      {% with filt=expid|add:"&"|add:missid %}
-                                                      {% with expLinL=DictMileageExpense|get_from_pair:filt %}
-                                                      {% for expLin in expLinL %}
-                                                         <tbody>
-                                                            <td>{{ expLin.nature }}</td>
-                                                            <td>{{ expLin.date }}</td>
-                                                            <td>{{ expLin.amountTVA }}</td>
-                                                            <td><a href="{% url 'download' filename='placeholder.jpg'%}">Télécharger</a></td>
-                                                            
-                                                            <td>
-                                                               {% if expLin.state != 'Accepté' %}
-                                                               <form method="get" action="{% url 'RefundRequest' %}{{expLin.id}}">
-                                                                  <button type="submit" formmethod="get" onclick="location.href = "{% url 'RefundRequest' %}" id="myButton" class="btn btn-primary" >détail</button>
-                                                               </form>
-                                                               {% else %}
-                                                               <p>Non modifiable après acceptation</p>
-                                                               {% endif %}
-                                                            </td>
-                                                            <td>
-                                                               <div class="form-check">
-                                                                  <input class="form-check-input" type="checkbox" value="" name="valid" id="flexCheckChecked" checked>
-                                                               </div>
-                                                            </td>
-                                                            
-                                                         </tbody>
-                                                      {% endfor %}
-        
-                                                      {% endwith %}
-                                                      {% endwith %}
-                                                      {% endwith %}
-                                                      {% endwith %}
-                                                   
-                                                      
-                                                      
-                                                      
-                                          {% endfor %}
+                                 {% with expid=notedefrais.id|stringformat:"i" %}
+                                 {% with missid=mission.id|stringformat:"i" %}
+                                 {% with filt=expid|add:"&"|add:missid %}
+                                 {% with expLinL=DictRefundRequest|get_from_pair:filt %}
+                                 {% for expLin in expLinL %}
+                                 <tbody>
+                                    <td>{{ expLin.nature }}</td>
+                                    <td>{{ expLin.date }}</td>
+                                    <td>{{ expLin.amountTVA }}</td>
+                                    {% if expLin.proof.name.strip %}
+                                    <td><a href="{% url 'download' expLin.proof.name|urlFromFile:1 %}">Télécharger</a></td>
+                                    {% else %}
+                                    <td>Non renseignée</td>
+                                    {% endif %}
+                                    <td>
+                                       {% if expLin.state != 'Accepté' %}
+                                       <form method="get" action="{% url 'RefundRequest' %}{{expLin.id}}">
+                                          <button type="submit" formmethod="get" onclick="location.href = "{% url 'RefundRequest' %}" id="myButton" class="btn btn-primary" >détail</button>
+                                       </form>
+                                       {% else %}
+                                       <p>Non modifiable après acceptation</p>
                                        {% endif %}
-                                    {% endfor %}
-                                       </table>
                                     </td>
-                                 </tr>
+                                    <td>
+                                       <div class="form-check">
+                                          <input class="form-check-input" type="checkbox" value="" name="valid" id="flexCheckChecked" checked>
+                                       </div>
+                                    </td>
+                                 </tbody>
+                                 {% endfor %}
+                                 {% endwith %}
+                                 {% endwith %}
+                                 {% endwith %}
+                                 {% endwith %}
                               </table>
-                              
-                              <form method="post">
-                                 {% csrf_token %}
-                                 <button type="submit"   formmethod="post" class="btn btn-primary btn-lg float-right">Confirmer</button>
-                              </form>
+                              <p class="t_heading">Demande d'avances</p>
+                              <table class="table custom-view">
+                                 <thead style="background-color:seagreen;color:white;">
+                                    <th>Type</th>
+                                    <th>Date</th>
+                                    <th>Coût total TTC (€)</th>
+                                    <th>Justificatif</th>
+                                    <th>Détail</th>
+                                    <th>Valider</th>
+                                 </thead>
+                                 {% with expid=notedefrais.id|stringformat:"i" %}
+                                 {% with missid=mission.id|stringformat:"i" %}
+                                 {% with filt=expid|add:"&"|add:missid %}
+                                 {% with expLinL=DictAdvance|get_from_pair:filt %}
+                                 {% for expLin in expLinL %}
+                                 <tbody>
+                                    <td>{{ expLin.nature }}</td>
+                                    <td>{{ expLin.date }}</td>
+                                    <td>{{ expLin.amountTVA }}</td>
+                                    {% if expLin.proof.name.strip %}
+                                    <td><a href="{% url 'download' expLin.proof.name|urlFromFile:1 %}">Télécharger</a></td>
+                                    {% else %}
+                                    <td>Non renseignée</td>
+                                    {% endif %}
+                                    <td>
+                                       {% if expLin.state != 'Accepté' %}
+                                       <form method="get" action="{% url 'RefundRequest' %}{{expLin.id}}">
+                                          <button type="submit" formmethod="get" onclick="location.href = "{% url 'RefundRequest' %}" id="myButton" class="btn btn-primary" >détail</button>
+                                       </form>
+                                       {% else %}
+                                       <p>Non modifiable après acceptation</p>
+                                       {% endif %}
+                                    </td>
+                                    <td>
+                                       <div class="form-check">
+                                          <input class="form-check-input" type="checkbox" value="" name="valid" id="flexCheckChecked" checked>
+                                       </div>
+                                    </td>
+                                 </tbody>
+                                 {% endfor %}
+                                 {% endwith %}
+                                 {% endwith %}
+                                 {% endwith %}
+                                 {% endwith %}
+                              </table>
+                              <p class="t_heading">Frais kilométriques</p>
+                              <table class="table custom-view">
+                                 <thead style="background-color:seagreen;color:white;">
+                                    <th>Type</th>
+                                    <th>Date</th>
+                                    <th>Coût total TTC (€)</th>
+                                    <th>Justificatif</th>
+                                    <th>Détail</th>
+                                    <th>Valider</th>
+                                 </thead>
+                                 {% with expid=notedefrais.id|stringformat:"i" %}
+                                 {% with missid=mission.id|stringformat:"i" %}
+                                 {% with filt=expid|add:"&"|add:missid %}
+                                 {% with expLinL=DictMileageExpense|get_from_pair:filt %}
+                                 {% for expLin in expLinL %}
+                                 <tbody>
+                                    <td>{{ expLin.nature }}</td>
+                                    <td>{{ expLin.date }}</td>
+                                    <td>{{ expLin.amountTVA }}</td>
+                                    {% if expLin.proof.name.strip %}
+                                    <td><a href="{% url 'download' expLin.proof.name|urlFromFile:1 %}">Télécharger</a></td>
+                                    {% else %}
+                                    <td>Non renseignée</td>
+                                    {% endif %}
+                                    <td>
+                                       {% if expLin.state != 'Accepté' %}
+                                       <form method="get" action="{% url 'RefundRequest' %}{{expLin.id}}">
+                                          <button type="submit" formmethod="get" onclick="location.href = "{% url 'RefundRequest' %}" id="myButton" class="btn btn-primary" >détail</button>
+                                       </form>
+                                       {% else %}
+                                       <p>Non modifiable après acceptation</p>
+                                       {% endif %}
+                                    </td>
+                                    <td>
+                                       <div class="form-check">
+                                          <input class="form-check-input" type="checkbox" value="" name="valid" id="flexCheckChecked" checked>
+                                       </div>
+                                    </td>
+                                 </tbody>
+                                 {% endfor %}
+                                 {% endwith %}
+                                 {% endwith %}
+                                 {% endwith %}
+                                 {% endwith %}
+                                 
+                              </table>
+                              {% endfor %}
+                              {% endif %}
+                              {% endfor %}
                            </td>
                         </tr>
-                        
-                        {% endfor %}
-                     {% endif %}
-                  {% endfor %}
+                     </table>
+                     <form method="post">
+                        {% csrf_token %}
+                        <button type="submit"   formmethod="post" class="btn btn-primary btn-lg float-right">Confirmer</button>
+                     </form>
+                  </td>
+               </tr>
+               {% endfor %}
+               {% endif %}
+               {% endfor %}
                {% endfor %}
             </tbody>
          </table>
