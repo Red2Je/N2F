@@ -88,7 +88,7 @@
                               {% with expid=expRep.id|stringformat:"i" %}
                               {% with missid=mission.id|stringformat:"i" %}
                               {% with filt=expid|add:"&"|add:missid %}
-                              {% with expLinL=expLinDict|get_from_tuple:filt %}
+                              {% with expLinL=expLinDict|get_from_pair:filt %}
                               {% for expLin in expLinL %}
                               <tbody>
                                  <td>{{ expLin.get_nature_display }}</td>

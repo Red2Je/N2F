@@ -48,8 +48,21 @@ def get_class(value):
   return value.__class__.__name__
 
 @register.filter
-def get_from_tuple(dict, args):
+def get_from_pair(dict, args):
     argList = args.split('&')
     expRep = ExpenseReport.objects.get(id=int(argList[0]))
     mission = Mission.objects.get(id=int(argList[1]))
     return dict.get((expRep, mission))
+
+@register.filter
+def isHead(u,args):
+    c = Collaborator.objects.get(user = u)
+    return c.departmentHead is not None
+
+@register.filter
+def get_from_tuple(dict,args):
+    argList = args.split('&')
+    collab = Collaborator.objects.get(id = argList[0])
+    expRep = ExpenseReport.objects.get(id = argList[1])
+    mission = Mission.objects.get(id = argList[2])
+    return dict.get((collab,expRep,mission))

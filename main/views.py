@@ -61,14 +61,26 @@ def save_file(f):
 
 @login_required(login_url='/login/')
 def sHistoric(request):
-	u = Collaborator.objects.get(user = request.user)
-	service = u.departmentHead
-	if service is not None:
-		"""uL = Collaborator.objects.filter(service=service)
-		for user in uL:"""
-		print("t")
+    u = Collaborator.objects.get(user = request.user)
+    service = u.departmentHead
+    uL = []
+    expRepDict = {}
+    missionDict = {}
+    expLinDict = {}
+    if service is not None:
+        uL = list(Collaborator.objects.filter(service=service))
+        for user in uL:
+            expRepDict[user] = list(ExpenseReport.objects.filter(collaborator = user))
+            for expRep in expRepDict[user] : 
+                filt = list(RefundRequest.objects.filter(expenseReport = expRep))
+                filtMiss = [f.mission for f in filt]
+                filtMiss = list(set(filtMiss))#remove duplicates
+                missionDict[(user,expRep)] = filtMiss
+                for miss in filtMiss:
+                    expLinDict[(user,expRep,miss)] = list(RefundRequest.objects.filter(expenseReport = expRep, mission = miss))
 
-    return render(request,'main/historic.html')
+    context = {'service' : service, 'uL' : uL, 'expRepDict' : expRepDict, 'missDict' : missionDict, 'expLinDict' : expLinDict}
+    return render(request,'main/historic.html',context)
 
 @login_required(login_url='/login/')
 def cHistoric(request):
