@@ -113,7 +113,7 @@
 
 
 
-
+                          
                            <p class="t_heading"><strong>Remboursement frais kilométriques</strong></p>
                            <table class="table custom-view">
                               <thead style="background-color:seagreen;color:white;">
@@ -140,7 +140,7 @@
                                  {% endif %}
                                  <td>
                                     {% if expLin.state != 'Accepté' %}
-                                    <form method="get" action="{% url 'RefundRequest' %}{{expLin.id}}">
+                                    <form method="get" action="{% url 'MileageRequest' %}{{expLin.id}}">
                                        <button type="submit" formmethod="get" id="myButton" class="btn btn-primary" >Modifier</button>
                                     </form>
                                     {% else %}
@@ -182,7 +182,7 @@
                                  <td>{{ expLin.advanceCommentary }}</td>
                                  <td>
                                     {% if expLin.state != 'Accepté' %}
-                                    <form method="get" action="{% url 'RefundRequest' %}{{expLin.id}}">
+                                    <form method="get" action="{% url 'AdvanceRequest' %}{{expLin.id}}">
                                        <button type="submit" formmethod="get" id="myButton" class="btn btn-primary" >Consulter</button>
                                     </form>
                                     {% else %}

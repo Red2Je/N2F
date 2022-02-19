@@ -69,6 +69,8 @@ def sHistoric(request):
     service = u.departmentHead
     uL = []
     expRepDict = {}
+    advDict = {}
+    mileDict = {}
     missionDict = {}
     expLinDict = {}
     if service is not None:
@@ -81,11 +83,14 @@ def sHistoric(request):
                 filtMiss = list(set(filtMiss))  # remove duplicates
                 missionDict[(user, expRep)] = filtMiss
                 for miss in filtMiss:
-                    expLinDict[(user, expRep, miss)] = list(
-                        RefundRequest.objects.filter(expenseReport=expRep, mission=miss))
+                    expLinDict[(user, expRep, miss)] = list(RefundRequest.objects.filter(expenseReport=expRep, mission=miss))
+                    advDict[(user,expRep,miss)] = list(Advance.objects.filter(expenseReport=expRep, mission=miss))
+                    mileDict[(user,expRep,miss)] = list(MileageExpense.objects.filter(expenseReport=expRep, mission=miss))
+                    expLinDict[(user,expRep,miss)] = [e for e in expLinDict[(user,expRep,miss)] if e.id not in [m.id for m in mileDict[(user,expRep,miss)]]]
 
-    context = {'service': service, 'uL': uL, 'expRepDict': expRepDict, 'missDict': missionDict,
-               'expLinDict': expLinDict}
+    print(expRepDict.get(uL[0]))
+    context = {'expRepDict': expRepDict, 'uL': uL, 'expLinDict': expLinDict, 'missDict': missionDict, 'mileDict': mileDict,
+               'advDict': advDict}
     return render(request, 'main/historic.html', context)
 
 
@@ -111,7 +116,7 @@ def cHistoric(request):
                 mileDict[(expRep,miss)] = list(MileageExpense.objects.filter(expenseReport=expRep, mission=miss))
                 expLinDict[(expRep,miss)] = [e for e in expLinDict[(expRep,miss)] if e.id not in [m.id for m in mileDict[(expRep,miss)]]]
                     
-
+                print(advDict)
     context = {'expRepL': expRepL, 'collab': u, 'expLinDict': expLinDict, 'missDict': missionDict, 'mileDict': mileDict,
                'advDict': advDict}
     return render(request, 'main/clientHistoric.html', context)
@@ -323,7 +328,8 @@ def consultRefund(request, refId):
 @login_required(login_url='/login/')
 def createConsultRefund(request, RefReq=None):
     validor = Collaborator.objects.get(user=request.user)  # valideur
-    if Collaborator.objects.filter(validator=validor).count() >= 1:  # on ne fait rien si personne n'a ce valideur
+    print(Collaborator.objects.filter(validator=validor).count())
+    if Collaborator.objects.filter(validator=validor).count() < 1:  # on ne fait rien si personne n'a ce valideur
         return redirect('/void')
     ligneDeFrais = RefundRequest.objects.get(id=RefReq.id)
     context = {'ldf':ligneDeFrais}
@@ -334,30 +340,46 @@ def createConsultRefund(request, RefReq=None):
 ################################################################
 
 @login_required(login_url='/login/')
-def createAdvanceRequest(request):
+def createAdvanceRequest(request, AdvRef=None):
     col, expRep = collabAndReport(request)
     # default the date to today
     today = datetime.date.today()
     today = today.strftime("%d/%m/%Y")
     form = AdvanceForm(collab=col, initial={'date': today})
+
+    if AdvRef is not None and AdvRef.state != RefundRequest.accepted:
+        col = AdvRef.expenseReport.collaborator
+        form = AdvanceForm(instance=AdvRef, collab=col,
+                                 req=request)  # we pass the instance of the already existing refund request to let the model form generate itself
+
+
     if request.method == 'POST':
 
         form = AdvanceForm(request.POST, request.FILES, collab=col)
         if form.is_valid():
-            toValidate = RefundRequest.draft
-            if 'Submit' in request.POST:
-                toValidate = RefundRequest.sent
-            obj = form.save(commit=False)
+            if AdvRef is None : 
+                toValidate = RefundRequest.draft
+                if 'Submit' in request.POST:
+                    toValidate = RefundRequest.sent
+                obj = form.save(commit=False)
 
-            # Handle the users that does not have a report yet
-            obj.proof = None
-            obj.expenseReport = expRep
-            obj.collaborator = col
-            obj.validator = col.validator
-            obj.validated = toValidate
+                # Handle the users that does not have a report yet
+                obj.proof = None
+                obj.expenseReport = expRep
+                obj.collaborator = col
+                obj.validator = col.validator
+                obj.validated = toValidate
 
-            obj.save()
-            return redirect('/void')
+                obj.save()
+                return redirect('/void')
+            else:
+                obj = form.save(commit=False)
+                obj.collaborator = col
+                obj.validator = col.validator
+                obj.state = RefundRequest.sent
+                obj.proof = None
+                obj.save()
+                return redirect('/void')
         else:
             print(form.errors)
     context = {'form': form}
@@ -378,7 +400,7 @@ def createMileageExpense(request, MilRef=None):
 
     if MilRef is not None and MilRef.state != RefundRequest.accepted:
             col = MilRef.expenseReport.collaborator
-            form = RefundRequestForm(instance=MilRef, collab=col,
+            form = MileageExpenseForm(instance=MilRef, collab=col,
                                     req=request)  # we pass the instance of the already existing refund request to let the model form generate itself
 
     if request.method == 'POST':
@@ -422,7 +444,6 @@ def createMileageExpense(request, MilRef=None):
 @login_required(login_url='/login/')
 def modifyRefund(request, refId):
     RefReq = RefundRequest.objects.get(id=refId)
-    print(RefReq)
     return createRefundRequest(request, RefReq=RefReq)
 
 @login_required(login_url='/login/')
@@ -432,7 +453,7 @@ def modifyAdvance(request, advId):
 
 @login_required(login_url='/login/')
 def modifyMileage(request, milId):
-    RefReq = Advance.objects.get(id=milId)
+    RefReq = MileageExpense.objects.get(id=milId)
     return createMileageExpense(request, MilRef=RefReq)
 
 

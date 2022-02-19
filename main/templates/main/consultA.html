@@ -93,13 +93,10 @@
 				            	<Label>Mission</Label>
 				            </div>
 				            <div class="five">
-				            	<Label>Remboursement hors taxe</Label>
+				            	<Label>Remboursement estimé</Label>
 				            </div>
 				            <div class="six">
-				            	<Label>Remboursement avec taxes</Label>
-				            </div>
-				            <div class="seven">
-				            	<Label>Justificatif</Label>
+				            	<Label>Commentaire</Label>
 				            </div>
 				        </div>
 				        <div class="wrapper">
@@ -121,13 +118,10 @@
 								<a>{{ldf.mission}}</a>
 							</div>
 							<div class="five">
-								<a>{{ldf.amountHT}}</a>
+								<a>{{ldf.estimatedPrice}}</a>
 							</div>
 							<div class="six">
-								<a>{{ldf.amountTVA}}</a>
-							</div>
-							<div class="seven">
-								<a href="{% url 'download' ldf.proof.name|urlFromFile:1 %}">Télécharger</a>
+								<a>{{ldf.advanceCommentary}}</a>
 							</div>
 						</div>
 				</div>
