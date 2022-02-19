@@ -92,8 +92,6 @@ def cHistoric(request):
     advDict = {}
     mileDict = {}
     missionDict = {}
-    tempELDict = {}
-    tempMDict = {}
     if ExpenseReport.objects.filter(collaborator=u).count() >= 1:
         expRepL = list(ExpenseReport.objects.filter(collaborator=u).order_by('year', '-month'))
         for expRep in expRepL:
@@ -103,9 +101,10 @@ def cHistoric(request):
             missionDict[expRep] = filtMiss
             for miss in filtMiss:
                 expLinDict[(expRep, miss)] = list(RefundRequest.objects.filter(expenseReport=expRep, mission=miss))
-                if MileageExpense.objects.filter(expenseReport=expRep, mission=miss).count() >= 1:
-                    tempMDict[miss] = list(MileageExpense.objects.filter(expenseReport=expRep, mission=miss))
-                    mileDict[expRep] = tempMDict
+                advDict[(expRep,miss)] = list(Advance.objects.filter(expenseReport=expRep, mission=miss))
+                mileDict[(expRep,miss)] = list(MileageExpense.objects.filter(expenseReport=expRep, mission=miss))
+                expLinDict[(expRep,miss)] = [e for e in expLinDict[(expRep,miss)] if e.id not in [m.id for m in mileDict[(expRep,miss)]]]
+                    
 
     context = {'expRepL': expRepL, 'collab': u, 'expLinDict': expLinDict, 'missDict': missionDict, 'mileDict': mileDict,
                'advDict': advDict}
@@ -162,8 +161,10 @@ def valid(request):
                         DictMission[notedefraise] += Mission # stockage des missions pour l'affichage
                         for miss in Mission:
                             DictMileageExpense[(notedefraise,miss)] = list(MileageExpense.objects.filter(expenseReport=notedefraise)) # frais kilométriques de l'utilisateur pour cette note de frais
-                        
 
+                    DictRefundRequest[(notedefraise,miss)] = [e for e in DictRefundRequest[(notedefraise,miss)] if e.id not in [m.id for m in DictMileageExpense[(notedefraise,miss)]]]    
+
+                    
                     
                     
 
@@ -307,13 +308,13 @@ def createAdvanceRequest(request):
             obj = form.save(commit=False)
 
             # Handle the users that does not have a report yet
+            obj.proof = None
             obj.expenseReport = expRep
             obj.collaborator = col
             obj.validator = col.validator
             obj.validated = toValidate
 
             obj.save()
-            save_file(request.FILES['proof'])
             return redirect('/void')
         else:
             print(form.errors)
