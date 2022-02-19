@@ -33,20 +33,14 @@
 <section class="content">
    <div class="table-responsive">
       <p class="t_heading">Notes de frais</p>
-      <table class="table table-bordered table-hover">
-         <thead>
+      <table class="table table-bordered">
+         <thead style="background-color:darkgreen;color:white;">
             <th>Date</th>
             <th>Coût total TTC (€)</th>
             <th>État</th>
-            <th>Details</th>
+            <th>Détails</th>
          </thead>
-         <script>
-         @{int i=0;}
-     	</script>
          {% for expRep in expRepL %}
-         <script>
-         i++;
-         </script>
          <tbody>
             <tr>
                <td>{{ expRep.month}} {{expRep.year }}</td>
@@ -58,11 +52,11 @@
                <td colspan="7">
                   <p class="t_heading">Missions</p>
                   <table class="table custom-view">
-                     <thead>
+                     <thead style="background-color:green;color:white;">
                         <th>Mission</th>
                         <th>Nombre ligne de frais</th>
                         <th>Coût total TTC (€)</th>
-                        <th>Details</th>
+                        <th>Détails</th>
                      </thead>
                      {% for key,value in missDict.items %}
                      {% if key == expRep %}
@@ -77,7 +71,7 @@
                         <td colspan="14">
                            <p class="t_heading">Remboursement hors frais kilométriques</p>
                            <table class="table custom-view">
-                              <thead>
+                              <thead style="background-color:seagreen;color:white;">
                                  <th>Type</th>
                                  <th>Date</th>
                                  <th>Coût total TTC (€)</th>
@@ -95,14 +89,14 @@
                                  <td>{{ expLin.date }}</td>
                                  <td>{{ expLin.amountTVA }}</td>
                                  {% if expLin.proof.name.strip %}
-                                 <td><a href="{% url 'download' expLin.proof.name|urlFromFile:1 %}">Télécharger  {{expLine.proof.name}} </a></td>
+                                 <td><a href="{% url 'download' expLin.proof.name|urlFromFile:1 %}">Télécharger</a></td>
                                  {% else %}
                                  <td>Non renseignée</td>
                                  {% endif %}
                                  <td>
                                     {% if expLin.state != 'Accepté' %}
                                     <form method="get" action="{% url 'RefundRequest' %}{{expLin.id}}">
-                                       <button type="submit" formmethod="get" onclick="location.href = "{% url 'RefundRequest' %}" id="myButton" class="btn btn-primary" >détail</button>
+                                       <button type="submit" formmethod="get" id="myButton" class="btn btn-primary" >Modifier</button>
                                     </form>
                                     {% else %}
                                     <p>Non modifiable après acceptation</p>
