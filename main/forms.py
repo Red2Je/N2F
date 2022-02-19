@@ -22,7 +22,7 @@ class RefundRequestForm(ModelForm):
             'expenseReport': 'Note de frais',
             'mission': 'Mission',
             'amountHT': 'Remboursement hors taxe',
-            'amountTVA': 'Remboursement avec taxes',
+            'amountTVA': 'Remboursement avec taxe',
             'proof': 'Justificatif',
         }
         widgets = {'date': forms.SelectDateWidget}

@@ -55,13 +55,6 @@ def get_from_pair(dict, args):
     return dict.get((expRep, mission))
 
 @register.filter
-def get_from_pair2(dict, args):
-    argList = args.split('&')
-    user = Collaborator.objects.get(id=int(argList[0]))
-    expRep = ExpenseReport.objects.get(id=int(argList[1]))
-    return dict.get((user, expRep))
-
-@register.filter
 def isHead(u,args):
     c = Collaborator.objects.get(user = u)
     return c.departmentHead is not None
