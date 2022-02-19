@@ -98,9 +98,7 @@
                                     {% endif %}
                                     <td>
                                        {% if expLin.state != 'Accepté' %}
-                                       <form method="get" action="{% url 'RefundRequest' %}{{expLin.id}}">
-                                          <button type="submit" formmethod="get" onclick="location.href = "{% url 'RefundRequest' %}" id="myButton" class="btn btn-primary" >détail</button>
-                                       </form>
+                                       <a class="btn btn-primary" href="{% url 'RefundRequest' %}{{expLin.id}}">détail</a>
                                        {% else %}
                                        <p>Non modifiable après acceptation</p>
                                        {% endif %}
@@ -144,9 +142,7 @@
                                     {% endif %}
                                     <td>
                                        {% if expLin.state != 'Accepté' %}
-                                       <form method="get" action="{% url 'RefundRequest' %}{{expLin.id}}">
-                                          <button type="submit" formmethod="get" onclick="location.href = "{% url 'RefundRequest' %}" id="myButton" class="btn btn-primary" >détail</button>
-                                       </form>
+                                       <a class="btn btn-primary" href="{% url 'RefundRequest' %}{{expLin.id}}">détail</a>
                                        {% else %}
                                        <p>Non modifiable après acceptation</p>
                                        {% endif %}
@@ -189,9 +185,7 @@
                                     {% endif %}
                                     <td>
                                        {% if expLin.state != 'Accepté' %}
-                                       <form method="get" action="{% url 'RefundRequest' %}{{expLin.id}}">
-                                          <button type="submit" formmethod="get" onclick="location.href = "{% url 'RefundRequest' %}" id="myButton" class="btn btn-primary" >détail</button>
-                                       </form>
+                                       <a class="btn btn-primary" href="{% url 'RefundRequest' %}{{expLin.id}}">détail</a>
                                        {% else %}
                                        <p>Non modifiable après acceptation</p>
                                        {% endif %}
