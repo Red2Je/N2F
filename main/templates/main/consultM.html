@@ -57,6 +57,22 @@
   grid-column: 1;
   grid-row: 7;
 }
+.eight {
+  grid-column: 1;
+  grid-row: 8;
+}
+.nine {
+  grid-column: 1;
+  grid-row: 9;
+}
+.ten {
+  grid-column: 1;
+  grid-row: 10;
+}
+.eleven {
+  grid-column: 1;
+  grid-row: 11;
+}
 </style>
 
         <section class="content-header">
@@ -101,6 +117,18 @@
 				            <div class="seven">
 				            	<Label>Justificatif</Label>
 				            </div>
+				            <div class="eight">
+				            	<Label>Puissance fiscale</Label>
+				            </div>
+				            <div class="nine">
+				            	<Label>Ville de départ</Label>
+				            </div>
+				            <div class="ten">
+				            	<Label>Ville d'arrivée</Label>
+				            </div>
+				            <div class="eleven">
+				            	<Label>Distance</Label>
+				            </div>
 				        </div>
 				        <div class="wrapper">
 				        	<div class="one">
@@ -128,6 +156,18 @@
 							</div>
 							<div class="seven">
 								<a href="{% url 'download' ldf.proof.name|urlFromFile:1 %}">Télécharger</a>
+							</div>
+							<div class="eight">
+								<a>{{ldf.carFiscalPower}}</a>
+							</div>
+							<div class="nine">
+								<a>{{ldf.startCity}}</a>
+							</div>
+							<div class="ten">
+								<a>{{ldf.endCity}}</a>
+							</div>
+							<div class="eleven">
+								<a>{{ldf.distance}}</a>
 							</div>
 						</div>
 				</div>
