@@ -32,54 +32,63 @@
 </section>
 <section class="content">
    <div class="table-responsive">
-      <p class="t_heading">Notes de frais</p>
-      <table class="table table-bordered table-hover">
-         <thead>
+      <p class="t_heading">Utilisateurs</p>
+      <table class="table table-bordered">
+      	<thead style="background-color:darkgreen;color:white;">
             <th>Demandeur</th>
-            <th>Date</th>
-            <th>Coût total TTC (€)</th>
-            <th>État</th>
-            <th>Details</th>
-         </thead>
-         <script>
-         @{int i=0;}
-     	</script>
-         {% for expRep in expRepL %}
-         <script>
-         i++;
-         </script>
-         <tbody>
-            <tr>
-               <td>{{ collab.user.username }}</td>
-               <td>{{ expRep.month}} {{expRep.year }}</td>
-               <td>{{ expRep|sumRep:1 }}</td>
-               <td>Incomplet</td>
+            <th>Détails</th>
+        </thead>
+        {% for us in uL %}
+        <tbody>
+        	<tr>
+               <td>{{ us.user.username }}</td>
                <td><button class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target= "#intro-{{ forloop.counter }}">Show details</button></td>
             </tr>
             <tr id="intro-{{ forloop.counter }}" class="collapse">
-               <td colspan="7">
+            	<td colspan="7">
+        <p class="t_heading">Notes de frais</p>
+      <table class="table custom-view">
+         <thead style="background-color:green;color:white;">
+            <th>Date</th>
+            <th>Coût total TTC (€)</th>
+            <th>État</th>
+            <th>Détails</th>
+         </thead>
+         {% with expRepL=expRepDict|get:us %}
+         {% for expRep in expRepL %}
+         <tbody>
+            
+               <td>{{ expRep.month}} {{expRep.year }}</td>
+               <td>{{ expRep|sumRep:1 }}</td>
+               <td>Incomplet</td>
+               <td><button class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target= "#intro-{{forloop.parentloop.counter}}-{{ forloop.counter }}">Show details</button></td>
+            </tr>
+            <tr id="intro-{{forloop.parentloop.counter}}-{{ forloop.counter }}" class="collapse">
+               <td colspan="14">
                   <p class="t_heading">Missions</p>
                   <table class="table custom-view">
-                     <thead>
+                     <thead style="background-color:seagreen;color:white;">
                         <th>Mission</th>
                         <th>Nombre ligne de frais</th>
                         <th>Coût total TTC (€)</th>
-                        <th>Details</th>
+                        <th>Détails</th>
                      </thead>
-                     {% for key,value in missDict.items %}
-                     {% if key == expRep %}
-                     {% for mission in value %}
+                     {% with usid=us.id|stringformat:"i" %}
+                     {% with expid=expRep.id|stringformat:"i" %}
+                     {% with filt2=usid|add:"&"|add:expid %}
+                     {% with missionL=missDict|get_from_pair2:filt2 %}
+                     {% for mission in missionL %}
                      <tbody>
                         <td>{{ mission.name }}</td>
                         <td>{{ mission.name|sumMission:expRep }}</td>
                         <td>{{ mission.name|sumMissMoney:expRep }}</td>
-                        <td><button class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target="#outro-{{forloop.parentloop.counter}}-{{ forloop.counter }}">Show details</button></td>
+                        <td><button class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target="#outro-{{forloop.parentloop.parentloop.counter}}-{{forloop.parentloop.counter}}-{{ forloop.counter }}">Show details</button></td>
                      </tbody>
-                     <tr id="outro-{{forloop.parentloop.counter}}-{{ forloop.counter }}" class="collapse">
-                        <td colspan="14">
+                     <tr id="outro-{{forloop.parentloop.parentloop.counter}}-{{forloop.parentloop.counter}}-{{ forloop.counter }}" class="collapse">
+                        <td colspan="21">
                            <p class="t_heading">Remboursement hors frais kilométriques</p>
                            <table class="table custom-view">
-                              <thead>
+                              <thead style="background-color:mediumseagreen;color:white;">
                                  <th>Type</th>
                                  <th>Date</th>
                                  <th>Coût total TTC (€)</th>
@@ -89,7 +98,7 @@
                               </thead>
                               {% with expid=expRep.id|stringformat:"i" %}
                               {% with missid=mission.id|stringformat:"i" %}
-                              {% with filt=expid|add:"&"|add:missid %}
+                              {% with filt=usid|add:"&"|add:expid|add:"&"|add:missid %}
                               {% with expLinL=expLinDict|get_from_tuple:filt %}
                               {% for expLin in expLinL %}
                               <tbody>
@@ -102,13 +111,9 @@
                                  <td>Non renseignée</td>
                                  {% endif %}
                                  <td>
-                                    {% if expLin.state != 'Accepté' %}
-                                    <form method="get" action="{% url 'RefundRequest' %}{{expLin.id}}">
-                                       <button type="submit" formmethod="get" onclick="location.href = "{% url 'RefundRequest' %}" id="myButton" class="btn btn-primary" >détail</button>
+                                    <form method="get" action="{% url 'ConsultRequest' %}{{expLin.id}}">
+                                       <button type="submit" formmethod="get" id="myButton" class="btn btn-primary" >Modifier</button>
                                     </form>
-                                    {% else %}
-                                    <p>Non modifiable après acceptation</p>
-                                    {% endif %}
                                  </td>
                                  <td>{{ expLin.state }}</td>
                               </tbody>
@@ -121,14 +126,20 @@
                         </td>
                      </tr>
                       {% endfor %}
-                      {% endif %}
-                      {% endfor %}                        
+                      {% endwith %}
+                      {% endwith %}
+                      {% endwith %}
+                      {% endwith %}                  
                   </table>
                </td>
             </tr>
          </tbody>
-         {% endfor %}                                                                                                    
+         {% endfor %}
+         {% endwith %}    
       </table>
+      </tbody>
+      {% endfor %}
+  </table>
    </div>
 </section>
     </div>

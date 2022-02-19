@@ -12,11 +12,16 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.datastructures import MultiValueDictKeyError
 from django.forms import ValidationError
+from django.contrib.auth.decorators import user_passes_test
 import datetime
 import os
 import locale
 import mimetypes
 
+#Check is the user is a validator
+def is_validator(user):
+    u= Collaborator.objects.get(user=user)
+    return u.departmentHead is not None
 
 def logoutPage(request):
     logout(request)
@@ -58,6 +63,7 @@ def save_file(f):
 
 
 @login_required(login_url='/login/')
+@user_passes_test(is_validator)
 def sHistoric(request):
     u = Collaborator.objects.get(user=request.user)
     service = u.departmentHead
@@ -66,7 +72,7 @@ def sHistoric(request):
     missionDict = {}
     expLinDict = {}
     if service is not None:
-        uL = list(Collaborator.objects.filter(service=service))
+        uL = list(Collaborator.objects.filter(service=service).order_by('-user'))
         for user in uL:
             expRepDict[user] = list(ExpenseReport.objects.filter(collaborator=user))
             for expRep in expRepDict[user]:
@@ -116,47 +122,39 @@ def cHistoric(request):
 ################################################################
 
 @login_required(login_url='/login/')
+@user_passes_test(is_validator)
 def valid(request):
     validor = Collaborator.objects.get(user=request.user)  # valideur
     CollaboratorList = []  # liste des collaborateurs du valideur
     DictNoteDeFrais = {}  # dict de [collaborateur : [liste de notes de frais] ]
-    DictMileageExpense = {}  # dict de [Note de frais: [liste de MileageExpense ] ]
-    DictRefundRequest = {}  # dict de [Note de frais: [liste de RefundRequest ] ]
-    DictAdvance = {}  # dict de [Note de frais: [liste de Advance ] ]
-    DictMission = {}  # dict de  [Note de frais : [RefundRequest] ]
+    DictLigneDeFrais = {}  # dict de [Note de frais: [liste de ExpenseLine ] ]
+    DictMission = {}  # dict de  [Note de frais : [mission] ]
 
     if Collaborator.objects.filter(validator=validor).count() >= 1:  # on ne fait rien si personne n'a ce valideur
         CollaboratorList = list(Collaborator.objects.filter(validator=validor))
 
         # recuperation de ses notes de frais, peut etre mettre une date limite sinon tout sera envoye
         for collabo in CollaboratorList:
-            if ExpenseReport.objects.filter(collaborator=collabo).count() >= 1:  # on ne fait rien si pas de note de frais
+            if ExpenseReport.objects.filter(
+                    collaborator=collabo).count() >= 1:  # on ne fait rien si pas de note de frais
                 DictNoteDeFrais[collabo] = list(ExpenseReport.objects.filter(collaborator=collabo))
 
                 for notedefraise in DictNoteDeFrais[collabo]:
                     DictMission[notedefraise] = []
-
                     if RefundRequest.objects.filter(expenseReport=notedefraise).count() >= 1:
                         filt = list(RefundRequest.objects.filter(expenseReport=notedefraise))
                         Mission = [f.mission for f in filt]
-                        Mission = list(set(Mission))  # remove duplicates
-                        DictMission[notedefraise] += Mission # stockage des missions pour l'affichage
-                        for miss in Mission:
-                            DictRefundRequest[(notedefraise,miss)] = list(RefundRequest.objects.filter(expenseReport=notedefraise)) # ligne de frais de l'utilisateur pour cette note de frais
-                        
+                        DictMission[notedefraise] += Mission
 
                     if Advance.objects.filter(expenseReport=notedefraise).count() >= 1:
                         filt = list(Advance.objects.filter(expenseReport=notedefraise))
                         Mission = [f.mission for f in filt]
-                        Mission = list(set(Mission))  # remove duplicates
-                        DictMission[notedefraise] += Mission # stockage des missions pour l'affichage
-                        for miss in Mission:
-                            DictAdvance[(notedefraise,miss)] = list(Advance.objects.filter(expenseReport=notedefraise)) # avance de l'utilisateur pour cette note de frais
-                        
+                        DictMission[notedefraise] += Mission
 
                     if MileageExpense.objects.filter(expenseReport=notedefraise).count() >= 1:
                         filt = list(MileageExpense.objects.filter(expenseReport=notedefraise))
                         Mission = [f.mission for f in filt]
+<<<<<<< Updated upstream
                         Mission = list(set(Mission))  # remove duplicates
                         DictMission[notedefraise] += Mission # stockage des missions pour l'affichage
                         for miss in Mission:
@@ -168,10 +166,22 @@ def valid(request):
                     
                     
 
+=======
+                        DictMission[notedefraise] += Mission
+
+            # on associe a chaque note de frais envoyee les lignes correspondantes
+            for note in DictNoteDeFrais[collabo]:
+                DictLigneDeFrais[note] = []
+                # ajout de ses advances 
+                DictLigneDeFrais[note] += list(Advance.objects.filter(expenseReport=note).filter(state="sent"))
+                # ajout de ses lignes de frais
+                DictLigneDeFrais[note] += list(RefundRequest.objects.filter(expenseReport=note).filter(state="sent"))
+                # ajout de ses frais kilometriques
+                DictLigneDeFrais[note] += list(MileageExpense.objects.filter(expenseReport=note).filter(state="sent"))
+>>>>>>> Stashed changes
 
     context = {'CollaboratorList': CollaboratorList, 'DictNoteDeFrais': DictNoteDeFrais,
-               'DictAdvance': DictAdvance,'DictMileageExpense': DictMileageExpense,'DictRefundRequest': DictRefundRequest,
-                'validor': validor, 'DictMission': DictMission}
+               'DictLigneDeFrais': DictLigneDeFrais, 'validor': validor, 'DictMission': DictMission}
     return render(request, 'main/valid.html', context)
 
     # missionDict = {}
@@ -285,6 +295,24 @@ def createRefundRequest(request, RefReq=None):
     context = {'form': form}
     return render(request, 'main/form.html', context)
 
+
+################################################################
+#                      ConsultRefund                           #
+################################################################
+@login_required(login_url='/login/')
+def consultRefund(request, refId):
+    RefReq = RefundRequest.objects.get(id=refId)
+    print(RefReq)
+    return createConsultRefund(request, RefReq=RefReq)
+
+@login_required(login_url='/login/')
+def createConsultRefund(request, RefReq=None):
+    validor = Collaborator.objects.get(user=request.user)  # valideur
+    if Collaborator.objects.filter(validator=validor).count() >= 1:  # on ne fait rien si personne n'a ce valideur
+        return redirect('/void')
+    ligneDeFrais = RefundRequest.objects.get(id=RefReq.id)
+    context = {'ldf':ligneDeFrais}
+    return render(request, 'main/consult.html', context)
 
 ################################################################
 #                         Advance                              #

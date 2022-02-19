@@ -22,7 +22,7 @@ class RefundRequestForm(ModelForm):
             'expenseReport': 'Note de frais',
             'mission': 'Mission',
             'amountHT': 'Remboursement hors taxe',
-            'amountTVA': 'Remboursement avec taxe',
+            'amountTVA': 'Remboursement avec taxes',
             'proof': 'Justificatif',
         }
         widgets = {'date': forms.SelectDateWidget}
@@ -125,7 +125,7 @@ class ExpenseLineCreateForm(ModelForm):
 class ExpenseReportForm(ModelForm):
     class Meta:
         model = ExpenseReport
-        fields = ('month',)  # take out user you don't need it here
+        fields = ('month','year')  # take out user you don't need it here
 
     def save(self, **kwargs):
         user = kwargs.pop('user')
