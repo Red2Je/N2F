@@ -278,7 +278,6 @@ def createRefundRequest(request, RefReq=None):
                     save_file(request.FILES['proof'])
                 else:
                     obj.proof = RefReq.proof
-                obj.proof = RefReq.proof
                 obj.save()
                 return redirect('/void')
         else:
@@ -327,30 +326,46 @@ def createAdvanceRequest(request):
 ################################################################
 
 @login_required(login_url='/login/')
-def createMileageExpense(request):
+def createMileageExpense(request, MilRef=None):
     col, expRep = collabAndReport(request)
     # default the date to today
     today = datetime.date.today()
     today = today.strftime("%d/%m/%Y")
-    form = MileageExpenseForm(collab=col, initial={'date': today})
+    form = MileageExpenseForm(initial={'date': today},collab=col, req = request)
+
+    if MilRef is not None and MilRef.state != RefundRequest.accepted:
+            col = MilRef.expenseReport.collaborator
+            form = RefundRequestForm(instance=MilRef, collab=col,
+                                    req=request)  # we pass the instance of the already existing refund request to let the model form generate itself
+
     if request.method == 'POST':
 
         form = MileageExpenseForm(request.POST, request.FILES, collab=col)
         if form.is_valid():
-            toValidate = None
-            if 'Submit' in request.POST:
-                toValidate = False
-            obj = form.save(commit=False)
-            obj.expenseReport = expRep
-            obj.collaborator = col
-            obj.validator = col.validator
-            obj.validated = toValidate
+            if MilRef is not None:
+                toValidate = RefundRequest.draft
+                if 'Submit' in request.POST:
+                    toValidate = RefundRequest.sent
+                obj = form.save(commit=False)
+                obj.expenseReport = expRep
+                obj.collaborator = col
+                obj.validator = col.validator
+                obj.validated = toValidate
 
-            obj.save()
-            try:
+                obj.save()
                 save_file(request.FILES['proof'])
-            except MultiValueDictKeyError:
-                pass
+            else:
+                obj = form.save(commit=False)
+                obj.collaborator = col
+                obj.validator = col.validator
+                obj.state = RefundRequest.sent
+                if obj.proof != MilRef.proof:  # if we give a new proof, we delete the old one from the server
+                    MilRef.dele()
+                    save_file(request.FILES['proof'])
+                else:
+                    obj.proof = MilRef.proof
+                obj.save()
+                return redirect('/void')
             return redirect('/void')
         else:
             print(form.errors)
@@ -364,8 +379,17 @@ def createMileageExpense(request):
 @login_required(login_url='/login/')
 def modifyRefund(request, refId):
     RefReq = RefundRequest.objects.get(id=refId)
-    print(RefReq)
     return createRefundRequest(request, RefReq=RefReq)
+
+@login_required(login_url='/login/')
+def modifyAdvance(request, advId):
+    RefReq = Advance.objects.get(id=advId)
+    return createRefundRequest(request, AdvRef=RefReq)
+
+@login_required(login_url='/login/')
+def modifyMileage(request, milId):
+    RefReq = Advance.objects.get(id=milId)
+    return createRefundRequest(request, MilRef=RefReq)
 
 
 def createExpenseReport(request):

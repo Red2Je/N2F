@@ -60,11 +60,13 @@ class AdvanceForm(ModelForm):
         collab = kwargs.pop('collab', None)
         request = kwargs.pop('req', None)
         super(AdvanceForm, self).__init__(*args, **kwargs)
-        if self.instance is None and request is not None and request.method == 'GET':
-            expRepL = ExpenseReport.objects.filter(collaborator=collab)
-            c = [(" ".join((expRep.collaborator.user.username, expRep.month, str(expRep.year), 'aaaaaa')), expRep) for
-                 expRep in expRepL]
-            self.fields['expenseReport'].choices = c
+        if request is not None and request.method == 'GET':
+            expRepL = ExpenseReport.objects.filter(collaborator=collab).order_by(
+                '-year')  # we look for the the expense report of the user, order them by descending year
+            self.fields['expenseReport'].queryset = expRepL  # the queryset is the choice we have in the choicefield
+            self.fields['expenseReport'].widget.choices = self.fields[
+                'expenseReport'].choices  # we mus actualize the widget's choices along with the modek's choices
+            self.fields['expenseReport'].initial = expRepL[0]  # we set the initial value of the choice field to the most recent expense report
 
 
 class MileageExpenseForm(ModelForm):
@@ -91,11 +93,13 @@ class MileageExpenseForm(ModelForm):
         collab = kwargs.pop('collab', None)
         request = kwargs.pop('req', None)
         super(MileageExpenseForm, self).__init__(*args, **kwargs)
-        if self.instance is None and request is not None and request.method == 'GET':
-            expRepL = ExpenseReport.objects.filter(collaborator=collab)
-            c = [(" ".join((expRep.collaborator.user.username, expRep.month, str(expRep.year), 'aaaaaa')), expRep) for
-                 expRep in expRepL]
-            self.fields['expenseReport'].choices = c
+        if request is not None and request.method == 'GET':
+            expRepL = ExpenseReport.objects.filter(collaborator=collab).order_by(
+                '-year')  # we look for the the expense report of the user, order them by descending year
+            self.fields['expenseReport'].queryset = expRepL  # the queryset is the choice we have in the choicefield
+            self.fields['expenseReport'].widget.choices = self.fields[
+                'expenseReport'].choices  # we mus actualize the widget's choices along with the modek's choices
+            self.fields['expenseReport'].initial = expRepL[0]  # we set the initial value of the choice field to the most recent expense report
 
 
 """
