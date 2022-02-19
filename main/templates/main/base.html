@@ -81,6 +81,12 @@
                     <a href="{% url 'clientHistoric' %}" class="nav-link ">
                     <p>Historique des notes de frais personnels</p>
                     </a>
+                    {% load tags %}
+                    {% if user|isHead:1 %}
+                    <a href = "{% url 'serviceHistoric' %}" class = "nav-link">
+                    <p>Historique des notes de frais du service</p>
+                    </a>
+                    {% endif %}
                     <a href="{% url 'RefundRequest' %}" class="nav-link ">
                     <p>Ajouter une demande de remboursement</p>
                     </a>
