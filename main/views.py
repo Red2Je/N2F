@@ -3,10 +3,17 @@ from xmlrpc.client import DateTime
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.shortcuts import redirect
+<<<<<<< Updated upstream
 from .forms import MileageExpenseForm, RefundRequestForm, ExpenseReportForm, AdvanceForm
 from .forms import RefundRequestForm
 from .models import ExpenseReport, Collaborator, ExpenseLine, Advance, Mission, RefundRequest, MileageExpense
 from django.contrib.auth import authenticate, login, logout
+=======
+from .forms import ExpenseLineCreateForm
+from .forms import ExpenseReportForm
+from .models import ExpenseReport, Collaborator, ExpenseLine, RefundRequest
+from django.contrib.auth import authenticate, login , logout
+>>>>>>> Stashed changes
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
@@ -101,11 +108,16 @@ def cHistoric(request):
     if ExpenseReport.objects.filter(collaborator=u).count() >= 1:
         expRepL = list(ExpenseReport.objects.filter(collaborator=u).order_by('year', '-month'))
         for expRep in expRepL:
+<<<<<<< Updated upstream
             filt = list(RefundRequest.objects.filter(expenseReport=expRep))
+=======
+            filt = list(RefundRequest.objects.filter(expenseReport = expRep))
+>>>>>>> Stashed changes
             filtMiss = [f.mission for f in filt]
             filtMiss = list(set(filtMiss))  # remove duplicates
             missionDict[expRep] = filtMiss
             for miss in filtMiss:
+<<<<<<< Updated upstream
                 expLinDict[(expRep, miss)] = list(RefundRequest.objects.filter(expenseReport=expRep, mission=miss))
                 advDict[(expRep,miss)] = list(Advance.objects.filter(expenseReport=expRep, mission=miss))
                 mileDict[(expRep,miss)] = list(MileageExpense.objects.filter(expenseReport=expRep, mission=miss))
@@ -120,6 +132,12 @@ def cHistoric(request):
 ################################################################
 #                 validator Homepage                           #
 ################################################################
+=======
+                tempDict[miss] = list(RefundRequest.objects.filter(expenseReport = expRep, mission = miss))
+                expLinDict[expRep] = tempDict
+    context = {'expRepL' : expRepL, 'collab' : u, 'expLinDict' : expLinDict, 'missDict' : missionDict}
+    return render(request,'main/clientHistoric.html',context)
+>>>>>>> Stashed changes
 
 @login_required(login_url='/login/')
 @user_passes_test(is_validator)
