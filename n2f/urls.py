@@ -29,10 +29,18 @@ urlpatterns = [
     path('clientHistoric/', views.cHistoric, name='clientHistoric'),
     # path('download/<str:filename>', views.download_file, name='download'),
     path('download/<str:filename>/', views.download_file, name='download'),
+
     path('Refund/', views.createRefundRequest, name='RefundRequest'),
+    path('ConsultRefund/', views.createConsultRefund, name='ConsultRequest'),
+
     path('Advance/', views.createAdvanceRequest, name='AdvanceRequest'),
     path('Mileage/', views.createMileageExpense, name='MileageRequest'),
     path('validation/', views.valid, name='validation'),
-    path('Refund/<int:refId>', views.modifyRefund, name='ModifyRefund'),
 
+    path('Refund/<int:refId>', views.modifyRefund, name='ModifyRefund'),
+    path('Advance/<int:advId>', views.modifyAdvance, name='ModifyAdvance'),
+    path('Mileage/<int:milId>', views.modifyMileage, name='ModifyMileage'),
+
+    path('Refund/<int:refId>/', views.modifyRefund, name='ModifyRefund'),
+    path('ConsultRefund/<int:refId>/', views.consultRefund, name='Consult'),
 ]
