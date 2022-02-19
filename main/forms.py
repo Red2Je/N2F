@@ -1,7 +1,7 @@
 from ast import expr
 from django.forms import ModelForm
 from django import forms
-from .models import Collaborator, ExpenseLine
+from .models import Collaborator, ExpenseLine, Mission
 from .models import ExpenseReport
 from .models import RefundRequest
 from .models import Advance
@@ -10,6 +10,8 @@ import operator
 
 
 # form for update/create
+
+
 
 
 class RefundRequestForm(ModelForm):
@@ -27,6 +29,7 @@ class RefundRequestForm(ModelForm):
         }
         widgets = {'date': forms.SelectDateWidget}
 
+
     def __init__(self, *args, **kwargs, ):
         collab = kwargs.pop('collab',
                             None)  # kwargs is a list of argument that have keywords. if oyu call f(a, opt = 1), kwargs.pop('opt',None), return either 1 if opt is given and none if we call f(a)
@@ -36,11 +39,8 @@ class RefundRequestForm(ModelForm):
             expRepL = ExpenseReport.objects.filter(collaborator=collab).order_by(
                 '-year')  # we look for the the expense report of the user, order them by descending year
             self.fields['expenseReport'].queryset = expRepL  # the queryset is the choice we have in the choicefield
-            self.fields['expenseReport'].widget.choices = self.fields[
-                'expenseReport'].choices  # we mus actualize the widget's choices along with the modek's choices
-            self.fields['expenseReport'].initial = expRepL[
-                0]  # we set the initial value of the choice field to the most recent expense report
-
+            self.fields['expenseReport'].widget.choices = self.fields['expenseReport'].choices  # we mus actualize the widget's choices along with the modek's choices
+            self.fields['expenseReport'].initial = expRepL[0]  # we set the initial value of the choice field to the most recent expense report
 
 class AdvanceForm(ModelForm):
     class Meta:
