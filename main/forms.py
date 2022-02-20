@@ -74,7 +74,7 @@ class MileageExpenseForm(ModelForm):
     class Meta:
         model = MileageExpense
         fields = ['date', 'expenseReport', 'mission', 'carFiscalPower', 'startCity', 'endCity', 'distance',
-                  'amountHT', 'amountTVA', 'proof']
+                 'proof']
         labels = {
             'date': 'Date',
             'nature': 'Nature',
@@ -84,8 +84,6 @@ class MileageExpenseForm(ModelForm):
             'startCity': 'Ville de depart',
             'endCity': "Ville d'arrivee",
             'distance': 'Distance',
-            'amountHT': 'Remboursement hors taxes',
-            'amountTVA': 'Remoursement avec taxes',
             'proof': 'Justificatif',
         }
         widgets = {'date': forms.SelectDateWidget}

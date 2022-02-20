@@ -159,7 +159,6 @@ def valid(request):
 
                 for notedefraise in DictNoteDeFrais[collabo]:
                     DictMission[notedefraise] = []
-                    DictReportState[notedefraise]="Accepté"
                     if RefundRequest.objects.filter(expenseReport=notedefraise).count() >= 1:
                         filt = list(RefundRequest.objects.filter(expenseReport=notedefraise,state=ExpenseLine.sent))
                         Mission = [f.mission for f in filt]
@@ -362,7 +361,7 @@ def createRefundRequest(request, RefReq=None):
 
                 obj.save()
                 save_file(request.FILES['proof'])
-                return redirect('/void')
+                return redirect('/')
             else:
                 obj = form.save(commit=False)
                 obj.collaborator = col
@@ -375,7 +374,7 @@ def createRefundRequest(request, RefReq=None):
                     obj.proof = RefReq.proof
                 obj.proof = RefReq.proof
                 obj.save()
-                return redirect('/void')
+                return redirect('/')
         else:
             print("ERROR : ", form.errors)
     context = {'form': form, 'type':"refund"}
@@ -393,7 +392,7 @@ def consultRefund(request, refId):
 def createConsultRefund(request, RefReq=None):
     validor = Collaborator.objects.get(user=request.user)  # valideur
     if validor.departmentHead is None:  # on ne fait rien si personne n'a ce valideur
-        return redirect('/void')
+        return redirect('/')
     ligneDeFrais = RefundRequest.objects.get(id=RefReq.id)
     context = {'ldf':ligneDeFrais}
     return render(request, 'main/consult.html', context)
@@ -410,7 +409,7 @@ def consultAdvance(request, advId):
 def createConsultAdvance(request, AdvReq=None):
     validor = Collaborator.objects.get(user=request.user)  # valideur
     if validor.departmentHead is None:  # on ne fait rien si personne n'a ce valideur
-        return redirect('/void')
+        return redirect('/')
     ligneDeFrais = Advance.objects.get(id=AdvReq.id)
     context = {'ldf':ligneDeFrais}
     return render(request, 'main/consultA.html', context)
@@ -427,7 +426,7 @@ def consultMileage(request, milId):
 def createConsultMileage(request, MilReq=None):
     validor = Collaborator.objects.get(user=request.user)  # valideur
     if validor.departmentHead is None:  # on ne fait rien si personne n'a ce valideur
-        return redirect('/void')
+        return redirect('/')
     ligneDeFrais = MileageExpense.objects.get(id=MilReq.id)
     context = {'ldf':ligneDeFrais}
     return render(request, 'main/consultM.html', context)
@@ -469,7 +468,7 @@ def createAdvanceRequest(request, AdvRef=None):
                 obj.validated = toValidate
 
                 obj.save()
-                return redirect('/void')
+                return redirect('/')
             else:
                 obj = form.save(commit=False)
                 obj.collaborator = col
@@ -477,7 +476,7 @@ def createAdvanceRequest(request, AdvRef=None):
                 obj.state = RefundRequest.sent
                 obj.proof = None
                 obj.save()
-                return redirect('/void')
+                return redirect('/')
         else:
             print(form.errors)
     context = {'form': form, 'type':"advance"}
@@ -487,6 +486,44 @@ def createAdvanceRequest(request, AdvRef=None):
 ################################################################
 #                         Mileage                              #
 ################################################################
+
+
+def computeMileage(cv,dist):
+
+
+
+    action = {
+        (MileageExpense.cv3, 5000 ) : [0.502,0],
+        (MileageExpense.cv3, 20000 ) : [0.3,1007],
+        (MileageExpense.cv3, 20001 ) : [0.35,0],
+
+        (MileageExpense.cv4, 5000 ) : [0.575,0],
+        (MileageExpense.cv4, 20000 ) : [0.323,1262],
+        (MileageExpense.cv4, 20001 ) : [0.387,0],
+
+        (MileageExpense.cv5, 5000 ) : [0.603,0],
+        (MileageExpense.cv5, 20000 ) : [0.339,1320],
+        (MileageExpense.cv5, 20001 ) : [0.405,0],
+
+        (MileageExpense.cv6, 5000 ) : [0.631,0],
+        (MileageExpense.cv6, 20000 ) : [0.355,1382],
+        (MileageExpense.cv6, 20001 ) : [0.425,0],
+
+        (MileageExpense.cv7, 5000 ) : [0.661,0],
+        (MileageExpense.cv7, 20000 ) : [0.374,1435],
+        (MileageExpense.cv7, 20001 ) : [0.446,0],
+    }
+    if dist <= 5000:
+        li = action.get((cv,5000))
+    elif dist > 5000 and dist <= 20000:
+        li = action.get((cv,20000))
+    else:
+        li = action.get((cv,20001))
+    
+    return li[0]*dist+li[1]
+
+
+
 
 @login_required(login_url='/login/')
 def createMileageExpense(request, MilRef=None):
@@ -505,16 +542,18 @@ def createMileageExpense(request, MilRef=None):
 
         form = MileageExpenseForm(request.POST, request.FILES, collab=col)
         if form.is_valid():
-            if MilRef is not None:
+            if MilRef is None:
                 toValidate = RefundRequest.draft
                 if 'Submit' in request.POST:
                     toValidate = RefundRequest.sent
                 obj = form.save(commit=False)
                 obj.nature = ExpenseLine.transport
+                obj.amountHT = computeMileage(obj.carFiscalPower, obj.distance)
+                obj.amountTVA = computeMileage(obj.carFiscalPower, obj.distance)
                 obj.expenseReport = expRep
                 obj.collaborator = col
                 obj.validator = col.validator
-                obj.validated = toValidate
+                obj.state = toValidate
 
                 obj.save()
                 save_file(request.FILES['proof'])
@@ -522,6 +561,8 @@ def createMileageExpense(request, MilRef=None):
                 obj = form.save(commit=False)
                 obj.collaborator = col
                 obj.validator = col.validator
+                obj.amountHT = computeMileage(obj.carFiscalPower, obj.distance)
+                obj.amountTVA = computeMileage(obj.carFiscalPower, obj.distance)
                 obj.state = RefundRequest.sent
                 if obj.proof != MilRef.proof:  # if we give a new proof, we delete the old one from the server
                     MilRef.dele()
@@ -529,8 +570,8 @@ def createMileageExpense(request, MilRef=None):
                 else:
                     obj.proof = MilRef.proof
                 obj.save()
-                return redirect('/void')
-            return redirect('/void')
+                return redirect('/')
+            return redirect('/')
         else:
             print(form.errors)
     context = {'form': form, 'type':"mileage"}
@@ -563,7 +604,7 @@ def createExpenseReport(request):
         if form.is_valid():
             col = Collaborator.objects.get(user=request.user)
             form.save(collaborator=col)
-            return redirect('/void')
+            return redirect('/')
 
     context = {'form': form}
     return render(request, 'main/form.html', context)
