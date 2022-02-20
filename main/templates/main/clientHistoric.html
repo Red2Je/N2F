@@ -42,11 +42,12 @@
             <th>Détails</th>
          </thead>
          {% for expRep in expRepL %}
+
          <tbody>
             <tr>
                <td>{{ expRep.month}} {{expRep.year }}</td>
                <td>{{ expRep|sumRep:1 }}</td>
-               <td>Incomplet</td>
+               <td>{{ DictReportState|get:expRep }}</td>
                <td><button class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target= "#intro-{{ forloop.counter }}">Afficher</button></td>
             </tr>
             <tr id="intro-{{ forloop.counter }}" class="collapse">

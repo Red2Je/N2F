@@ -63,7 +63,14 @@
             
                <td>{{ expRep.month}} {{expRep.year }}</td>
                <td>{{ expRep|sumRep:1 }}</td>
-               <td>Incomplet</td>
+               {% with uid=us.id|stringformat:"i" %}
+               {% with expId=expRep.id|stringformat:"i" %}
+               {% with filt=uid|add:"&"|add:expId %}
+               <td>{{ DictReportState|get_from_pair2:filt }} </td>
+               {% endwith %}
+               {% endwith %}
+               {% endwith %}
+
                <td><button class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target= "#intro-{{forloop.parentloop.parentloop.counter}}-{{ forloop.counter }}">Afficher</button></td>
             <tr id="intro-{{forloop.parentloop.parentloop.counter}}-{{ forloop.counter }}" class="collapse">
                <td colspan="14">

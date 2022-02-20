@@ -116,3 +116,7 @@ def get_from_tuple(dict,args):
 @register.filter
 def mult(l,r):
     return(l*r)
+
+
+
+    
