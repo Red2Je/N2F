@@ -42,7 +42,7 @@
         <tbody>
         	<tr>
                <td>{{ us.user.username }}</td>
-               <td><button class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target= "#intro-{{ forloop.counter }}">Show details</button></td>
+               <td><button class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target= "#intro-{{ forloop.counter }}">Afficher</button></td>
             </tr>
             <tr id="intro-{{ forloop.counter }}" class="collapse">
             	<td colspan="7">
@@ -64,7 +64,7 @@
                <td>{{ expRep.month}} {{expRep.year }}</td>
                <td>{{ expRep|sumRep:1 }}</td>
                <td>Incomplet</td>
-               <td><button class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target= "#intro-{{forloop.parentloop.parentloop.counter}}-{{ forloop.counter }}">Show details</button></td>
+               <td><button class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target= "#intro-{{forloop.parentloop.parentloop.counter}}-{{ forloop.counter }}">Afficher</button></td>
             <tr id="intro-{{forloop.parentloop.parentloop.counter}}-{{ forloop.counter }}" class="collapse">
                <td colspan="14">
                 {% with usid=us.id|stringformat:"i" %}
@@ -86,7 +86,7 @@
                         <td>{{ mission.name }}</td>
                         <td>{{ mission.name|sumMission:expRep }}</td>
                         <td>{{ mission.name|sumMissMoney:expRep }}</td>
-                        <td><button class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target="#outro-{{forloop.parentloop.parentloop.parentloop.parentloop.counter}}-{{forloop.parentloop.parentloop.counter}}-{{ forloop.counter }}">Show details</button></td>
+                        <td><button class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target="#outro-{{forloop.parentloop.parentloop.parentloop.parentloop.counter}}-{{forloop.parentloop.parentloop.counter}}-{{ forloop.counter }}">Afficher</button></td>
                      </tbody>
                      <tr id="outro-{{forloop.parentloop.parentloop.parentloop.parentloop.counter}}-{{forloop.parentloop.parentloop.counter}}-{{ forloop.counter }}" class="collapse">
                         <td colspan="21">
@@ -237,30 +237,5 @@
    </div>
 </section>
     </div>
-<script>
-   function ShowHide(id) {
-     if ($(id).html() == "Show details") {
-       $(id).html("Hide details");
-     } else {
-       $(id).html("Show details");
-     }
-   
-   }
-   function Test(){
-   	return"<h1>TEST</h1>";
-   }
 
-   class Counter {
-     static cpt = 0;
-    
-     //static variable defined
-     static Increase() {
-       cpt = cpt + 1;
-       return "#" + cpt;
-     }
-     static Cpt(){
-       return cpt;
-     }
-   }
-</script>
 {% endblock %}
