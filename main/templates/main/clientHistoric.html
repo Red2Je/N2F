@@ -117,7 +117,6 @@
                            <p class="t_heading"><strong>Remboursement frais kilométriques</strong></p>
                            <table class="table custom-view"  style="background-color:white;color:black;">
                               <thead style="background-color:seagreen;color:white;">
-                                 <th>Type</th>
                                  <th>Date</th>
                                  <th>Coût total TTC (€)</th>
                                  <th>Justificatif</th>
@@ -130,7 +129,6 @@
                               {% with expLinL=mileDict|get_from_pair:filt %}
                               {% for expLin in expLinL %}
                               <tbody>
-                                 <td>{{ expLin.get_nature_display }}</td>
                                  <td>{{ expLin.date }}</td>
                                  <td>{{ expLin.amountTVA }}</td>
                                  {% if expLin.proof.name.strip %}
@@ -163,7 +161,6 @@
                               <p class="t_heading"><strong>Demandes d'avances</strong></p>
                            <table class="table custom-view"  style="background-color:white;color:black;">
                               <thead style="background-color:seagreen;color:white;">
-                                 <th>Type</th>
                                  <th>Date</th>
                                  <th>Montant restant (€)</th>
                                  <th>Commentaire</th>
@@ -176,7 +173,6 @@
                               {% with expLinL=advDict|get_from_pair:filt %}
                               {% for expLin in expLinL %}
                               <tbody>
-                                 <td>{{ expLin.get_nature_display }}</td>
                                  <td>{{ expLin.date }}</td>
                                  <td>{{ expLin.estimatedPrice }}</td>
                                  <td>{{ expLin.advanceCommentary }}</td>
