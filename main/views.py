@@ -42,7 +42,7 @@ def user_login(request):
             # if the user is valid and comes from another page, redirect him
             if next != '/':
                 return redirect(next)
-            return redirect('/void')
+            return redirect('/')
         else:
             form = AuthenticationForm()
             return render(request, 'main/login.html', {'form': form})
@@ -207,7 +207,7 @@ def valid(request):
     # context = {'expRepL' : expRepL, 'collab' : u, 'expLinDict' : expLinDict, 'missDict' : missionDict}
     # return render(request,'main/clientHistoric.html',context)
 
-
+@login_required(login_url='/login/')
 def download_file(request, filename=''):
     if filename != '':
         # Define Django project base directory
@@ -444,7 +444,7 @@ def modifyMileage(request, milId):
     RefReq = MileageExpense.objects.get(id=milId)
     return createMileageExpense(request, MilRef=RefReq)
 
-
+@login_required(login_url='/login/')
 def createExpenseReport(request):
     form = ExpenseReportForm()
     if request.method == 'POST':
@@ -457,6 +457,6 @@ def createExpenseReport(request):
     context = {'form': form}
     return render(request, 'main/form.html', context)
 
-
+@login_required(login_url='/login/')
 def home(request):
     return render(request, 'main/home.html')
