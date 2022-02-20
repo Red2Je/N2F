@@ -180,49 +180,55 @@ def valid(request):
                             DictRefundRequest[(notedefraise,miss)] = [e for e in DictRefundRequest[(notedefraise,miss)] if e.id not in [m.id for m in DictMileageExpense[(notedefraise,miss)]]] # supprimer duplication des mileage dans le dic  DictRefundRequest
 
         
+        # post du valideur 
         if request.method == 'POST':
+            # Liste des lignes de frais
             RefundRequestvalided= request.POST.getlist('RefundRequest')
+            # Liste des frais kilometriques
             Mileagevalided= request.POST.getlist('validMileage')
+            # liste des avances
             Advancevalided= request.POST.getlist('validAvance')
-            print(RefundRequestvalided)
-            print(Mileagevalided)
-            print(Advancevalided)
+
             for refundamodif in RefundRequestvalided:
-                val = int(refundamodif)
-                if val > 0 :
-                    amodif =RefundRequest.objects.get( id = val )
-                    amodif.state=ExpenseLine.accepted
-                    amodif.save()
-                else:
-                    val=-val
-                    amodif =RefundRequest.objects.get( id = val )
-                    amodif.state=ExpenseLine.refused
-                    amodif.save()
+                if refundamodif != "": # si != traiter plus tard
+                    val = int(refundamodif)
+                    if val > 0 : # si indice positif, valided
+                        amodif =RefundRequest.objects.get( id = val )
+                        amodif.state=ExpenseLine.accepted
+                        amodif.save()
+                    else: # si indice negatif, refused
+                        val=-val
+                        amodif =RefundRequest.objects.get( id = val )
+                        amodif.state=ExpenseLine.refused
+                        amodif.save()
 
             for advanceamodif in Advancevalided:
-                val = int(advanceamodif)
-                if val > 0 :
-                    advanceamodif =Advance.objects.get( id = val )
-                    advanceamodif.state=ExpenseLine.accepted
-                    advanceamodif.save()
-                else:
-                    val=-val
-                    amodif =Advance.objects.get( id = val )
-                    amodif.state=ExpenseLine.refused
-                    amodif.save()
+                if advanceamodif != "": # si != traiter plus tard
+                    val = int(advanceamodif)
+                    if val > 0 : # si indice positif, valided
+                        advanceamodif =Advance.objects.get( id = val )
+                        advanceamodif.state=ExpenseLine.accepted
+                        advanceamodif.save()
+                    else: # si indice negatif, refused
+                        val=-val
+                        amodif =Advance.objects.get( id = val )
+                        amodif.state=ExpenseLine.refused
+                        amodif.save()
 
             for mileageeamodif in Mileagevalided:
-                val = int(mileageeamodif)
-                if val > 0 :
-                    mileageeamodif =Advance.objects.get( id = val )
-                    mileageeamodif.state=ExpenseLine.accepted
-                    mileageeamodif.save()
-                else:
-                    val=-val
-                    mileageeamodif =MileageExpense.objects.get( id = val )
-                    mileageeamodif.state=ExpenseLine.refused
-                    mileageeamodif.save()
-            return redirect('/validation')
+                if mileageeamodif != "": # si != traiter plus tard
+                    val = int(mileageeamodif)
+                    if val > 0 : # si indice positif, valided
+                        mileageeamodif =Advance.objects.get( id = val )
+                        mileageeamodif.state=ExpenseLine.accepted
+                        mileageeamodif.save()
+                    else: # si indice negatif, refused
+                        val=-val
+                        mileageeamodif =MileageExpense.objects.get( id = val )
+                        mileageeamodif.state=ExpenseLine.refused
+                        mileageeamodif.save()
+
+            return redirect('/validation') # redirection sur la page avec les modif traited
 
         
         

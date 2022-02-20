@@ -80,7 +80,7 @@
                                     <th>Coût total TTC (€)</th>
                                     <th>Justificatif</th>
                                     <th>Détail</th>
-                                    <th>Valider</th>
+                                    <th>Action</th>
                                  </thead>
                                  {% with expid=notedefrais.id|stringformat:"i" %}
                                  {% with missid=mission.id|stringformat:"i" %}
@@ -112,6 +112,9 @@
                                           
                                           <input class="form-check-input" type="radio" value="{{ expLin.id|mult:-1|stringformat:"i" }}" name="RefundRequest" id="flexCheckCheckedrefuse" >
                                           <label class="form-check-label" for="flexCheckCheckedrefuse">Refuser</label>
+
+                                          <input class="form-check-input" type="radio" value="" name="validMileage" id="RefundRequest" >
+                                          <label class="form-check-label" for="flexCheckCheckedrefuse">Traiter plus tard</label>
                                         </div>
                                         
                                     </td>
@@ -125,12 +128,11 @@
                               <p class="t_heading">Demande d'avances</p>
                               <table class="table custom-view">
                                  <thead style="background-color:seagreen;color:white;">
-                                    <th>Type</th>
                                     <th>Date</th>
-                                    <th>Coût total TTC (€)</th>
-                                    <th>Justificatif</th>
+                                    <th>Montant restant</th>
+                                    <th>Commentaire</th>
                                     <th>Détail</th>
-                                    <th>Valider</th>
+                                    <th>Action</th>
                                  </thead>
                                  {% with expid=notedefrais.id|stringformat:"i" %}
                                  {% with missid=mission.id|stringformat:"i" %}
@@ -138,17 +140,12 @@
                                  {% with expLinL=DictAdvance|get_from_pair:filt %}
                                  {% for expLin in expLinL %}
                                  <tbody>
-                                    <td>{{ expLin.nature }}</td>
                                     <td>{{ expLin.date }}</td>
                                     <td>{{ expLin.estimatedPrice }}</td>
-                                    {% if expLin.proof.name.strip %}
-                                    <td><a href="{% url 'download' expLin.proof.name|urlFromFile:1 %}">Télécharger</a></td>
-                                    {% else %}
-                                    <td>Non renseignée</td>
-                                    {% endif %}
+                                    <td>{{ expLin.advanceCommentary }}</td>
                                     <td>
                                        {% if expLin.state != 'Accepté' %}
-                                       <a class="btn btn-primary" href="{% url 'RefundRequest' %}{{expLin.id}}">détail</a>
+                                       <a class="btn btn-primary" href="{% url 'AdvanceRequest' %}{{expLin.id}}">détail</a>
                                        {% else %}
                                        <p>Non modifiable après acceptation</p>
                                        {% endif %}
@@ -162,6 +159,9 @@
                                           
                                           <input class="form-check-input" type="radio" value="{{ expLin.id|mult:-1|stringformat:"i" }}" name="validAvance" id="flexCheckCheckedrefuse" >
                                           <label class="form-check-label" for="flexCheckCheckedrefuse">Refuser</label>
+
+                                          <input class="form-check-input" type="radio" value="" name="validAvance" id="flexCheckCheckedrefuse" >
+                                          <label class="form-check-label" for="flexCheckCheckedrefuse">Traiter plus tard</label>
                                         </div>
                                     </td>
                                  </tbody>
@@ -179,7 +179,7 @@
                                     <th>Coût total TTC (€)</th>
                                     <th>Justificatif</th>
                                     <th>Détail</th>
-                                    <th>Valider</th>
+                                    <th>Action</th>
                                  </thead>
                                  {% with expid=notedefrais.id|stringformat:"i" %}
                                  {% with missid=mission.id|stringformat:"i" %}
@@ -211,6 +211,9 @@
                                           
                                           <input class="form-check-input" type="radio" value="{{ expLin.id|mult:-1|stringformat:"i" }}" name="validMileage" id="flexCheckCheckedrefuse" >
                                           <label class="form-check-label" for="flexCheckCheckedrefuse">Refuser</label>
+
+                                          <input class="form-check-input" type="radio" value="" name="validMileage" id="flexCheckCheckedrefuse" >
+                                          <label class="form-check-label" for="flexCheckCheckedrefuse">Traiter plus tard</label>
                                         </div>
                                     </td>
                                  </tbody>
