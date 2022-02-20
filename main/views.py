@@ -376,7 +376,7 @@ def consultRefund(request, refId):
 @login_required(login_url='/login/')
 def createConsultRefund(request, RefReq=None):
     validor = Collaborator.objects.get(user=request.user)  # valideur
-    if Collaborator.objects.filter(validator=validor).count() < 1:  # on ne fait rien si personne n'a ce valideur
+    if validor.departmentHead is None:  # on ne fait rien si personne n'a ce valideur
         return redirect('/void')
     ligneDeFrais = RefundRequest.objects.get(id=RefReq.id)
     context = {'ldf':ligneDeFrais}
@@ -393,7 +393,7 @@ def consultAdvance(request, advId):
 @login_required(login_url='/login/')
 def createConsultAdvance(request, AdvReq=None):
     validor = Collaborator.objects.get(user=request.user)  # valideur
-    if Collaborator.objects.filter(validator=validor).count() < 1:  # on ne fait rien si personne n'a ce valideur
+    if validor.departmentHead is None:  # on ne fait rien si personne n'a ce valideur
         return redirect('/void')
     ligneDeFrais = Advance.objects.get(id=AdvReq.id)
     context = {'ldf':ligneDeFrais}
@@ -410,7 +410,7 @@ def consultMileage(request, milId):
 @login_required(login_url='/login/')
 def createConsultMileage(request, MilReq=None):
     validor = Collaborator.objects.get(user=request.user)  # valideur
-    if Collaborator.objects.filter(validator=validor).count() < 1:  # on ne fait rien si personne n'a ce valideur
+    if validor.departmentHead is None:  # on ne fait rien si personne n'a ce valideur
         return redirect('/void')
     ligneDeFrais = MileageExpense.objects.get(id=MilReq.id)
     context = {'ldf':ligneDeFrais}

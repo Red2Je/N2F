@@ -116,7 +116,7 @@
                                                       {% endif %}
                                                       <td>
                                                          {% if expLin.state != 'Accepté' %}
-                                                         <a class="btn btn-primary" target="_blank" href="{% url 'RefundRequest' %}{{expLin.id}}">détail</a>
+                                                         <a class="btn btn-primary" target="_blank" href="{% url 'ConsultRequest' %}{{expLin.id}}">détail</a>
                                                          {% else %}
                                                          <p>Non modifiable après acceptation</p>
                                                          {% endif %}
@@ -167,7 +167,7 @@
                                                       <td>{{ expLin.advanceCommentary }}</td>
                                                       <td>
                                                          {% if expLin.state != 'Accepté' %}
-                                                         <a class="btn btn-primary" target="_blank" href="{% url 'AdvanceRequest' %}{{expLin.id}}">détail</a>
+                                                         <a class="btn btn-primary" target="_blank" href="{% url 'ConsultAdvanceRequest' %}{{expLin.id}}">détail</a>
                                                          {% else %}
                                                          <p>Non modifiable après acceptation</p>
                                                          {% endif %}
@@ -224,7 +224,7 @@
                                                       {% endif %}
                                                       <td>
                                                          {% if expLin.state != 'Accepté' %}
-                                                         <a class="btn btn-primary" target="_blank" href="{% url 'RefundRequest' %}{{expLin.id}}">détail</a>
+                                                         <a class="btn btn-primary" target="_blank" href="{% url 'ConsultMileageRequest' %}{{expLin.id}}">détail</a>
                                                          {% else %}
                                                          <p>Non modifiable après acceptation</p>
                                                          {% endif %}
