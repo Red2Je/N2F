@@ -149,10 +149,6 @@ def valid(request):
 
                 for notedefraise in DictNoteDeFrais[collabo]:
                     DictMission[notedefraise] = []
-<<<<<<< HEAD
-=======
-
->>>>>>> 19e452603bd34b77b07caa59e26f757bcf447714
                     if RefundRequest.objects.filter(expenseReport=notedefraise).count() >= 1:
                         filt = list(RefundRequest.objects.filter(expenseReport=notedefraise, state=ExpenseLine.sent))
                         Mission = [f.mission for f in filt]
@@ -259,16 +255,10 @@ def valid(request):
 
             return redirect('/validation')  # redirection sur la page avec les modif traited
 
-<<<<<<< HEAD
-    context = {'CollaboratorList': CollaboratorList, 'DictNoteDeFrais': DictNoteDeFrais,
-               'DictAdvance': DictAdvance,'DictMileageExpense': DictMileageExpense,'DictRefundRequest': DictRefundRequest,
-                'validor': validor, 'DictMission': DictMission}
-=======
     context = {'CollaboratorList': CollaboratorList, 'DictNoteDeFrais': DictNoteDeFrais, 'DictAdvance': DictAdvance, 'DictMileageExpense': DictMileageExpense, 'DictRefundRequest': DictRefundRequest, 'validor': validor, 'DictMission': DictMission}
->>>>>>> 19e452603bd34b77b07caa59e26f757bcf447714
     return render(request, 'main/valid.html', context)
 
-    # missionDict = {}  # tempDict ={}
+    
 
     # if ExpenseReport.objects.filter(collaborator=u).count() >= 1:  #     expRepL = list(ExpenseReport.objects.filter(collaborator = u))  #     for expRep in expRepL:  #         filt = list(ExpenseLine.objects.filter(expenseReport = expRep))  #         filtMiss = [f.mission for f in filt]  #         missionDict[expRep] = filtMiss  #         for miss in filtMiss:  #             tempDict[miss] = list(ExpenseLine.objects.filter(expenseReport = expRep, mission = miss))  #             expLinDict[expRep] = tempDict  # context = {'expRepL' : expRepL, 'collab' : u, 'expLinDict' : expLinDict, 'missDict' : missionDict}  # return render(request,'main/clientHistoric.html',context)
 
