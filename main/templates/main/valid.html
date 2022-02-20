@@ -38,15 +38,18 @@
                <th>Détails</th>
             </thead>
             <tbody>
+               
                {% for collab in CollaboratorList %}
                {% for key,value in DictNoteDeFrais.items %}
                {% if key == collab %}
                {% for notedefrais in value %}
+               <form  class="form-group" method="post">
+                  {% csrf_token %}
                <tr>
                   <td>{{ collab.user.username }}</td>
-                  <td>{{ notedefrais.month}} {{notedefraisyear }}</td>
-                  <td>{{ notedefrais|sumRep:1 }}</td>
-                  <td><button class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target= "#intro-{{ forloop.counter }}">Show details</button></td>
+                  <td>{{ notedefrais.month}} {{notedefrais.year }}</td>
+                  <td>{{ notedefrais|sumRepValid:1 }}</td>
+                  <td><button type="button" class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target= "#intro-{{ forloop.counter }}">Show details</button></td>
                </tr>
                <tr id="intro-{{ forloop.counter }}" class="collapse">
                   <td colspan="7">
@@ -63,9 +66,9 @@
                         {% for mission in value2 %}
                         <tbody>
                            <td>{{ mission.name }}</td>
-                           <td>{{ mission.name|sumMission:key2 }}</td>
-                           <td>{{ mission.name|sumMissMoney:key2 }}</td>
-                           <td><button class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target="#outro-{{forloop.parentloop.counter}}-{{ forloop.counter }}">Show details</button></td>
+                           <td>{{ mission.id|sumMissionValid:key2 }}</td>
+                           <td>{{ mission.id|sumMissMoneyValid:key2 }}</td>
+                           <td><button  type="button" class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target="#outro-{{forloop.parentloop.counter}}-{{ forloop.counter }}">Show details</button></td>
                         </tbody>
                         <tr id="outro-{{forloop.parentloop.counter}}-{{ forloop.counter }}" class="collapse">
                            <td colspan="14">
@@ -95,17 +98,22 @@
                                     {% endif %}
                                     <td>
                                        {% if expLin.state != 'Accepté' %}
-                                       <form method="get" action="{% url 'RefundRequest' %}{{expLin.id}}">
-                                          <button type="submit" formmethod="get" onclick="location.href = "{% url 'RefundRequest' %}" id="myButton" class="btn btn-primary" >détail</button>
-                                       </form>
+                                       <a class="btn btn-primary" href="{% url 'RefundRequest' %}{{expLin.id}}">détail</a>
                                        {% else %}
                                        <p>Non modifiable après acceptation</p>
                                        {% endif %}
                                     </td>
                                     <td>
                                        <div class="form-check">
-                                          <input class="form-check-input" type="checkbox" value="expline.id" name="validRefundRequest" id="flexCheckChecked" checked>
-                                       </div>
+                                          
+                                          
+                                          <input class="form-check-input" type="radio" value="{{ expLin.id|stringformat:"i" }}" name="RefundRequest" id="flexCheckChecked" checked>
+                                          <label class="form-check-label" for="flexCheckChecked">Valider</label>
+                                          
+                                          <input class="form-check-input" type="radio" value="{{ expLin.id|mult:-1|stringformat:"i" }}" name="RefundRequest" id="flexCheckCheckedrefuse" >
+                                          <label class="form-check-label" for="flexCheckCheckedrefuse">Refuser</label>
+                                        </div>
+                                        
                                     </td>
                                  </tbody>
                                  {% endfor %}
@@ -132,7 +140,7 @@
                                  <tbody>
                                     <td>{{ expLin.nature }}</td>
                                     <td>{{ expLin.date }}</td>
-                                    <td>{{ expLin.amountTVA }}</td>
+                                    <td>{{ expLin.estimatedPrice }}</td>
                                     {% if expLin.proof.name.strip %}
                                     <td><a href="{% url 'download' expLin.proof.name|urlFromFile:1 %}">Télécharger</a></td>
                                     {% else %}
@@ -140,17 +148,21 @@
                                     {% endif %}
                                     <td>
                                        {% if expLin.state != 'Accepté' %}
-                                       <form method="get" action="{% url 'RefundRequest' %}{{expLin.id}}">
-                                          <button type="submit" formmethod="get" onclick="location.href = "{% url 'RefundRequest' %}" id="myButton" class="btn btn-primary" >détail</button>
-                                       </form>
+                                       <a class="btn btn-primary" href="{% url 'RefundRequest' %}{{expLin.id}}">détail</a>
                                        {% else %}
                                        <p>Non modifiable après acceptation</p>
                                        {% endif %}
                                     </td>
                                     <td>
                                        <div class="form-check">
-                                          <input class="form-check-input" type="checkbox" value=""  name="validAvance" id="flexCheckChecked" checked>
-                                       </div>
+                                          
+                                          
+                                          <input class="form-check-input" type="radio" value="{{ expLin.id|stringformat:"i" }}" name="validAvance" id="flexCheckChecked" checked>
+                                          <label class="form-check-label" for="flexCheckChecked">Valider</label>
+                                          
+                                          <input class="form-check-input" type="radio" value="{{ expLin.id|mult:-1|stringformat:"i" }}" name="validAvance" id="flexCheckCheckedrefuse" >
+                                          <label class="form-check-label" for="flexCheckCheckedrefuse">Refuser</label>
+                                        </div>
                                     </td>
                                  </tbody>
                                  {% endfor %}
@@ -185,17 +197,21 @@
                                     {% endif %}
                                     <td>
                                        {% if expLin.state != 'Accepté' %}
-                                       <form method="get" action="{% url 'RefundRequest' %}{{expLin.id}}">
-                                          <button type="submit" formmethod="get" onclick="location.href = "{% url 'RefundRequest' %}" id="myButton" class="btn btn-primary" >détail</button>
-                                       </form>
+                                       <a class="btn btn-primary" href="{% url 'RefundRequest' %}{{expLin.id}}">détail</a>
                                        {% else %}
                                        <p>Non modifiable après acceptation</p>
                                        {% endif %}
                                     </td>
                                     <td>
                                        <div class="form-check">
-                                          <input class="form-check-input" type="checkbox" value="" name="validMileage" id="flexCheckChecked" checked>
-                                       </div>
+                                          
+                                          
+                                          <input class="form-check-input" type="radio" value="{{ expLin.id|stringformat:"i" }}" name="validMileage" id="flexCheckChecked" checked>
+                                          <label class="form-check-label" for="flexCheckChecked">Valider</label>
+                                          
+                                          <input class="form-check-input" type="radio" value="{{ expLin.id|mult:-1|stringformat:"i" }}" name="validMileage" id="flexCheckCheckedrefuse" >
+                                          <label class="form-check-label" for="flexCheckCheckedrefuse">Refuser</label>
+                                        </div>
                                     </td>
                                  </tbody>
                                  {% endfor %}
@@ -211,8 +227,7 @@
                            </td>
                         </tr>
                      </table>
-                     <form method="post">
-                        {% csrf_token %}
+                     
                         <button type="submit"   formmethod="post" class="btn btn-primary btn-lg float-right">Confirmer</button>
                      </form>
                   </td>
@@ -226,6 +241,7 @@
       </div>
    </section>
 </div>
+
 <script>
    function ShowHide(id) {
      if ($(id).html() == "Show details") {
@@ -235,5 +251,17 @@
      }
    
    }
+   $(".list-group-item").each(function (i, li) {
+        var currentli = $(li);
+        $(currentli).find("#checkbox1").on('change', function () {
+            $(currentli).find("#checkbox2").not(this).prop('checked',false);
+        });
+
+        $(currentli).find("#checkbox2").on('change', function () {
+            $(currentli).find("#checkbox1").not(this).prop('checked', false);
+        });
+    });
 </script>
+
+
 {% endblock %}

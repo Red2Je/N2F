@@ -32,16 +32,17 @@ urlpatterns = [
 
     path('Refund/', views.createRefundRequest, name='RefundRequest'),
     path('ConsultRefund/', views.createConsultRefund, name='ConsultRequest'),
-
     path('Advance/', views.createAdvanceRequest, name='AdvanceRequest'),
+    path('ConsultAdvance/', views.createConsultAdvance, name='ConsultAdvanceRequest'),
     path('Mileage/', views.createMileageExpense, name='MileageRequest'),
+    path('ConsultMileage/', views.createConsultMileage, name='ConsultMileageRequest'),
+
     path('validation/', views.valid, name='validation'),
 
     path('Refund/<int:refId>/', views.modifyRefund, name='ModifyRefund'),
     path('Advance/<int:advId>/', views.modifyAdvance, name='ModifyAdvance'),
     path('Mileage/<int:milId>/', views.modifyMileage, name='ModifyMileage'),
-
     path('ConsultRefund/<int:refId>/', views.consultRefund, name='Consult'),
-    path('Advance/<int:advId>/', views.modifyAdvance, name='ModifyAdvance'),
-    path('Mileage/<int:milId>/', views.modifyMileage, name='ModifyMileage'),
+    path('ConsultAdvance/<int:advId>/', views.consultAdvance, name='ConsultAdvance'),
+    path('ConsultMileage/<int:milId>/', views.consultMileage, name='ConsultMileage'),
 ]
