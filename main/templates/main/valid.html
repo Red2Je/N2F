@@ -66,8 +66,8 @@
                         {% for mission in value2 %}
                         <tbody>
                            <td>{{ mission.name }}</td>
-                           <td>{{ mission.name|sumMission:key2 }}</td>
-                           <td>{{ mission.name|sumMissMoney:key2 }}</td>
+                           <td>{{ mission.id|sumMissionValid:key2 }}</td>
+                           <td>{{ mission.id|sumMissMoneyValid:key2 }}</td>
                            <td><button  type="button" class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target="#outro-{{forloop.parentloop.counter}}-{{ forloop.counter }}">Show details</button></td>
                         </tbody>
                         <tr id="outro-{{forloop.parentloop.counter}}-{{ forloop.counter }}" class="collapse">

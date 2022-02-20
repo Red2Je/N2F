@@ -149,48 +149,51 @@ def valid(request):
                     DictMission[notedefraise] = []
 
                     if RefundRequest.objects.filter(expenseReport=notedefraise).count() >= 1:
-                        filt = list(RefundRequest.objects.filter(expenseReport=notedefraise))
+                        filt = list(RefundRequest.objects.filter(expenseReport=notedefraise,state=ExpenseLine.sent))
                         Mission = [f.mission for f in filt]
                         Mission = list(set(Mission))  # remove duplicates
-                        DictMission[notedefraise] += Mission # stockage des missions pour l'affichage
+                        for misson in Mission:
+                            if misson not in DictMission[notedefraise] :
+                                DictMission[notedefraise] += Mission # stockage des missions pour l'affichage
                         for miss in Mission:
-                            DictRefundRequest[(notedefraise,miss)] = list(RefundRequest.objects.filter(expenseReport=notedefraise)) # ligne de frais de l'utilisateur pour cette note de frais
-                        
+                            DictRefundRequest[(notedefraise,miss)] = list(set(list(RefundRequest.objects.filter(expenseReport=notedefraise,state=ExpenseLine.sent)))) # ligne de frais de l'utilisateur pour cette note de frais
+                            print(DictRefundRequest[(notedefraise,miss)])
 
                     if Advance.objects.filter(expenseReport=notedefraise).count() >= 1:
-                        filt = list(Advance.objects.filter(expenseReport=notedefraise))
+                        filt = list(Advance.objects.filter(expenseReport=notedefraise,state=ExpenseLine.sent))
                         Mission = [f.mission for f in filt]
                         Mission = list(set(Mission))  # remove duplicates
-                        DictMission[notedefraise] += Mission # stockage des missions pour l'affichage
+                        for misson in Mission:
+                            if misson not in DictMission[notedefraise] :
+                                DictMission[notedefraise] += Mission # stockage des missions pour l'affichage
                         for miss in Mission:
-                            DictAdvance[(notedefraise,miss)] = list(Advance.objects.filter(expenseReport=notedefraise)) # avance de l'utilisateur pour cette note de frais
+                            DictAdvance[(notedefraise,miss)] = list(set(list(Advance.objects.filter(expenseReport=notedefraise,state=ExpenseLine.sent)))) # avance de l'utilisateur pour cette note de frais
                         
 
                     if MileageExpense.objects.filter(expenseReport=notedefraise).count() >= 1:
-                        filt = list(MileageExpense.objects.filter(expenseReport=notedefraise))
+                        filt = list(MileageExpense.objects.filter(expenseReport=notedefraise,state=ExpenseLine.sent))
                         Mission = [f.mission for f in filt]
                         Mission = list(set(Mission))  # remove duplicates
-                        DictMission[notedefraise] += Mission # stockage des missions pour l'affichage
+                        for misson in Mission:
+                            if misson not in DictMission[notedefraise] :
+                                DictMission[notedefraise] += Mission # stockage des missions pour l'affichage
                         for miss in Mission:
-                            DictMileageExpense[(notedefraise,miss)] = list(MileageExpense.objects.filter(expenseReport=notedefraise)) # frais kilométriques de l'utilisateur pour cette note de frais
+                            DictMileageExpense[(notedefraise,miss)] = list(set(list(MileageExpense.objects.filter(expenseReport=notedefraise,state=ExpenseLine.sent)))) # frais kilométriques de l'utilisateur pour cette note de frais
 
-                            DictRefundRequest[(notedefraise,miss)] = [e for e in DictRefundRequest[(notedefraise,miss)] if e.id not in [m.id for m in DictMileageExpense[(notedefraise,miss)]]]
+                            DictRefundRequest[(notedefraise,miss)] = [e for e in DictRefundRequest[(notedefraise,miss)] if e.id not in [m.id for m in DictMileageExpense[(notedefraise,miss)]]] # supprimer duplication des mileage dans le dic  DictRefundRequest
 
-        """
+        
         if request.method == 'POST':
             RefundRequestvalided= request.POST.getlist('validRefundRequest')
             print(RefundRequestvalided)
             Mileagevalided= request.POST.getlist('validMileage')
             Advancevalided= request.POST.getlist('validAvance')
             for refundamodif in RefundRequestvalided:
-                 amodif =RefundRequest.objects.filter( id = RefundRequestvalided )
-                 amodif.state='Accepté'
+                 amodif =RefundRequest.objects.get( id = refundamodif )
+                 amodif.state=ExpenseLine.accepted
                  amodif.save()
-        """
-        if request.method == 'POST':
-            fruits = request.POST.getlist('validRefundRequest')
-            print(fruits)
-
+        
+        
 
 
 

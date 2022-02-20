@@ -29,6 +29,26 @@ def sumMissMoney(value,arg):
 
 
 @register.filter
+def sumMissionValid(value,arg):
+    filtMiss = Mission.objects.get(id = value)
+    filt = list(RefundRequest.objects.filter(expenseReport = arg,mission = filtMiss,state=ExpenseLine.sent))
+    print(filt)
+    return str(len(filt))
+
+
+@register.filter
+def sumMissMoneyValid(value,arg):
+    sum = 0
+    filtMiss = Mission.objects.get(id  = value)
+    filt = list(RefundRequest.objects.filter(expenseReport = arg,mission = filtMiss,state=ExpenseLine.sent))
+    for eL in filt:
+        sum += eL.amountTVA
+    print(filtMiss)
+    print(filt)
+    return (str(sum))
+
+
+@register.filter
 def get(dict,key):
     return(dict.get(key))
 
