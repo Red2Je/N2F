@@ -10,6 +10,14 @@ def sumRep(value,arg):
         sum += eL.amountTVA
     return str(sum)
 
+@register.filter
+def sumRepValid(value,arg):
+    sum = 0
+    filt = list(RefundRequest.objects.filter(expenseReport = value, state = ExpenseLine.sent))
+    for eL in filt:
+        sum += eL.amountTVA
+    return str(sum)
+
 
 @register.filter
 def sumMission(value,arg):
@@ -32,7 +40,7 @@ def sumMissMoney(value,arg):
 def sumMissionValid(value,arg):
     filtMiss = Mission.objects.get(id = value)
     filt = list(RefundRequest.objects.filter(expenseReport = arg,mission = filtMiss,state=ExpenseLine.sent))
-    print(filt)
+    print("filt for " ,filtMiss, " = ",filt)
     return str(len(filt))
 
 

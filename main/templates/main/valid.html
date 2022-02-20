@@ -47,8 +47,8 @@
                   {% csrf_token %}
                <tr>
                   <td>{{ collab.user.username }}</td>
-                  <td>{{ notedefrais.month}} {{notedefraisyear }}</td>
-                  <td>{{ notedefrais|sumRep:1 }}</td>
+                  <td>{{ notedefrais.month}} {{notedefrais.year }}</td>
+                  <td>{{ notedefrais|sumRepValid:1 }}</td>
                   <td><button type="button" class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target= "#intro-{{ forloop.counter }}">Show details</button></td>
                </tr>
                <tr id="intro-{{ forloop.counter }}" class="collapse">
