@@ -33,7 +33,7 @@
 <section class="content">
    <div class="table-responsive">
       <p class="t_heading">Utilisateurs</p>
-      <table class="table table-bordered">
+      <table class="table table-bordered" style="background-color:white;color:black;">
       	<thead style="background-color:darkgreen;color:white;">
             <th>Demandeur</th>
             <th>Détails</th>
@@ -47,7 +47,7 @@
             <tr id="intro-{{ forloop.counter }}" class="collapse">
             	<td colspan="7">
         <p class="t_heading">Notes de frais</p>
-      <table class="table custom-view">
+      <table class="table custom-view" style="background-color:lightgrey;color:black;">
          <thead style="background-color:green;color:white;">
             <th>Date</th>
             <th>Coût total TTC (€)</th>
@@ -66,7 +66,7 @@
             <tr id="intro-{{forloop.parentloop.counter}}-{{ forloop.counter }}" class="collapse">
                <td colspan="14">
                   <p class="t_heading">Missions</p>
-                  <table class="table custom-view">
+                  <table class="table custom-view" style="background-color:white;color:black;">
                      <thead style="background-color:seagreen;color:white;">
                         <th>Mission</th>
                         <th>Nombre ligne de frais</th>
@@ -87,7 +87,7 @@
                      <tr id="outro-{{forloop.parentloop.parentloop.counter}}-{{forloop.parentloop.counter}}-{{ forloop.counter }}" class="collapse">
                         <td colspan="21">
                            <p class="t_heading">Remboursement hors frais kilométriques</p>
-                           <table class="table custom-view">
+                           <table class="table custom-view" style="background-color:lightgrey;color:black;">
                               <thead style="background-color:mediumseagreen;color:white;">
                                  <th>Type</th>
                                  <th>Date</th>
@@ -133,7 +133,7 @@
                      <tr id="outro-{{forloop.parentloop.parentloop.counter}}-{{forloop.parentloop.counter}}-{{ forloop.counter }}" class="collapse">
                         <td colspan="21">
                            <p class="t_heading">Remboursement frais kilométriques</p>
-                           <table class="table custom-view">
+                           <table class="table custom-view" style="background-color:lightgrey;color:black;">
                               <thead style="background-color:mediumseagreen;color:white;">
                                  <th>Type</th>
                                  <th>Date</th>
@@ -176,7 +176,7 @@
                      <tr id="outro-{{forloop.parentloop.parentloop.counter}}-{{forloop.parentloop.counter}}-{{ forloop.counter }}" class="collapse">
                         <td colspan="21">
                            <p class="t_heading">Demandes d'avances</p>
-                           <table class="table custom-view">
+                           <table class="table custom-view" style="background-color:lightgrey;color:black;">
                               <thead style="background-color:mediumseagreen;color:white;">
                                  <th>Type</th>
                                  <th>Date</th>
