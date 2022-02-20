@@ -106,7 +106,7 @@ def cHistoric(request):
     if ExpenseReport.objects.filter(collaborator=u).count() >= 1:
         expRepL = list(ExpenseReport.objects.filter(collaborator=u).order_by('year', '-month'))
         for expRep in expRepL:
-            filt = list(RefundRequest.objects.filter(expenseReport=expRep))
+            filt = list(RefundRequest.objects.filter(expenseReport=expRep)) + list(MileageExpense.objects.filter(expenseReport=expRep)) + list(Advance.objects.filter(expenseReport=expRep))
             filtMiss = [f.mission for f in filt]
             filtMiss = list(set(filtMiss))  # remove duplicates
             missionDict[expRep] = filtMiss
