@@ -24,7 +24,6 @@ urlpatterns = [
     path('void/', views.void, name='void'),
     path('formReport/', views.createExpenseReport, name='formReport'),
     path('login/', views.user_login, name='login'),
-    path('logout/', views.logoutPage, name='logout'),
     path('serviceHistoric/', views.sHistoric, name='serviceHistoric'),
     path('clientHistoric/', views.cHistoric, name='clientHistoric'),
     # path('download/<str:filename>', views.download_file, name='download'),
