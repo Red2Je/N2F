@@ -104,10 +104,16 @@
                                        {% endif %}
                                     </td>
                                     <td>
-                                          <div class="form-check">
-                                             <input class="form-check-input" type="checkbox" value="{{ expLin.id|stringformat:"i" }}" name="validRefundRequest" id="flexCheckChecked" checked>
-                                             <label class="form-check-label" for="mango">Valider</label>
-                                          </div>
+                                       <div class="form-check">
+                                          
+                                          
+                                          <input class="form-check-input" type="radio" value="{{ expLin.id|stringformat:"i" }}" name="RefundRequest" id="flexCheckChecked" checked>
+                                          <label class="form-check-label" for="flexCheckChecked">Valider</label>
+                                          
+                                          <input class="form-check-input" type="radio" value="{{ expLin.id|mult:-1|stringformat:"i" }}" name="RefundRequest" id="flexCheckCheckedrefuse" >
+                                          <label class="form-check-label" for="flexCheckCheckedrefuse">Refuser</label>
+                                        </div>
+                                        
                                     </td>
                                  </tbody>
                                  {% endfor %}
@@ -134,7 +140,7 @@
                                  <tbody>
                                     <td>{{ expLin.nature }}</td>
                                     <td>{{ expLin.date }}</td>
-                                    <td>{{ expLin.amountTVA }}</td>
+                                    <td>{{ expLin.estimatedPrice }}</td>
                                     {% if expLin.proof.name.strip %}
                                     <td><a href="{% url 'download' expLin.proof.name|urlFromFile:1 %}">Télécharger</a></td>
                                     {% else %}
@@ -149,8 +155,14 @@
                                     </td>
                                     <td>
                                        <div class="form-check">
-                                          <input class="form-check-input" type="checkbox" value=""  name="validAvance" id="flexCheckChecked" checked>
-                                       </div>
+                                          
+                                          
+                                          <input class="form-check-input" type="radio" value="{{ expLin.id|stringformat:"i" }}" name="validAvance" id="flexCheckChecked" checked>
+                                          <label class="form-check-label" for="flexCheckChecked">Valider</label>
+                                          
+                                          <input class="form-check-input" type="radio" value="{{ expLin.id|mult:-1|stringformat:"i" }}" name="validAvance" id="flexCheckCheckedrefuse" >
+                                          <label class="form-check-label" for="flexCheckCheckedrefuse">Refuser</label>
+                                        </div>
                                     </td>
                                  </tbody>
                                  {% endfor %}
@@ -192,8 +204,14 @@
                                     </td>
                                     <td>
                                        <div class="form-check">
-                                          <input class="form-check-input" type="checkbox" value="" name="validMileage" id="flexCheckChecked" checked>
-                                       </div>
+                                          
+                                          
+                                          <input class="form-check-input" type="radio" value="{{ expLin.id|stringformat:"i" }}" name="validMileage" id="flexCheckChecked" checked>
+                                          <label class="form-check-label" for="flexCheckChecked">Valider</label>
+                                          
+                                          <input class="form-check-input" type="radio" value="{{ expLin.id|mult:-1|stringformat:"i" }}" name="validMileage" id="flexCheckCheckedrefuse" >
+                                          <label class="form-check-label" for="flexCheckCheckedrefuse">Refuser</label>
+                                        </div>
                                     </td>
                                  </tbody>
                                  {% endfor %}
@@ -233,5 +251,17 @@
      }
    
    }
+   $(".list-group-item").each(function (i, li) {
+        var currentli = $(li);
+        $(currentli).find("#checkbox1").on('change', function () {
+            $(currentli).find("#checkbox2").not(this).prop('checked',false);
+        });
+
+        $(currentli).find("#checkbox2").on('change', function () {
+            $(currentli).find("#checkbox1").not(this).prop('checked', false);
+        });
+    });
 </script>
+
+
 {% endblock %}

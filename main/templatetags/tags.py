@@ -1,5 +1,5 @@
 from django import template
-from ..models import ExpenseReport, Collaborator, ExpenseLine, Mission, RefundRequest
+from ..models import ExpenseReport, Collaborator, ExpenseLine, Mission, RefundRequest, Advance
 
 register = template.Library()
 @register.filter
@@ -16,6 +16,9 @@ def sumRepValid(value,arg):
     filt = list(RefundRequest.objects.filter(expenseReport = value, state = ExpenseLine.sent))
     for eL in filt:
         sum += eL.amountTVA
+    filt = list(Advance.objects.filter(expenseReport = value, state = ExpenseLine.sent))
+    for eL in filt:
+        sum += eL.estimatedPrice
     return str(sum)
 
 
@@ -40,7 +43,7 @@ def sumMissMoney(value,arg):
 def sumMissionValid(value,arg):
     filtMiss = Mission.objects.get(id = value)
     filt = list(RefundRequest.objects.filter(expenseReport = arg,mission = filtMiss,state=ExpenseLine.sent))
-    print("filt for " ,filtMiss, " = ",filt)
+    filt += list(Advance.objects.filter(expenseReport = arg,mission = filtMiss, state = ExpenseLine.sent))
     return str(len(filt))
 
 
@@ -51,8 +54,9 @@ def sumMissMoneyValid(value,arg):
     filt = list(RefundRequest.objects.filter(expenseReport = arg,mission = filtMiss,state=ExpenseLine.sent))
     for eL in filt:
         sum += eL.amountTVA
-    print(filtMiss)
-    print(filt)
+    filt = list(Advance.objects.filter(expenseReport = arg,mission = filtMiss,state=ExpenseLine.sent))
+    for eL in filt:
+        sum += eL.estimatedPrice
     return (str(sum))
 
 
@@ -101,3 +105,7 @@ def get_from_tuple(dict,args):
     expRep = ExpenseReport.objects.get(id = argList[1])
     mission = Mission.objects.get(id = argList[2])
     return dict.get((collab,expRep,mission))
+
+@register.filter
+def mult(l,r):
+    return(l*r)
