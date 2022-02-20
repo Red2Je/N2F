@@ -1,6 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
-<html>
+<html lang="">
 <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -22,6 +22,7 @@
 <style>
 
 </style>
+
 
     </head>
 
@@ -60,6 +61,7 @@
             {% endif %}
             </ul>
         </nav>
+        <h1>&#8205</h1>
 
         <!-- Main Sidebar -->
         <aside class="main-sidebar fixed sidebar-dark-primary elevation-4">
@@ -90,10 +92,8 @@
                     <a href="{% url 'RefundRequest' %}" class="nav-link ">
                     <p>Ajouter une demande de remboursement</p>
                     </a>
-                    </a>
                     <a href="{% url 'AdvanceRequest' %}" class="nav-link ">
                     <p>Ajouter une demande d'avance</p>
-                    </a>
                     </a>
                     <a href="{% url 'MileageRequest' %}" class="nav-link ">
                     <p>Aujouter  des Frais kilométriques</p>

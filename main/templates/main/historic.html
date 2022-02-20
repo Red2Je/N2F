@@ -32,7 +32,7 @@
 </section>
 <section class="content">
    <div class="table-responsive">
-      <p class="t_heading">Utilisateurs</p>
+      <Label class="t_heading">Utilisateurs</Label>
       <table class="table table-bordered" style="background-color:white;color:black;">
       	<thead style="background-color:darkgreen;color:white;">
             <th>Demandeur</th>
@@ -46,7 +46,10 @@
             </tr>
             <tr id="intro-{{ forloop.counter }}" class="collapse">
             	<td colspan="7">
-        <p class="t_heading">Notes de frais</p>
+                {% with expRepL=expRepDict|get:us %}
+               {% if expRepL|length != 0 %}
+               {% for expRep in expRepL|slice:":1" %}
+        <Label class="t_heading">Notes de frais</Label>
       <table class="table custom-view" style="background-color:lightgrey;color:black;">
          <thead style="background-color:green;color:white;">
             <th>Date</th>
@@ -61,11 +64,16 @@
                <td>{{ expRep.month}} {{expRep.year }}</td>
                <td>{{ expRep|sumRep:1 }}</td>
                <td>Incomplet</td>
-               <td><button class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target= "#intro-{{forloop.parentloop.counter}}-{{ forloop.counter }}">Show details</button></td>
-            </tr>
-            <tr id="intro-{{forloop.parentloop.counter}}-{{ forloop.counter }}" class="collapse">
+               <td><button class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target= "#intro-{{forloop.parentloop.parentloop.counter}}-{{ forloop.counter }}">Show details</button></td>
+            <tr id="intro-{{forloop.parentloop.parentloop.counter}}-{{ forloop.counter }}" class="collapse">
                <td colspan="14">
-                  <p class="t_heading">Missions</p>
+                {% with usid=us.id|stringformat:"i" %}
+                     {% with expid=expRep.id|stringformat:"i" %}
+                     {% with filt2=usid|add:"&"|add:expid %}
+                     {% with missionL=missDict|get_from_pair2:filt2 %}
+                     {% if missionL|length != 0 %}
+                     {% for mission in missionL|slice:":1" %}
+                  <Label class="t_heading">Missions</Label>
                   <table class="table custom-view" style="background-color:white;color:black;">
                      <thead style="background-color:seagreen;color:white;">
                         <th>Mission</th>
@@ -73,20 +81,22 @@
                         <th>Coût total TTC (€)</th>
                         <th>Détails</th>
                      </thead>
-                     {% with usid=us.id|stringformat:"i" %}
-                     {% with expid=expRep.id|stringformat:"i" %}
-                     {% with filt2=usid|add:"&"|add:expid %}
-                     {% with missionL=missDict|get_from_pair2:filt2 %}
                      {% for mission in missionL %}
                      <tbody>
                         <td>{{ mission.name }}</td>
                         <td>{{ mission.name|sumMission:expRep }}</td>
                         <td>{{ mission.name|sumMissMoney:expRep }}</td>
-                        <td><button class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target="#outro-{{forloop.parentloop.parentloop.counter}}-{{forloop.parentloop.counter}}-{{ forloop.counter }}">Show details</button></td>
+                        <td><button class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target="#outro-{{forloop.parentloop.parentloop.parentloop.parentloop.counter}}-{{forloop.parentloop.parentloop.counter}}-{{ forloop.counter }}">Show details</button></td>
                      </tbody>
-                     <tr id="outro-{{forloop.parentloop.parentloop.counter}}-{{forloop.parentloop.counter}}-{{ forloop.counter }}" class="collapse">
+                     <tr id="outro-{{forloop.parentloop.parentloop.parentloop.parentloop.counter}}-{{forloop.parentloop.parentloop.counter}}-{{ forloop.counter }}" class="collapse">
                         <td colspan="21">
-                           <p class="t_heading">Remboursement hors frais kilométriques</p>
+
+                          {% with expid=expRep.id|stringformat:"i" %}
+                              {% with missid=mission.id|stringformat:"i" %}
+                              {% with filt=usid|add:"&"|add:expid|add:"&"|add:missid %}
+                              {% with expLinL=expLinDict|get_from_tuple:filt %}
+                              {% for expLin in expLinL|slice:":1" %}
+                           <Label class="t_heading">Remboursement hors frais kilométriques</Label>
                            <table class="table custom-view" style="background-color:lightgrey;color:black;">
                               <thead style="background-color:mediumseagreen;color:white;">
                                  <th>Type</th>
@@ -96,10 +106,6 @@
                                  <th>Détail</th>
                                  <th>État</th>
                               </thead>
-                              {% with expid=expRep.id|stringformat:"i" %}
-                              {% with missid=mission.id|stringformat:"i" %}
-                              {% with filt=usid|add:"&"|add:expid|add:"&"|add:missid %}
-                              {% with expLinL=expLinDict|get_from_tuple:filt %}
                               {% for expLin in expLinL %}
                               <tbody>
                                  <td>{{ expLin.get_nature_display }}</td>
@@ -118,21 +124,19 @@
                                  <td>{{ expLin.state }}</td>
                               </tbody>
                               {% endfor %}
-                              {% endwith %}
-                              {% endwith %}
-                              {% endwith %}
-                              {% endwith %}
                               </table>
-                        </td>
-                     </tr>
+                              {% endfor %}
+                              {% endwith %}
+                              {% endwith %}
+                              {% endwith %}
+                              {% endwith %}
 
-
-
-
-
-                     <tr id="outro-{{forloop.parentloop.parentloop.counter}}-{{forloop.parentloop.counter}}-{{ forloop.counter }}" class="collapse">
-                        <td colspan="21">
-                           <p class="t_heading">Remboursement frais kilométriques</p>
+                          {% with expid=expRep.id|stringformat:"i" %}
+                              {% with missid=mission.id|stringformat:"i" %}
+                              {% with filt=usid|add:"&"|add:expid|add:"&"|add:missid %}
+                              {% with expLinL=mileDict|get_from_tuple:filt %}
+                              {% for expLin in expLinL|slice:":1" %}
+                           <Label class="t_heading">Remboursement frais kilométriques</Label>
                            <table class="table custom-view" style="background-color:lightgrey;color:black;">
                               <thead style="background-color:mediumseagreen;color:white;">
                                  <th>Type</th>
@@ -142,10 +146,6 @@
                                  <th>Détail</th>
                                  <th>État</th>
                               </thead>
-                              {% with expid=expRep.id|stringformat:"i" %}
-                              {% with missid=mission.id|stringformat:"i" %}
-                              {% with filt=usid|add:"&"|add:expid|add:"&"|add:missid %}
-                              {% with expLinL=mileDict|get_from_tuple:filt %}
                               {% for expLin in expLinL %}
                               <tbody>
                                  <td>{{ expLin.get_nature_display }}</td>
@@ -164,18 +164,19 @@
                                  <td>{{ expLin.state }}</td>
                               </tbody>
                               {% endfor %}
-                              {% endwith %}
-                              {% endwith %}
-                              {% endwith %}
-                              {% endwith %}
                               </table>
-                        </td>
-                     </tr>
+                              {% endfor %}
+                              {% endwith %}
+                              {% endwith %}
+                              {% endwith %}
+                              {% endwith %}
 
-
-                     <tr id="outro-{{forloop.parentloop.parentloop.counter}}-{{forloop.parentloop.counter}}-{{ forloop.counter }}" class="collapse">
-                        <td colspan="21">
-                           <p class="t_heading">Demandes d'avances</p>
+                          {% with expid=expRep.id|stringformat:"i" %}
+                              {% with missid=mission.id|stringformat:"i" %}
+                              {% with filt=usid|add:"&"|add:expid|add:"&"|add:missid %}
+                              {% with expLinL=advDict|get_from_tuple:filt %}
+                              {% for expLin in expLinL|slice:":1" %}
+                           <Label class="t_heading">Demandes d'avances</Label>
                            <table class="table custom-view" style="background-color:lightgrey;color:black;">
                               <thead style="background-color:mediumseagreen;color:white;">
                                  <th>Type</th>
@@ -185,10 +186,6 @@
                                  <th>Détail</th>
                                  <th>État</th>
                               </thead>
-                              {% with expid=expRep.id|stringformat:"i" %}
-                              {% with missid=mission.id|stringformat:"i" %}
-                              {% with filt=usid|add:"&"|add:expid|add:"&"|add:missid %}
-                              {% with expLinL=advDict|get_from_tuple:filt %}
                               {% for expLin in expLinL %}
                               <tbody>
                                  <td>{{ expLin.get_nature_display }}</td>
@@ -203,25 +200,37 @@
                                  <td>{{ expLin.state }}</td>
                               </tbody>
                               {% endfor %}
-                              {% endwith %}
-                              {% endwith %}
-                              {% endwith %}
-                              {% endwith %}
                               </table>
+                              {% endfor %}
+                              {% endwith %}
+                              {% endwith %}
+                              {% endwith %}
+                              {% endwith %}
                         </td>
                      </tr>
-                      {% endfor %}
-                      {% endwith %}
-                      {% endwith %}
-                      {% endwith %}
-                      {% endwith %}                  
+                     {% endfor %}                  
                   </table>
+                  {% endfor %}
+                  {% else %}
+                  <p>Aucune mission enregistrée</p>
+                  {% endif %}
+                  {% endwith %}
+                  {% endwith %}
+                  {% endwith %}
+                  {% endwith %}
                </td>
             </tr>
          </tbody>
          {% endfor %}
          {% endwith %}    
       </table>
+      {% endfor %}
+      {% else %}
+         <p>Aucune note de frais enregistrée</p>
+      {% endif %}
+      {% endwith %} 
+    </td>
+  </tr>
       </tbody>
       {% endfor %}
   </table>

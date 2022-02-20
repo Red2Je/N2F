@@ -42,7 +42,7 @@ def user_login(request):
             # if the user is valid and comes from another page, redirect him
             if next != '/':
                 return redirect(next)
-            return redirect('/void')
+            return redirect('/')
         else:
             form = AuthenticationForm()
             return render(request, 'main/login.html', {'form': form})
@@ -88,7 +88,6 @@ def sHistoric(request):
                     mileDict[(user,expRep,miss)] = list(MileageExpense.objects.filter(expenseReport=expRep, mission=miss))
                     expLinDict[(user,expRep,miss)] = [e for e in expLinDict[(user,expRep,miss)] if e.id not in [m.id for m in mileDict[(user,expRep,miss)]]]
 
-    print(expRepDict.get(uL[0]))
     context = {'expRepDict': expRepDict, 'uL': uL, 'expLinDict': expLinDict, 'missDict': missionDict, 'mileDict': mileDict,
                'advDict': advDict}
     return render(request, 'main/historic.html', context)
@@ -115,8 +114,6 @@ def cHistoric(request):
                 advDict[(expRep,miss)] = list(Advance.objects.filter(expenseReport=expRep, mission=miss))
                 mileDict[(expRep,miss)] = list(MileageExpense.objects.filter(expenseReport=expRep, mission=miss))
                 expLinDict[(expRep,miss)] = [e for e in expLinDict[(expRep,miss)] if e.id not in [m.id for m in mileDict[(expRep,miss)]]]
-                    
-                print(advDict)
     context = {'expRepL': expRepL, 'collab': u, 'expLinDict': expLinDict, 'missDict': missionDict, 'mileDict': mileDict,
                'advDict': advDict}
     return render(request, 'main/clientHistoric.html', context)
@@ -157,7 +154,7 @@ def valid(request):
                                 DictMission[notedefraise] += Mission # stockage des missions pour l'affichage
                         for miss in Mission:
                             DictRefundRequest[(notedefraise,miss)] = list(set(list(RefundRequest.objects.filter(expenseReport=notedefraise,state=ExpenseLine.sent)))) # ligne de frais de l'utilisateur pour cette note de frais
-                            print(DictRefundRequest[(notedefraise,miss)])
+                            
 
                     if Advance.objects.filter(expenseReport=notedefraise).count() >= 1:
                         filt = list(Advance.objects.filter(expenseReport=notedefraise,state=ExpenseLine.sent))
@@ -184,14 +181,49 @@ def valid(request):
 
         
         if request.method == 'POST':
-            RefundRequestvalided= request.POST.getlist('validRefundRequest')
-            print(RefundRequestvalided)
+            RefundRequestvalided= request.POST.getlist('RefundRequest')
             Mileagevalided= request.POST.getlist('validMileage')
             Advancevalided= request.POST.getlist('validAvance')
+            print(RefundRequestvalided)
+            print(Mileagevalided)
+            print(Advancevalided)
             for refundamodif in RefundRequestvalided:
-                 amodif =RefundRequest.objects.get( id = refundamodif )
-                 amodif.state=ExpenseLine.accepted
-                 amodif.save()
+                val = int(refundamodif)
+                if val > 0 :
+                    amodif =RefundRequest.objects.get( id = val )
+                    amodif.state=ExpenseLine.accepted
+                    amodif.save()
+                else:
+                    val=-val
+                    amodif =RefundRequest.objects.get( id = val )
+                    amodif.state=ExpenseLine.refused
+                    amodif.save()
+
+            for advanceamodif in Advancevalided:
+                val = int(advanceamodif)
+                if val > 0 :
+                    advanceamodif =Advance.objects.get( id = val )
+                    advanceamodif.state=ExpenseLine.accepted
+                    advanceamodif.save()
+                else:
+                    val=-val
+                    amodif =Advance.objects.get( id = val )
+                    amodif.state=ExpenseLine.refused
+                    amodif.save()
+
+            for mileageeamodif in Mileagevalided:
+                val = int(mileageeamodif)
+                if val > 0 :
+                    mileageeamodif =Advance.objects.get( id = val )
+                    mileageeamodif.state=ExpenseLine.accepted
+                    mileageeamodif.save()
+                else:
+                    val=-val
+                    mileageeamodif =MileageExpense.objects.get( id = val )
+                    mileageeamodif.state=ExpenseLine.refused
+                    mileageeamodif.save()
+            return redirect('/validation')
+
         
         
 
@@ -222,7 +254,7 @@ def valid(request):
     # context = {'expRepL' : expRepL, 'collab' : u, 'expLinDict' : expLinDict, 'missDict' : missionDict}
     # return render(request,'main/clientHistoric.html',context)
 
-
+@login_required(login_url='/login/')
 def download_file(request, filename=''):
     if filename != '':
         # Define Django project base directory
@@ -325,13 +357,11 @@ def createRefundRequest(request, RefReq=None):
 @login_required(login_url='/login/')
 def consultRefund(request, refId):
     RefReq = RefundRequest.objects.get(id=refId)
-    print(RefReq)
     return createConsultRefund(request, RefReq=RefReq)
 
 @login_required(login_url='/login/')
 def createConsultRefund(request, RefReq=None):
     validor = Collaborator.objects.get(user=request.user)  # valideur
-    print(Collaborator.objects.filter(validator=validor).count())
     if Collaborator.objects.filter(validator=validor).count() < 1:  # on ne fait rien si personne n'a ce valideur
         return redirect('/void')
     ligneDeFrais = RefundRequest.objects.get(id=RefReq.id)
@@ -344,13 +374,11 @@ def createConsultRefund(request, RefReq=None):
 @login_required(login_url='/login/')
 def consultAdvance(request, advId):
     AdvReq = Advance.objects.get(id=advId)
-    print(AdvReq)
     return createConsultAdvance(request, AdvReq=AdvReq)
 
 @login_required(login_url='/login/')
 def createConsultAdvance(request, AdvReq=None):
     validor = Collaborator.objects.get(user=request.user)  # valideur
-    print(Collaborator.objects.filter(validator=validor).count())
     if Collaborator.objects.filter(validator=validor).count() < 1:  # on ne fait rien si personne n'a ce valideur
         return redirect('/void')
     ligneDeFrais = Advance.objects.get(id=AdvReq.id)
@@ -363,13 +391,11 @@ def createConsultAdvance(request, AdvReq=None):
 @login_required(login_url='/login/')
 def consultMileage(request, milId):
     MilReq = MileageExpense.objects.get(id=milId)
-    print(MilReq)
     return createConsultMileage(request, MilReq=MilReq)
 
 @login_required(login_url='/login/')
 def createConsultMileage(request, MilReq=None):
     validor = Collaborator.objects.get(user=request.user)  # valideur
-    print(Collaborator.objects.filter(validator=validor).count())
     if Collaborator.objects.filter(validator=validor).count() < 1:  # on ne fait rien si personne n'a ce valideur
         return redirect('/void')
     ligneDeFrais = MileageExpense.objects.get(id=MilReq.id)
@@ -499,7 +525,7 @@ def modifyMileage(request, milId):
     RefReq = MileageExpense.objects.get(id=milId)
     return createMileageExpense(request, MilRef=RefReq)
 
-
+@login_required(login_url='/login/')
 def createExpenseReport(request):
     form = ExpenseReportForm()
     if request.method == 'POST':
@@ -512,6 +538,6 @@ def createExpenseReport(request):
     context = {'form': form}
     return render(request, 'main/form.html', context)
 
-
+@login_required(login_url='/login/')
 def home(request):
     return render(request, 'main/home.html')

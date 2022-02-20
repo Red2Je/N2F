@@ -31,8 +31,9 @@
    <!-- /.container-fluid -->
 </section>
 <section class="content">
+  {% if expRepL|length != 0 %}
    <div class="table-responsive">
-      <p class="t_heading">Notes de frais</p>
+      <Label class="t_heading">Notes de frais</Label>
       <table class="table table-bordered">
          <thead  style="background-color:darkgreen;color:white;">
             <th>Date</th>
@@ -50,7 +51,11 @@
             </tr>
             <tr id="intro-{{ forloop.counter }}" class="collapse">
                <td colspan="7">
-                  <p class="t_heading">Missions</p>
+                  {% for key,value in missDict.items|slice:":1"%}
+                     {% if key == expRep %}
+                        {% if value|length != 0 %}
+                        {% for mission in value|slice:":1"%}
+                  <Label class="t_heading">Missions</Label>
                   <table class="table custom-view" style="background-color:lightgrey;color:black;">
                      <thead style="background-color:green;color:white;">
                         <th>Mission</th>
@@ -69,7 +74,12 @@
                      </tbody>
                      <tr id="outro-{{forloop.parentloop.counter}}-{{ forloop.counter }}" class="collapse">
                         <td colspan="14">
-                           <p class="t_heading"><strong>Remboursement hors frais kilométriques</strong></p>
+                            {% with expid=expRep.id|stringformat:"i" %}
+                              {% with missid=mission.id|stringformat:"i" %}
+                              {% with filt=expid|add:"&"|add:missid %}
+                              {% with expLinL=expLinDict|get_from_pair:filt %}
+                              {% for expLin in expLinL|slice:":1" %}
+                           <Label class="t_heading"><strong>Remboursement hors frais kilométriques</strong></Label>
                            <table class="table custom-view" style="background-color:white;color:black;">
                               <thead style="background-color:seagreen;color:white;">
                                  <th>Type</th>
@@ -79,10 +89,6 @@
                                  <th>Détail</th>
                                  <th>État</th>
                               </thead>
-                              {% with expid=expRep.id|stringformat:"i" %}
-                              {% with missid=mission.id|stringformat:"i" %}
-                              {% with filt=expid|add:"&"|add:missid %}
-                              {% with expLinL=expLinDict|get_from_pair:filt %}
                               {% for expLin in expLinL %}
                               <tbody>
                                  <td>{{ expLin.get_nature_display }}</td>
@@ -105,16 +111,21 @@
                                  <td>{{ expLin.state }}</td>
                               </tbody>
                               {% endfor %}
-                              {% endwith %}
-                              {% endwith %}
-                              {% endwith %}
-                              {% endwith %}
                               </table>
+                              {% endfor %}
+                              {% endwith %}
+                              {% endwith %}
+                              {% endwith %}
+                              {% endwith %}
 
 
 
-                          
-                           <p class="t_heading"><strong>Remboursement frais kilométriques</strong></p>
+                          {% with expid=expRep.id|stringformat:"i" %}
+                              {% with missid=mission.id|stringformat:"i" %}
+                              {% with filt=expid|add:"&"|add:missid %}
+                              {% with expLinL=mileDict|get_from_pair:filt %}
+                              {% for expLin in expLinL|slice:":1" %}
+                           <Label class="t_heading"><strong>Remboursement frais kilométriques</strong></Label>
                            <table class="table custom-view"  style="background-color:white;color:black;">
                               <thead style="background-color:seagreen;color:white;">
                                  <th>Date</th>
@@ -123,10 +134,6 @@
                                  <th>Détail</th>
                                  <th>État</th>
                               </thead>
-                              {% with expid=expRep.id|stringformat:"i" %}
-                              {% with missid=mission.id|stringformat:"i" %}
-                              {% with filt=expid|add:"&"|add:missid %}
-                              {% with expLinL=mileDict|get_from_pair:filt %}
                               {% for expLin in expLinL %}
                               <tbody>
                                  <td>{{ expLin.date }}</td>
@@ -148,17 +155,21 @@
                                  <td>{{ expLin.state }}</td>
                               </tbody>
                               {% endfor %}
-                              {% endwith %}
-                              {% endwith %}
-                              {% endwith %}
-                              {% endwith %}
                               </table>
+                              {% endfor %}
+                              {% endwith %}
+                              {% endwith %}
+                              {% endwith %}
+                              {% endwith %}
 
 
 
-
-
-                              <p class="t_heading"><strong>Demandes d'avances</strong></p>
+                              {% with expid=expRep.id|stringformat:"i" %}
+                              {% with missid=mission.id|stringformat:"i" %}
+                              {% with filt=expid|add:"&"|add:missid %}
+                              {% with expLinL=advDict|get_from_pair:filt %}
+                              {% for expLin in expLinL|slice:":1" %}
+                              <Label class="t_heading"><strong>Demandes d'avances</strong></Label>
                            <table class="table custom-view"  style="background-color:white;color:black;">
                               <thead style="background-color:seagreen;color:white;">
                                  <th>Date</th>
@@ -167,10 +178,6 @@
                                  <th>Détail</th>
                                  <th>État</th>
                               </thead>
-                              {% with expid=expRep.id|stringformat:"i" %}
-                              {% with missid=mission.id|stringformat:"i" %}
-                              {% with filt=expid|add:"&"|add:missid %}
-                              {% with expLinL=advDict|get_from_pair:filt %}
                               {% for expLin in expLinL %}
                               <tbody>
                                  <td>{{ expLin.date }}</td>
@@ -188,36 +195,33 @@
                                  <td>{{ expLin.state }}</td>
                               </tbody>
                               {% endfor %}
-                              {% endwith %}
-                              {% endwith %}
-                              {% endwith %}
-                              {% endwith %}
                               </table>
+                              {% endfor %}
+                              {% endwith %}
+                              {% endwith %}
+                              {% endwith %}
+                              {% endwith %}
                         </td>
                      </tr>
                       {% endfor %}
                       {% endif %}
-                      {% endfor %}
-                     <form method="get" action="{% url 'RefundRequest' %}">
-                       {% csrf_token %}
-                       <button type="submit" formmethod="get" class="btn btn-primary btn-lg float-right">Ajouter une demande de remboursement</button>
-                    </form>
-                    <form method="get" action="{% url 'AdvanceRequest' %}">
-                       {% csrf_token %}
-                       <button type="submit" formmethod="get" class="btn btn-primary btn-lg float-right">Ajouter une demande d'avance</button>
-                    </form>
-                    <form method="get" action="{% url 'MileageRequest' %}">
-                       {% csrf_token %}
-                       <button type="submit" formmethod="get" class="btn btn-primary btn-lg float-right">Ajouter une demande de remboursement de frais kilométrique</button>
-                    </form>
-                        
+                      {% endfor %}                        
                   </table>
+                  {% endfor %}
+                      {% else %}
+                      <p>Aucune mission enregistrée</p>
+                      {% endif %}
+                      {% endif %}
+                  {% endfor %}
                </td>
             </tr>
          </tbody>
          {% endfor %}                                                                                                    
       </table>
    </div>
+   {% else %}
+   <p>Aucune note de frais enregistrée</p>
+   {% endif %}
 </section>
     </div>
 <script>
