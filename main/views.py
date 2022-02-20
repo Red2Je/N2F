@@ -73,30 +73,37 @@ def sHistoric(request):
     mileDict = {}
     missionDict = {}
     expLinDict = {}
+    DictReportState ={}
     if service is not None:
         uL = list(Collaborator.objects.filter(service=service))
         for user in uL:
             expRepDict[user] = list(ExpenseReport.objects.filter(collaborator=user))
             for expRep in expRepDict[user]:
+                DictReportState[(user,expRep)]="Accepté"
                 filt = list(RefundRequest.objects.filter(expenseReport=expRep))
                 filtMiss = [f.mission for f in filt]
                 filtMiss = list(set(filtMiss))  # remove duplicates
                 missionDict[(user, expRep)] = filtMiss
+                if (len(filt)==0):
+                    DictReportState[(user, expRep)]="Vide"
                 for miss in filtMiss:
                     expLinDict[(user, expRep, miss)] = list(RefundRequest.objects.filter(expenseReport=expRep, mission=miss))
                     advDict[(user,expRep,miss)] = list(Advance.objects.filter(expenseReport=expRep, mission=miss))
                     mileDict[(user,expRep,miss)] = list(MileageExpense.objects.filter(expenseReport=expRep, mission=miss))
                     expLinDict[(user,expRep,miss)] = [e for e in expLinDict[(user,expRep,miss)] if e.id not in [m.id for m in mileDict[(user,expRep,miss)]]]
+                for f in filt:
+                    if f.state != ExpenseLine.accepted :
+                        DictReportState[(user, expRep)]="Incomplet"
 
     context = {'expRepDict': expRepDict, 'uL': uL, 'expLinDict': expLinDict, 'missDict': missionDict, 'mileDict': mileDict,
-               'advDict': advDict, 'service':service}
+               'advDict': advDict, 'service':service, 'DictReportState': DictReportState}
     return render(request, 'main/historic.html', context)
 
 
 @login_required(login_url='/login/')
 def cHistoric(request):
     u = Collaborator.objects.get(user=request.user)
-
+    DictReportState ={}
     expRepL = []
     expLinDict = {}
     advDict = {}
@@ -105,17 +112,25 @@ def cHistoric(request):
     if ExpenseReport.objects.filter(collaborator=u).count() >= 1:
         expRepL = list(ExpenseReport.objects.filter(collaborator=u).order_by('year', '-month'))
         for expRep in expRepL:
+            DictReportState[expRep]="Accepté"
             filt = list(RefundRequest.objects.filter(expenseReport=expRep)) + list(MileageExpense.objects.filter(expenseReport=expRep)) + list(Advance.objects.filter(expenseReport=expRep))
             filtMiss = [f.mission for f in filt]
             filtMiss = list(set(filtMiss))  # remove duplicates
             missionDict[expRep] = filtMiss
+            if (len(filt)==0):
+                DictReportState[expRep]="Vide"
             for miss in filtMiss:
                 expLinDict[(expRep, miss)] = list(RefundRequest.objects.filter(expenseReport=expRep, mission=miss))
                 advDict[(expRep,miss)] = list(Advance.objects.filter(expenseReport=expRep, mission=miss))
                 mileDict[(expRep,miss)] = list(MileageExpense.objects.filter(expenseReport=expRep, mission=miss))
                 expLinDict[(expRep,miss)] = [e for e in expLinDict[(expRep,miss)] if e.id not in [m.id for m in mileDict[(expRep,miss)]]]
+            for f in filt:
+                if f.state != ExpenseLine.accepted :
+                    DictReportState[expRep]="Incomplet"
+            
+
     context = {'expRepL': expRepL, 'collab': u, 'expLinDict': expLinDict, 'missDict': missionDict, 'mileDict': mileDict,
-               'advDict': advDict}
+               'advDict': advDict,  'DictReportState':DictReportState }
     return render(request, 'main/clientHistoric.html', context)
 
 
@@ -144,7 +159,7 @@ def valid(request):
 
                 for notedefraise in DictNoteDeFrais[collabo]:
                     DictMission[notedefraise] = []
-
+                    DictReportState[notedefraise]="Accepté"
                     if RefundRequest.objects.filter(expenseReport=notedefraise).count() >= 1:
                         filt = list(RefundRequest.objects.filter(expenseReport=notedefraise,state=ExpenseLine.sent))
                         Mission = [f.mission for f in filt]
@@ -154,7 +169,7 @@ def valid(request):
                                 DictMission[notedefraise] += Mission # stockage des missions pour l'affichage
                         for miss in Mission:
                             DictRefundRequest[(notedefraise,miss)] = list(set(list(RefundRequest.objects.filter(expenseReport=notedefraise,state=ExpenseLine.sent,mission=miss)))) # ligne de frais de l'utilisateur pour cette note de frais
-                            
+                      
 
                     if Advance.objects.filter(expenseReport=notedefraise).count() >= 1:
                         filt = list(Advance.objects.filter(expenseReport=notedefraise,state=ExpenseLine.sent))
@@ -178,8 +193,9 @@ def valid(request):
                             DictMileageExpense[(notedefraise,miss)] = list(set(list(MileageExpense.objects.filter(expenseReport=notedefraise,state=ExpenseLine.sent,mission=miss)))) # frais kilomÃ©triques de l'utilisateur pour cette note de frais
 
                             DictRefundRequest[(notedefraise,miss)] = [e for e in DictRefundRequest[(notedefraise,miss)] if e.id not in [m.id for m in DictMileageExpense[(notedefraise,miss)]]] # supprimer duplication des mileage dans le dic  DictRefundRequest
-                            print(DictRefundRequest[(notedefraise,miss)])
-                            #print(DictMileageExpense[(notedefraise,miss)])
+                        
+                        
+                   
             
 
         
@@ -250,7 +266,7 @@ def valid(request):
 
     context = {'CollaboratorList': CollaboratorList, 'DictNoteDeFrais': DictNoteDeFrais,
                'DictAdvance': DictAdvance,'DictMileageExpense': DictMileageExpense,'DictRefundRequest': DictRefundRequest,
-                'validor': validor, 'DictMission': DictMission}
+                'validor': validor, 'DictMission': DictMission, 'DictReportState' : DictReportState }
     return render(request, 'main/valid.html', context)
 
     # missionDict = {}
