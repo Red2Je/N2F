@@ -432,6 +432,7 @@ def createAdvanceRequest(request, AdvRef=None):
 
                 # Handle the users that does not have a report yet
                 obj.proof = None
+                obj.nature = ExpenseLine.advanceRequest
                 obj.expenseReport = expRep
                 obj.collaborator = col
                 obj.validator = col.validator
@@ -479,6 +480,7 @@ def createMileageExpense(request, MilRef=None):
                 if 'Submit' in request.POST:
                     toValidate = RefundRequest.sent
                 obj = form.save(commit=False)
+                obj.nature = ExpenseLine.transport
                 obj.expenseReport = expRep
                 obj.collaborator = col
                 obj.validator = col.validator

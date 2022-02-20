@@ -45,7 +45,7 @@ class RefundRequestForm(ModelForm):
 class AdvanceForm(ModelForm):
     class Meta:
         model = Advance
-        fields = ['date', 'nature', 'expenseReport', 'mission', 'estimatedPrice', 'advanceCommentary']
+        fields = ['date', 'expenseReport', 'mission', 'estimatedPrice', 'advanceCommentary']
         labels = {
             'date': 'Date',
             'nature': 'Nature',
@@ -72,7 +72,7 @@ class AdvanceForm(ModelForm):
 class MileageExpenseForm(ModelForm):
     class Meta:
         model = MileageExpense
-        fields = ['date', 'nature', 'expenseReport', 'mission', 'carFiscalPower', 'startCity', 'endCity', 'distance',
+        fields = ['date', 'expenseReport', 'mission', 'carFiscalPower', 'startCity', 'endCity', 'distance',
                   'amountHT', 'amountTVA', 'proof']
         labels = {
             'date': 'Date',
