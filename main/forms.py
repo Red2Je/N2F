@@ -84,7 +84,7 @@ class MileageExpenseForm(ModelForm):
             'startCity': 'Ville de depart',
             'endCity': "Ville d'arrivee",
             'distance': 'Distance',
-            'amountHT': 'Remboursemnt hors taxes',
+            'amountHT': 'Remboursement hors taxes',
             'amountTVA': 'Remoursement avec taxes',
             'proof': 'Justificatif',
         }
@@ -135,3 +135,13 @@ class ExpenseReportForm(ModelForm):
         instance.user = user
         instance.save()
         return instance
+
+class MissionForm(ModelForm):
+    class Meta:
+        model=Mission
+        fields = '__all__'
+
+        widgets = {'startDate': forms.SelectDateWidget,'endDate': forms.SelectDateWidget}
+        
+
+    

@@ -3,7 +3,7 @@ from xmlrpc.client import DateTime
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.shortcuts import redirect
-from .forms import MileageExpenseForm, RefundRequestForm, ExpenseReportForm, AdvanceForm
+from .forms import MileageExpenseForm, RefundRequestForm, ExpenseReportForm, AdvanceForm, MissionForm
 from .forms import RefundRequestForm
 from .models import ExpenseReport, Collaborator, ExpenseLine, Advance, Mission, RefundRequest, MileageExpense
 from django.contrib.auth import authenticate, login, logout
@@ -266,7 +266,7 @@ def valid(request):
 
     context = {'CollaboratorList': CollaboratorList, 'DictNoteDeFrais': DictNoteDeFrais,
                'DictAdvance': DictAdvance,'DictMileageExpense': DictMileageExpense,'DictRefundRequest': DictRefundRequest,
-                'validor': validor, 'DictMission': DictMission, 'DictReportState' : DictReportState }
+                'validor': validor, 'DictMission': DictMission }
     return render(request, 'main/valid.html', context)
 
     # missionDict = {}
@@ -571,3 +571,15 @@ def createExpenseReport(request):
 @login_required(login_url='/login/')
 def home(request):
     return render(request, 'main/home.html')
+
+@login_required(login_url='/login/')
+def createMission(request):
+    form = MissionForm()
+    if request.method == 'POST':
+        form = MissionForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('/')
+
+    context = {'form': form}
+    return render(request, 'main/form.html', context)

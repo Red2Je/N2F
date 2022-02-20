@@ -36,6 +36,8 @@ urlpatterns = [
     path('ConsultAdvance/', views.createConsultAdvance, name='ConsultAdvanceRequest'),
     path('Mileage/', views.createMileageExpense, name='MileageRequest'),
     path('ConsultMileage/', views.createConsultMileage, name='ConsultMileageRequest'),
+    path('CreateMission/', views.createMission, name='createMission'),
+
 
     path('validation/', views.valid, name='validation'),
 
