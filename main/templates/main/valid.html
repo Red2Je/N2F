@@ -48,7 +48,6 @@
                      <Label class="t_heading">Notes de frais</Label>
                      <table class="table table-bordered" style="background-color:lightgrey;color:black;">
                         <thead style="background-color:darkgreen;color:white;" >
-                           <th>Demandeur</th>
                            <th>Date</th>
                            <th>Coût total TTC (€)</th>
                            <th>Détails</th>
@@ -60,7 +59,6 @@
                            <form  class="form-group" method="post">
                               {% csrf_token %}
                               <tr>
-                                 <td>{{ collab.user.username }}</td>
                                  <td>{{ notedefrais.month}} {{notedefrais.year }}</td>
                                  <td>{{ notedefrais|sumRepValid:1 }}</td>
                                  <td><button type="button" class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target= "#intro-{{ forloop.parentloop.counter }}-{{ forloop.counter }}">Afficher</button></td>
