@@ -159,7 +159,6 @@ def valid(request):
 
                 for notedefraise in DictNoteDeFrais[collabo]:
                     DictMission[notedefraise] = []
-                    DictReportState[notedefraise]="Accepté"
                     if RefundRequest.objects.filter(expenseReport=notedefraise).count() >= 1:
                         filt = list(RefundRequest.objects.filter(expenseReport=notedefraise,state=ExpenseLine.sent))
                         Mission = [f.mission for f in filt]
@@ -266,7 +265,7 @@ def valid(request):
 
     context = {'CollaboratorList': CollaboratorList, 'DictNoteDeFrais': DictNoteDeFrais,
                'DictAdvance': DictAdvance,'DictMileageExpense': DictMileageExpense,'DictRefundRequest': DictRefundRequest,
-                'validor': validor, 'DictMission': DictMission, 'DictReportState' : DictReportState }
+                'validor': validor, 'DictMission': DictMission}
     return render(request, 'main/valid.html', context)
 
     # missionDict = {}
