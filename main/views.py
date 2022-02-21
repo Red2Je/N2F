@@ -53,7 +53,7 @@ def user_login(request):
 
 
 def void(request):
-    return render(request, 'main/void.html')
+    return redirect('/home')
 
 def error(request):
     return render(request, 'main/error.html')
