@@ -405,7 +405,7 @@ def createRefundRequest(request, RefReq=None):
                 obj.collaborator = col
                 obj.validator = col.validator
                 obj.state = RefundRequest.sent
-                if obj.proof != RefReq.proof:  # if we give a new proof, we delete the old one from the server
+                if obj.proof != RefReq.proof and RefReq.proof is not None:  # if we give a new proof, we delete the old one from the server
                     RefReq.dele()
                     save_file(request.FILES['proof'])
                 else:
@@ -503,7 +503,7 @@ def createAdvanceRequest(request, AdvRef=None):
                 obj.expenseReport = expRep
                 obj.collaborator = col
                 obj.validator = col.validator
-                obj.validated = toValidate
+                obj.state = toValidate
 
                 obj.save()
                 return redirect('/home')
@@ -602,7 +602,7 @@ def createMileageExpense(request, MilRef=None):
                 obj.amountHT = computeMileage(obj.carFiscalPower, obj.distance)
                 obj.amountTVA = computeMileage(obj.carFiscalPower, obj.distance)
                 obj.state = RefundRequest.sent
-                if obj.proof != MilRef.proof:  # if we give a new proof, we delete the old one from the server
+                if obj.proof != MilRef.proof and MilRef.proof is not None:  # if we give a new proof, we delete the old one from the server
                     MilRef.dele()
                     save_file(request.FILES['proof'])
                 else:
