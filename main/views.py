@@ -408,11 +408,14 @@ def createRefundRequest(request, RefReq=None):
                 obj.collaborator = col
                 obj.validator = col.validator
                 obj.state = RefundRequest.sent
-                if obj.proof != RefReq.proof and RefReq.proof is not None:  # if we give a new proof, we delete the old one from the server
-                    RefReq.dele()
+
+                if obj.proof.name is not None and RefReq.proof.name is not None:  # if we give a new proof, we delete the old one from the server
+                    RefReq.dele(instance=RefReq)
                     save_file(request.FILES['proof'])
                 else:
                     obj.proof = RefReq.proof
+                if RefReq.proof.name is not None:
+                    RefReq.delete()
                 obj.proof = RefReq.proof
                 obj.save()
                 return redirect('/home')
@@ -609,11 +612,13 @@ def createMileageExpense(request, MilRef=None):
                 obj.amountHT = computeMileage(obj.carFiscalPower, obj.distance)
                 obj.amountTVA = computeMileage(obj.carFiscalPower, obj.distance)
                 obj.state = RefundRequest.sent
-                if obj.proof != MilRef.proof and MilRef.proof is not None:  # if we give a new proof, we delete the old one from the server
-                    MilRef.dele()
+                if obj.proof.name is not None and MilRef.proof.name is not None:  # if we give a new proof, we delete the old one from the server
+                    MilRef.dele(instance=MilRef)
                     save_file(request.FILES['proof'])
                 else:
                     obj.proof = MilRef.proof
+                if MilRef.proof.name is not None:
+                    MilRef.delete()
                 obj.save()
                 return redirect('/home')
             return redirect('/home')
