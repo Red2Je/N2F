@@ -396,9 +396,12 @@ def createRefundRequest(request, RefReq=None):
                 obj.collaborator = col
                 obj.validator = col.validator
                 obj.state = toValidate
-
+                
                 obj.save()
-                save_file(request.FILES['proof'])
+
+                if obj.proof.name is not None:
+                    save_file(request.FILES['proof'])
+
                 return redirect('/home')
             else:
                 obj = form.save(commit=False)
@@ -594,7 +597,8 @@ def createMileageExpense(request, MilRef=None):
                 obj.state = toValidate
 
                 obj.save()
-                save_file(request.FILES['proof'])
+                if obj.proof.name is not None:
+                    save_file(request.FILES['proof'])
             else:
                 obj = form.save(commit=False)
                 obj.collaborator = col
