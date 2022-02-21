@@ -479,7 +479,7 @@ def createAdvanceRequest(request, AdvRef=None):
     # default the date to today
     today = datetime.date.today()
     today = today.strftime("%d/%m/%Y")
-    form = AdvanceForm(collab=col, initial={'date': today})
+    form = AdvanceForm(initial={'date': today},collab=col ,req = request)
 
     if AdvRef is not None and AdvRef.state != RefundRequest.accepted:
         col = AdvRef.expenseReport.collaborator
@@ -489,7 +489,7 @@ def createAdvanceRequest(request, AdvRef=None):
 
     if request.method == 'POST':
 
-        form = AdvanceForm(request.POST, request.FILES, collab=col)
+        form = AdvanceForm(request.POST, request.FILES, collab=col, req=request)
         if form.is_valid():
             if AdvRef is None : 
                 toValidate = RefundRequest.draft
