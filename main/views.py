@@ -79,7 +79,12 @@ def sHistoric(request):
     if service is not None:
         uL = list(Collaborator.objects.filter(service=service))
         for user in uL:
-            expRepDict[user] = list(ExpenseReport.objects.filter(collaborator=user))
+            temp = list(ExpenseReport.objects.filter(collaborator=user).order_by('year', '-month'))
+            temp2 = []
+            for expRep in temp:
+                if int(expRep.year) >= int(datetime.datetime.now().year) - 3 :
+                    temp2 += [expRep]
+            expRepDict[user] = temp2
             for expRep in expRepDict[user]:
                 DictReportState[(user,expRep)]="Accepté"
                 filt = list(RefundRequest.objects.filter(expenseReport=expRep))
@@ -112,7 +117,10 @@ def cHistoric(request):
     mileDict = {}
     missionDict = {}
     if ExpenseReport.objects.filter(collaborator=u).count() >= 1:
-        expRepL = list(ExpenseReport.objects.filter(collaborator=u).order_by('year', '-month'))
+        expRepLtemp = list(ExpenseReport.objects.filter(collaborator=u).order_by('year', '-month'))
+        for expRep in expRepLtemp:
+            if int(expRep.year) >= int(datetime.datetime.now().year) - 3 :
+                expRepL += [expRep]
         for expRep in expRepL:
             DictReportState[expRep]="Accepté"
             filt = list(RefundRequest.objects.filter(expenseReport=expRep)) + list(MileageExpense.objects.filter(expenseReport=expRep)) + list(Advance.objects.filter(expenseReport=expRep))
@@ -157,8 +165,12 @@ def valid(request):
         # recuperation de ses notes de frais, peut etre mettre une date limite sinon tout sera envoye
         for collabo in CollaboratorList:
             if ExpenseReport.objects.filter(collaborator=collabo).count() >= 1:  # on ne fait rien si pas de note de frais
-                DictNoteDeFrais[collabo] = list(ExpenseReport.objects.filter(collaborator=collabo))
-
+                temp = list(ExpenseReport.objects.filter(collaborator=collabo).order_by('year', '-month'))
+                temp2 = []
+                for expRep in temp:
+                    if int(expRep.year) >= int(datetime.datetime.now().year) - 3 :
+                        temp2 += [expRep]
+                DictNoteDeFrais[collabo] = temp2
                 for notedefraise in DictNoteDeFrais[collabo]:
                     DictMission[notedefraise] = []
                     if RefundRequest.objects.filter(expenseReport=notedefraise).count() >= 1:
