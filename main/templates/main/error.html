@@ -1,0 +1,33 @@
+{% extends 'main/base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class = "content-wrapper">
+    <div class = "content-header">
+	{% if form.errors %}
+		{% for field in form %}
+			{% for error in field.errors %}
+				<div class="alert alert-danger">
+					<strong>{{ error|escape }}</strong>
+				</div>
+			{% endfor %}
+		{% endfor %}
+		{% for error in form.non_field_errors %}
+			<div class="alert alert-danger">
+				<strong>{{ error|escape }}</strong>
+			</div>
+		{% endfor %}
+	{% endif %}
+	</div>
+        <section class="content-header">
+            <div class="container-fluid">
+                <div>
+                	<h2>Une erreur est survenue lors de votre navigation.</h2>
+                </div>
+                <div>
+                <h1>Veuillez contacter votre service d'administration pour plus d'informations.</h1>
+            </div>
+            </div><!-- /.container-fluid -->
+        </section>
+    </div>
+{% endblock %}

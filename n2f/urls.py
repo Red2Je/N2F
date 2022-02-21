@@ -17,11 +17,13 @@ from django.contrib import admin
 from django.urls import path, include
 from main import views
 from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.home, name='home'),
+    path('home/', views.home, name='home'),
     path('void/', views.void, name='void'),
+    path('error/', views.error, name='error'),
     path('formReport/', views.createExpenseReport, name='formReport'),
     path('login/', views.user_login, name='login'),
     path('logout/', views.logoutPage, name='logout'),
@@ -48,3 +50,5 @@ urlpatterns = [
     path('ConsultAdvance/<int:advId>/', views.consultAdvance, name='ConsultAdvance'),
     path('ConsultMileage/<int:milId>/', views.consultMileage, name='ConsultMileage'),
 ]
+
+urlpatterns+=staticfiles_urlpatterns()

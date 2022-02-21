@@ -41,6 +41,8 @@
 	                	Édition d'une demande d'avance
 	                {%elif type == 'mileage' %}
 	                	Édition d'une ligne de frais kilométriques
+	                {%elif type == 'mission' %}
+	                	Édition d'une mission
 	                {% endif %}
             	</h3>
               </div>
@@ -53,7 +55,9 @@
 						{{ form.as_table }}
 						</table>
 					<button type="submit" formenctype="multipart/form-data" formmethod="post" name="Submit">Envoyer</button>
+					{% if type != 'mission' %}
 					<button type="submit" formenctype="multipart/form-data" formmethod="post" name = "Save">Sauvegarder</button>
+					{% endif %}
 					</form>
 					</div>
 				</div>

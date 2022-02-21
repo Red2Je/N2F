@@ -30,7 +30,7 @@ def logoutPage(request):
 
 def user_login(request):
     # handle rediredct
-    next = request.GET.get('next', '/')
+    next = request.GET.get('next', '/home')
 
     if request.method == 'POST':
         username = request.POST['username']
@@ -40,9 +40,9 @@ def user_login(request):
         if user is not None:
             login(request, user)
             # if the user is valid and comes from another page, redirect him
-            if next != '/':
+            if next != '/home':
                 return redirect(next)
-            return redirect('/')
+            return redirect('/home')
         else:
             form = AuthenticationForm()
             return render(request, 'main/login.html', {'form': form})
@@ -55,6 +55,8 @@ def user_login(request):
 def void(request):
     return render(request, 'main/void.html')
 
+def error(request):
+    return render(request, 'main/error.html')
 
 def save_file(f):
     with open('proofs/' + f.name, 'wb+') as destination:
@@ -203,24 +205,36 @@ def valid(request):
             RefundRequestvalided = []
             Mileagevalided = []
             Advancevalided = []
+
+            RefundComment = {}
+            AdvanceComment = {}
+            MileageComment = {}
+
             for idRef in range(RefundRequest.objects.latest('id').id + 1):
                 try:
                     # Liste des lignes de frais
                     RefundRequestvalided += request.POST.getlist('RefundRequest'+str(idRef))
+                    if len(request.POST.getlist('comment'+str(idRef))) > 0:
+                        RefundComment[idRef] = request.POST.getlist('comment'+str(idRef))[0]
                 except:
                     print("unknown Refund id : " + str(idRef))
             for idMil in range(MileageExpense.objects.latest('id').id + 1):
                 try:
                     # Liste des frais kilometriques
                     Mileagevalided += request.POST.getlist('validMileage'+str(idMil))
+                    if len(request.POST.getlist('commentM'+str(idMil))) > 0:
+                        MileageComment[idMil] = request.POST.getlist('commentM'+str(idMil))[0]
                 except:
                     print("unknown Mileage id : " + str(idMil))
             for idAdv in range(Advance.objects.latest('id').id + 1):
                 try:
                     # liste des avances
                     Advancevalided += request.POST.getlist('validAvance'+str(idAdv))
+                    if len(request.POST.getlist('commentA'+str(idAdv))) > 0:
+                        AdvanceComment[idAdv] = request.POST.getlist('commentA'+str(idAdv))[0]
                 except:
                     print("unknown Advance id : " + str(idAdv))
+
 
             for refundamodif in RefundRequestvalided:
                 if refundamodif != "": # si != traiter plus tard
@@ -260,6 +274,18 @@ def valid(request):
                         mileageeamodif =MileageExpense.objects.get( id = val )
                         mileageeamodif.state=ExpenseLine.refused
                         mileageeamodif.save()
+            for key,value in RefundComment.items():
+                amodif =RefundRequest.objects.get( id = key )
+                amodif.validorCommentary=value
+                amodif.save()
+            for key,value in AdvanceComment.items():
+                advanceamodif =Advance.objects.get( id = key )
+                advanceamodif.validorCommentary=value
+                advanceamodif.save()
+            for key,value in MileageComment.items():
+                mileageeamodif =MileageExpense.objects.get( id = key )
+                mileageeamodif.validorCommentary=value
+                mileageeamodif.save()
 
             return redirect('/validation') # redirection sur la page avec les modif traited
 
@@ -302,7 +328,7 @@ def download_file(request, filename=''):
         return response
     else:
         # Load the template
-        return render(request, 'main/void.html')
+        return render(request, 'main/error.html')
 
 
 def collabAndReport(request):
@@ -361,7 +387,7 @@ def createRefundRequest(request, RefReq=None):
 
                 obj.save()
                 save_file(request.FILES['proof'])
-                return redirect('/')
+                return redirect('/home')
             else:
                 obj = form.save(commit=False)
                 obj.collaborator = col
@@ -374,7 +400,7 @@ def createRefundRequest(request, RefReq=None):
                     obj.proof = RefReq.proof
                 obj.proof = RefReq.proof
                 obj.save()
-                return redirect('/')
+                return redirect('/home')
         else:
             print("ERROR : ", form.errors)
     context = {'form': form, 'type':"refund"}
@@ -392,7 +418,7 @@ def consultRefund(request, refId):
 def createConsultRefund(request, RefReq=None):
     validor = Collaborator.objects.get(user=request.user)  # valideur
     if validor.departmentHead is None:  # on ne fait rien si personne n'a ce valideur
-        return redirect('/')
+        return redirect('/home')
     ligneDeFrais = RefundRequest.objects.get(id=RefReq.id)
     context = {'ldf':ligneDeFrais}
     return render(request, 'main/consult.html', context)
@@ -409,7 +435,7 @@ def consultAdvance(request, advId):
 def createConsultAdvance(request, AdvReq=None):
     validor = Collaborator.objects.get(user=request.user)  # valideur
     if validor.departmentHead is None:  # on ne fait rien si personne n'a ce valideur
-        return redirect('/')
+        return redirect('/home')
     ligneDeFrais = Advance.objects.get(id=AdvReq.id)
     context = {'ldf':ligneDeFrais}
     return render(request, 'main/consultA.html', context)
@@ -426,7 +452,7 @@ def consultMileage(request, milId):
 def createConsultMileage(request, MilReq=None):
     validor = Collaborator.objects.get(user=request.user)  # valideur
     if validor.departmentHead is None:  # on ne fait rien si personne n'a ce valideur
-        return redirect('/')
+        return redirect('/home')
     ligneDeFrais = MileageExpense.objects.get(id=MilReq.id)
     context = {'ldf':ligneDeFrais}
     return render(request, 'main/consultM.html', context)
@@ -468,7 +494,7 @@ def createAdvanceRequest(request, AdvRef=None):
                 obj.validated = toValidate
 
                 obj.save()
-                return redirect('/')
+                return redirect('/home')
             else:
                 obj = form.save(commit=False)
                 obj.collaborator = col
@@ -476,7 +502,7 @@ def createAdvanceRequest(request, AdvRef=None):
                 obj.state = RefundRequest.sent
                 obj.proof = None
                 obj.save()
-                return redirect('/')
+                return redirect('/home')
         else:
             print(form.errors)
     context = {'form': form, 'type':"advance"}
@@ -570,8 +596,8 @@ def createMileageExpense(request, MilRef=None):
                 else:
                     obj.proof = MilRef.proof
                 obj.save()
-                return redirect('/')
-            return redirect('/')
+                return redirect('/home')
+            return redirect('/home')
         else:
             print(form.errors)
     context = {'form': form, 'type':"mileage"}
@@ -604,7 +630,7 @@ def createExpenseReport(request):
         if form.is_valid():
             col = Collaborator.objects.get(user=request.user)
             form.save(collaborator=col)
-            return redirect('/')
+            return redirect('/home')
 
     context = {'form': form}
     return render(request, 'main/form.html', context)
@@ -620,7 +646,7 @@ def createMission(request):
         form = MissionForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('/')
+            return redirect('/home')
 
-    context = {'form': form}
+    context = {'form': form, 'type':"mission"}
     return render(request, 'main/form.html', context)

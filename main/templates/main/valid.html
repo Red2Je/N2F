@@ -38,7 +38,7 @@
             {% for collab in CollaboratorList %}
             <tbody>
                <tr>
-                  <td>{{ collab.user.username }}</td>
+                  <td>{{ collab.user.first_name }} {{ collab.user.last_name }}</td>
                   <td><button class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target= "#intro-{{ forloop.counter }}">Afficher</button></td>
                </tr>
                <tr id="intro-{{ forloop.counter }}" class="collapse">
@@ -56,7 +56,7 @@
                            {% for key,value in DictNoteDeFrais.items %}
                            {% if key == collab %}
                            {% for notedefrais in value %}
-                           <form  class="form-group" method="post">
+                           <form  class="form-group" method="post" action="">
                               {% csrf_token %}
                               <tr>
                                  <td>{{ notedefrais.month}} {{notedefrais.year }}</td>
@@ -84,8 +84,8 @@
                                           <td>{{ mission.name }}</td>
                                           <td>{{ mission.id|sumMissionValid:key2 }}</td>
                                           <td>{{ mission.id|sumMissMoneyValid:key2 }}</td>
-                                          <td><button  type="button" class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target="#outro-{{forloop.parentloop.counter}}-{{ forloop.counter }}">Afficher</button></td>
-                                          <tr id="outro-{{forloop.parentloop.counter}}-{{ forloop.counter }}" class="collapse">
+                                          <td><button  type="button" class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target="#outro-{{forloop.parentloop.counter}}-{{ forloop.counter }}">Cacher</button></td>
+                                          <tr id="outro-{{forloop.parentloop.counter}}-{{ forloop.counter }}" class="collapse show">
                                              <td colspan="21">
                                                 {% with expid=notedefrais.id|stringformat:"i" %}
                                                 {% with missid=mission.id|stringformat:"i" %}
@@ -104,6 +104,7 @@
                                                    </thead>
                                                    {% for expLin in expLinL %}
                                                    <tbody>
+                                                      <tr>
                                                       <td>{{ expLin.nature }}</td>
                                                       <td>{{ expLin.date }}</td>
                                                       <td>{{ expLin.amountTVA }}</td>
@@ -122,19 +123,36 @@
                                                       <td>
                                                          <div class="form-check col">
                                                             <div class="row">
-                                                               <input class="form-check-input" type="radio" value="{{ expLin.id|stringformat:"i" }}" name="RefundRequest{{expLin.id}}" id="flexCheckChecked{{expLin.id}}" checked>
+                                                               <input class="form-check-input" type="radio" value="{{ expLin.id|stringformat:"i" }}" onchange="HideField(com{{expLin.id}});" name="RefundRequest{{expLin.id}}" id="flexCheckChecked{{expLin.id}}" checked>
                                                                <label class="form-check-label" for="flexCheckChecked{{expLin.id}}">Valider</label>
                                                             </div>
                                                             <div class="row">
-                                                               <input class="form-check-input" type="radio" value="{{ expLin.id|mult:-1|stringformat:"i" }}" name="RefundRequest{{expLin.id}}" id="flexCheckCheckedRefuse{{expLin.id}}" >
+                                                               <input class="form-check-input" type="radio" value="{{ expLin.id|mult:-1|stringformat:"i" }}" onchange="ShowField(com{{expLin.id}});" name="RefundRequest{{expLin.id}}" id="flexCheckCheckedRefuse{{expLin.id}}" >
                                                                <label class="form-check-label" for="flexCheckCheckedRefuse{{expLin.id}}">Refuser</label>
                                                             </div>
                                                             <div class="row">
-                                                               <input class="form-check-input" type="radio" value="" name="RefundRequest{{expLin.id}}" id="flexCheckCheckedOther{{expLin.id}}" >
+                                                               <input class="form-check-input" type="radio" value="" onchange="HideField(com{{expLin.id}});" name="RefundRequest{{expLin.id}}" id="flexCheckCheckedOther{{expLin.id}}" >
                                                                <label class="form-check-label" for="flexCheckCheckedOther{{expLin.id}}">Traiter plus tard</label>
                                                             </div>
                                                          </div>
                                                       </td>
+                                                   </tr>
+                                                      <tr id="com{{expLin.id}}" class="collapse">
+                                                         <td colspan="28">
+                                                            <table class="table custom-view" style="background-color:white;color:black;">
+                                                               <thead style="background-color:darkgrey;color:black;" >
+                                                                  <th>Commentaire:</th>
+                                                               </thead>
+                                                               <tbody>
+                                                                  <tr>
+                                                                     <td>
+                                                                        <textarea type="text" id="comment{{expLin.id}}" name="comment{{expLin.id}}" cols="200" rows="4" ></textarea>
+                                                                     </td>
+                                                                  </tr>
+                                                               </tbody>
+                                                            </table>
+                                                         </td>
+                                                      </tr>
                                                    </tbody>
                                                    {% endfor %}
                                                 </table>
@@ -143,7 +161,6 @@
                                                 {% endwith %}
                                                 {% endwith %}
                                                 {% endwith %}
-
                                                 {% with expid=notedefrais.id|stringformat:"i" %}
                                                 {% with missid=mission.id|stringformat:"i" %}
                                                 {% with filt=expid|add:"&"|add:missid %}
@@ -160,6 +177,7 @@
                                                    </thead>
                                                    {% for expLin in expLinL %}
                                                    <tbody>
+                                                      <tr>
                                                       <td>{{ expLin.date }}</td>
                                                       <td>{{ expLin.estimatedPrice }}</td>
                                                       <td>{{ expLin.advanceCommentary }}</td>
@@ -173,19 +191,36 @@
                                                       <td>
                                                          <div class="form-check col">
                                                             <div class="row">
-                                                               <input class="form-check-input" type="radio" value="{{ expLin.id|stringformat:"i" }}" name="validAvance{{expLin.id}}" id="flexCheckChecked{{expLin.id}}" checked>
+                                                               <input class="form-check-input" type="radio" value="{{ expLin.id|stringformat:"i" }}" onchange="HideField(comA{{expLin.id}});" name="validAvance{{expLin.id}}" id="flexCheckChecked{{expLin.id}}" checked>
                                                                <label class="form-check-label" for="flexCheckChecked{{expLin.id}}">Valider</label>
                                                             </div>
                                                             <div class="row">
-                                                               <input class="form-check-input" type="radio" value="{{ expLin.id|mult:-1|stringformat:"i" }}" name="validAvance{{expLin.id}}" id="flexCheckCheckedRefuse{{expLin.id}}" >
+                                                               <input class="form-check-input" type="radio" value="{{ expLin.id|mult:-1|stringformat:"i" }}" onchange="ShowField(comA{{expLin.id}});" name="validAvance{{expLin.id}}" id="flexCheckCheckedRefuse{{expLin.id}}" >
                                                                <label class="form-check-label" for="flexCheckCheckedRefuse{{expLin.id}}">Refuser</label>
                                                             </div>
                                                             <div class="row">
-                                                               <input class="form-check-input" type="radio" value="" name="validAvance{{expLin.id}}" id="flexCheckCheckedOther{{expLin.id}}" >
+                                                               <input class="form-check-input" type="radio" value="" onchange="HideField(comA{{expLin.id}});" name="validAvance{{expLin.id}}" id="flexCheckCheckedOther{{expLin.id}}" >
                                                                <label class="form-check-label" for="flexCheckCheckedOther{{expLin.id}}">Traiter plus tard</label>
                                                             </div>
                                                          </div>
                                                       </td>
+                                                   </tr>
+                                                      <tr id="comA{{expLin.id}}" class="collapse">
+                                                         <td colspan="28">
+                                                            <table class="table custom-view" style="background-color:white;color:black;">
+                                                               <thead style="background-color:darkgrey;color:black;" >
+                                                                  <th>Commentaire:</th>
+                                                               </thead>
+                                                               <tbody>
+                                                                  <tr>
+                                                                     <td>
+                                                                        <textarea type="text" id="commentA{{expLin.id}}" name="commentA{{expLin.id}}" cols="200" rows="4" ></textarea>
+                                                                     </td>
+                                                                  </tr>
+                                                               </tbody>
+                                                            </table>
+                                                         </td>
+                                                      </tr>
                                                    </tbody>
                                                    {% endfor %}
                                                 </table>
@@ -194,12 +229,11 @@
                                                 {% endwith %}
                                                 {% endwith %}
                                                 {% endwith %}
-
                                                 {% with expid=notedefrais.id|stringformat:"i" %}
                                                 {% with missid=mission.id|stringformat:"i" %}
                                                 {% with filt=expid|add:"&"|add:missid %}
                                                 {% with expLinL=DictMileageExpense|get_from_pair:filt %}
-                                                {% for expLin in expLinL|slice:":1" %}
+                                                {% for expLin2 in expLinL|slice:":1" %}
                                                 <Label class="t_heading">Frais kilométriques</Label>
                                                 <table class="table custom-view" style="background-color:lightgrey;color:black;">
                                                    <thead style="background-color:seagreen;color:white;">
@@ -212,6 +246,7 @@
                                                    </thead>
                                                    {% for expLin in expLinL %}
                                                    <tbody>
+                                                      <tr>
                                                       <td>{{ expLin.nature }}</td>
                                                       <td>{{ expLin.date }}</td>
                                                       <td>{{ expLin.amountTVA }}</td>
@@ -230,19 +265,36 @@
                                                       <td>
                                                          <div class="form-check col">
                                                             <div class="row">
-                                                               <input class="form-check-input" type="radio" value="{{ expLin.id|stringformat:"i" }}" name="validMileage{{expLin.id}}" id="flexCheckChecked{{expLin.id}}" checked>
+                                                               <input class="form-check-input" type="radio" value="{{ expLin.id|stringformat:"i" }}" onchange="HideField(comM{{expLin.id}});" name="validMileage{{expLin.id}}" id="flexCheckChecked{{expLin.id}}" checked>
                                                                <label class="form-check-label" for="flexCheckChecked{{expLin.id}}">Valider</label>
                                                             </div>
                                                             <div class="row">
-                                                               <input class="form-check-input" type="radio" value="{{ expLin.id|mult:-1|stringformat:"i" }}" name="validMileage{{expLin.id}}" id="flexCheckCheckedRefuse{{expLin.id}}" >
+                                                               <input class="form-check-input" type="radio" value="{{ expLin.id|mult:-1|stringformat:"i" }}" onchange="ShowField(comM{{expLin.id}});" name="validMileage{{expLin.id}}" id="flexCheckCheckedRefuse{{expLin.id}}" >
                                                                <label class="form-check-label" for="flexCheckCheckedRefuse{{expLin.id}}">Refuser</label>
                                                             </div>
                                                             <div class="row">
-                                                               <input class="form-check-input" type="radio" value="" name="validMileage{{expLin.id}}" id="flexCheckCheckedOther{{expLin.id}}" >
+                                                               <input class="form-check-input" type="radio" value="" onchange="HideField(comM{{expLin.id}});" name="validMileage{{expLin.id}}" id="flexCheckCheckedOther{{expLin.id}}" >
                                                                <label class="form-check-label" for="flexCheckCheckedOther{{expLin.id}}">Traiter plus tard</label>
                                                             </div>
                                                          </div>
                                                       </td>
+                                                      </tr>
+                                                      <tr id="comM{{expLin.id}}" class="collapse">
+                                                         <td colspan="28">
+                                                            <table class="table custom-view" style="background-color:white;color:black;">
+                                                               <thead style="background-color:darkgrey;color:black;" >
+                                                                  <th>Commentaire:</th>
+                                                               </thead>
+                                                               <tbody>
+                                                                  <tr>
+                                                                     <td>
+                                                                        <textarea type="text" id="commentM{{expLin.id}}" name="commentM{{expLin.id}}" cols="200" rows="4" ></textarea>
+                                                                     </td>
+                                                                  </tr>
+                                                               </tbody>
+                                                            </table>
+                                                         </td>
+                                                      </tr>
                                                    </tbody>
                                                    {% endfor %}
                                                 </table>
@@ -288,6 +340,13 @@
    </section>
 </div>
 <script>
+   function HideField(id){
+      $(id).collapse("hide");
+   }
+   function ShowField(id){
+      $(id).collapse("show");
+   }
+   
    $(".list-group-item").each(function (i, li) {
         var currentli = $(li);
         $(currentli).find("#checkbox1").on('change', function () {
@@ -299,7 +358,7 @@
             $(currentli).find("#checkbox1").not(this).prop('checked', false);
             $(currentli).find("#checkbox3").not(this).prop('checked', false);
         });
-
+   
         $(currentli).find("#checkbox3").on('change', function () {
             $(currentli).find("#checkbox1").not(this).prop('checked', false);
             $(currentli).find("#checkbox2").not(this).prop('checked', false);

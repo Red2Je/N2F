@@ -1,6 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="">
+<link rel="icon" type="image/png" href="{% static "admin/media/Logo.png" %}" />
 <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -52,17 +53,17 @@ function ShowHide(id) {
                 </li>
                 {% else %}
                     <div class="info">
-                        <a href="#" class="d-block">unidentified user</a>
+                        <a href="#" class="d-block">Non connecté</a>
                     </div>
             {% endif %}
 
             {% if user.is_authenticated %}
                 <li class="nav-item d-none d-sm-inline-block">
-                    <a href="{% url 'logout' %}" class="nav-link">Logout</a>
+                    <a href="{% url 'logout' %}" class="nav-link">Déconnexion</a>
                 </li>
             {% else %}
                 <li class="nav-item d-none d-sm-inline-block">
-                    <a href="{% url 'login' %}" class="nav-link">Login</a>
+                    <a href="{% url 'login' %}" class="nav-link">Connexion</a>
                 </li>
             {% endif %}
             </ul>
@@ -73,7 +74,7 @@ function ShowHide(id) {
         <aside class="main-sidebar fixed sidebar-dark-primary elevation-4">
         <!-- Brand Logo -->
         <a href="{% url 'home' %}" class="brand-link">
-          <span class="brand-text font-weight-light">N2F</span>
+          <span class="brand-text font-weight-light">{% load static %} <img src="{% static "admin/media/Logo.png" %}" alt="home" width="30" height="30" />        N2F</span>
         </a>
 
         <!-- Sidebar -->
@@ -122,7 +123,7 @@ function ShowHide(id) {
                         </li>
                         <li class="nav-item">
                             <a href="{% url 'createMission' %}" class="nav-link">
-                                <i class="nav-icon fas fa-edit"></i><p>Créer une mission pour le service</p>
+                                <i class="nav-icon fas fa-edit"></i><p>Créer mission</p>
                             </a>
                         </li>
                     {% endif %}

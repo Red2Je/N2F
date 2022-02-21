@@ -25,7 +25,7 @@
 <style>
 .wrapper {
   display: grid;
-  grid-template-columns: repeat(7,1);
+  grid-template-columns: repeat(8,1);
   grid-gap: 10px;
   grid-auto-rows: minmax(20px, auto);
 }
@@ -56,6 +56,10 @@
 .seven {
   grid-column: 1;
   grid-row: 7;
+}
+.eight {
+  grid-column: 1;
+  grid-row: 8;
 }
 </style>
 
@@ -101,6 +105,11 @@
 				            <div class="seven">
 				            	<Label>Justificatif</Label>
 				            </div>
+				            {% if ldf.state == "Refusé" %}
+				            <div class="eight">
+				            	<Label>Commentaire</Label>
+				            </div>
+				            {% endif %}
 				        </div>
 				        <div class="wrapper">
 				        	<div class="one">
@@ -129,6 +138,11 @@
 							<div class="seven">
 								<a href="{% url 'download' ldf.proof.name|urlFromFile:1 %}">Télécharger</a>
 							</div>
+							{% if ldf.state == "Refusé" %}
+				            <div class="eight">
+				            	<Label>{{ldf.validorCommentary}}</Label>
+				            </div>
+				            {% endif %}
 						</div>
 				</div>
 					</form>
