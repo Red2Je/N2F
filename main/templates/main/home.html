@@ -3,21 +3,34 @@
 
 {% block content %}
 
+<style>
+.wrapper {
+  display: grid;
+  grid-template-columns: repeat(3,1);
+  grid-gap: 10px;
+  grid-auto-rows: minmax(10px, auto);
+}
+.one {
+  grid-column: 1;
+  grid-row: 1;
+}
+.two {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+</style>
+
+{% load static %}
+
     <div class="content-wrapper">
-        <section class="content-header">
-            <div class="container-fluid">
-                <div class="row mb-2">
-                    <div class="col-sm-6">
-                        <h1>LOGO</h1>
-                    </div>
-                </div>
-            </div><!-- /.container-fluid -->
-        </section>
 
         <section class="content">
             {% if user.is_authenticated %}
                 <div class="container-fluid">
-                    <div class="col">
+                    <div class="row">
+                    <div class="wrapper">
+                        <div class="one">
                         <!-- general form elements -->
                         <div class="card card-primary">
                             <div class="card-header">
@@ -30,7 +43,7 @@
                                     <a class="btn btn-primary btn-lg" href="{% url 'clientHistoric' %}"> Consulter vos notes de frais </a><br><br>
                                     <a class="btn btn-primary btn-lg" href="{% url 'RefundRequest' %}"> Faire une nouvelle demande de remboursement </a><br><br>
                                     <a class="btn btn-primary btn-lg" href="{% url 'AdvanceRequest' %}"> Faire une nouvelle demande d'avance </a><br><br>
-                                    <a class="btn btn-primary btn-lg" href="{% url 'MileageRequest' %}"> Faire une nouvelle demande de frais kilométriques </a><br><br>
+                                    <a class="btn btn-primary btn-lg" href="{% url 'MileageRequest' %}"> Faire une nouvelle demande de frais kilométriques </a>
                                 </div>
                             </div>
                         </div>
@@ -45,13 +58,15 @@
                                 <div class="card-body">
                                     <div class="form-group">
                                         <a class="btn btn-primary btn-lg" href="{% url 'validation' %}"> Consulter les notes de frais à valider </a><br><br>
-                                        <a class="btn btn-primary btn-lg" href="{% url 'serviceHistoric' %}"> Historique des notes du service </a>
+                                        <a class="btn btn-primary btn-lg" href="{% url 'serviceHistoric' %}"> Historique des notes du service </a><br><br>
+                                        <a class="btn btn-primary btn-lg" href="{% url 'createMission' %}"> Créer une nouvelle mission pour le service </a>
                                     </div>
                                 </div>
                             </div>
                         {% endif %}
                     </div>
-
+                    </div>
+              </div>
                 </div>
             {% endif %}
         </section>

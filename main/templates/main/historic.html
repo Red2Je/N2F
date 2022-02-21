@@ -41,7 +41,7 @@
         {% for us in uL %}
         <tbody>
         	<tr>
-               <td>{{ us.user.username }}</td>
+               <td>{{ us.user.first_name }} {{ us.user.last_name }}</td>
                <td><button class="btn btn-success" onclick="ShowHide(this);" data-toggle="collapse" data-target= "#intro-{{ forloop.counter }}">Afficher</button></td>
             </tr>
             <tr id="intro-{{ forloop.counter }}" class="collapse">

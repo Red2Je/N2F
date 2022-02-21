@@ -137,7 +137,13 @@ class ExpenseReportForm(ModelForm):
 class MissionForm(ModelForm):
     class Meta:
         model=Mission
-        fields = '__all__'
+        fields = ['name','startDate','endDate','service']
+        labels = {
+            'name':'Nom',
+            'startDate':'Date de départ',
+            'endDate':'Date de fin',
+            'service':'Service',
+        }
 
         widgets = {'startDate': forms.SelectDateWidget,'endDate': forms.SelectDateWidget}
         
