@@ -432,11 +432,12 @@ def consultRefund(request, refId):
 @login_required(login_url='/login/')
 def createConsultRefund(request, RefReq=None):
     validor = Collaborator.objects.get(user=request.user)  # valideur
-    if validor.departmentHead is None:  # on ne fait rien si personne n'a ce valideur
-        return redirect('/home')
-    ligneDeFrais = RefundRequest.objects.get(id=RefReq.id)
-    context = {'ldf':ligneDeFrais}
-    return render(request, 'main/consult.html', context)
+    if validor.departmentHead is not None or (RefReq is not None and RefReq.expenseReport.collaborator == validor):  # on ne fait rien si personne n'a ce valideur ou si la fiche n'appartient pas à l'utilisateur
+        ligneDeFrais = RefundRequest.objects.get(id=RefReq.id)
+        context = {'ldf': ligneDeFrais}
+        return render(request, 'main/consult.html', context)
+    return redirect('/home')
+
 
 ################################################################
 #                      ConsultAdvance                          #
@@ -449,11 +450,12 @@ def consultAdvance(request, advId):
 @login_required(login_url='/login/')
 def createConsultAdvance(request, AdvReq=None):
     validor = Collaborator.objects.get(user=request.user)  # valideur
-    if validor.departmentHead is None:  # on ne fait rien si personne n'a ce valideur
-        return redirect('/home')
-    ligneDeFrais = Advance.objects.get(id=AdvReq.id)
-    context = {'ldf':ligneDeFrais}
-    return render(request, 'main/consultA.html', context)
+    if validor.departmentHead is not None or (AdvReq is not None and AdvReq.expenseReport.collaborator != validor):  # on ne fait rien si personne n'a ce valideur ou si la fiche n'appartient pas à l'utilisateur
+        ligneDeFrais = Advance.objects.get(id=AdvReq.id)
+        context = {'ldf': ligneDeFrais}
+        return render(request, 'main/consultA.html', context)
+    return redirect('/home')
+
 
 ################################################################
 #                      ConsultMileage                          #
@@ -466,11 +468,12 @@ def consultMileage(request, milId):
 @login_required(login_url='/login/')
 def createConsultMileage(request, MilReq=None):
     validor = Collaborator.objects.get(user=request.user)  # valideur
-    if validor.departmentHead is None:  # on ne fait rien si personne n'a ce valideur
-        return redirect('/home')
-    ligneDeFrais = MileageExpense.objects.get(id=MilReq.id)
-    context = {'ldf':ligneDeFrais}
-    return render(request, 'main/consultM.html', context)
+    if validor.departmentHead is not None or (MilReq is not None and MilReq.expenseReport.collaborator != validor):  # on ne fait rien si personne n'a ce valideur ou si la fiche n'appartient pas à l'utilisateur
+        ligneDeFrais = MileageExpense.objects.get(id=MilReq.id)
+        context = {'ldf': ligneDeFrais}
+        return render(request, 'main/consultM.html', context)
+    return redirect('/home')
+
 
 ################################################################
 #                         Advance                              #
