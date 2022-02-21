@@ -136,7 +136,11 @@
 								<a>{{ldf.amountTVA}}</a>
 							</div>
 							<div class="seven">
-								<a href="{% url 'download' ldf.proof.name|urlFromFile:1 %}">Télécharger</a>
+								{% if ldf.proof != "" %}
+									<a href="{% url 'download' ldf.proof.name|urlFromFile:1 %}">Télécharger</a>
+								{% else %}
+									<p>Aucun justificatif fourni</p>
+								{% endif %}
 							</div>
 							{% if ldf.state == "Refusé" %}
 				            <div class="eight">
