@@ -55,7 +55,7 @@
 						{{ form.as_table }}
 						</table>
 					<button type="submit" formenctype="multipart/form-data" formmethod="post" name="Submit">Envoyer</button>
-					{% if type != 'mission' %}
+					{% if type != 'mission' and type != 'advance' %}
 					<button type="submit" formenctype="multipart/form-data" formmethod="post" name = "Save">Sauvegarder</button>
 					{% endif %}
 					</form>
