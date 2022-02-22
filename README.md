@@ -1,6 +1,6 @@
 ��# N2F
 
 Démarrer le projet : à la racine : 
-'''sh
+```sh
 python manage.py runserver
-'''
+```
