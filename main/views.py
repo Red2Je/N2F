@@ -410,11 +410,11 @@ def createRefundRequest(request, RefReq=None):
                 obj.state = RefundRequest.sent
 
                 if obj.proof.name is not None and RefReq.proof.name is not None:  # if we give a new proof, we delete the old one from the server
-                    RefReq.dele(instance=RefReq)
-                    save_file(request.FILES['proof'])
+                    if('proof' in request.FILES.keys()):
+                        save_file(request.FILES['proof'])
                 else:
                     obj.proof = RefReq.proof
-                if RefReq.proof.name is not None:
+                if RefReq is not None:
                     RefReq.delete()
                 obj.proof = RefReq.proof
                 obj.save()
@@ -613,7 +613,6 @@ def createMileageExpense(request, MilRef=None):
                 obj.amountTVA = computeMileage(obj.carFiscalPower, obj.distance)
                 obj.state = RefundRequest.sent
                 if obj.proof.name is not None and MilRef.proof.name is not None:  # if we give a new proof, we delete the old one from the server
-                    MilRef.dele(instance=MilRef)
                     save_file(request.FILES['proof'])
                 else:
                     obj.proof = MilRef.proof
